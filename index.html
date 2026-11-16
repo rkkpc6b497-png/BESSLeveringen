@@ -3,52 +3,107 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BESS Leveringskalender GIGA Leopard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..700&family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 <style>
-:root{--bg:#eceff2;--fg:#14202b;--card:#fff;--line:#d0d8df;--mut:#586674;--acc:#0f2a43;--accfg:#fff;--bad:#b42318;--ok:#067647;--warn:#9a6700;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0d1319;--fg:#e6ecf1;--card:#16202a;--line:#2b3a47;--mut:#9aa9b6;--acc:#5aa9e6;--accfg:#06121c;--bad:#ff8a80;--ok:#5fd39a;--warn:#f5c04a}}
+:root{--bg:#f4f5f7;--card:#fff;--fg:#0f1419;--mut:#6b7684;--line:#e6e9ee;--bd:#dbe0e7;--seg:#eceff3;--segon:#fff;--acc:#0f1419;--accfg:#fff;--volt:#c6f432;--hero:#0f1419;--bad:#d23f31;--ok:#1f8a4c;--warn:#a9690f;--sh:0 1px 2px rgba(15,20,25,.04),0 14px 36px -20px rgba(15,20,25,.2);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0b0e12;--card:#12171d;--fg:#eef1f5;--mut:#8b96a4;--line:#1f262e;--bd:#2a333d;--seg:#1a2027;--segon:#27303a;--acc:#c6f432;--accfg:#0f1419;--hero:#18220c;--bad:#ff8577;--ok:#6fd58f;--warn:#e6b85c;--sh:0 1px 2px rgba(0,0,0,.4),0 14px 36px -20px rgba(0,0,0,.8)}}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{background:var(--bg);color:var(--fg);font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:6px}
-.btn{border:1px solid var(--line);background:var(--card);color:var(--fg);padding:5px 10px;border-radius:5px;font-weight:500;cursor:pointer}
-.btn:hover{border-color:var(--acc)}.btn.pri{background:var(--acc);color:var(--accfg);border-color:var(--acc)}
-.btn:disabled{opacity:.4;cursor:not-allowed}.btn.del{color:var(--bad)}
-.tab{padding:8px 12px;white-space:nowrap;border-bottom:3px solid transparent;color:var(--mut);font-weight:500;cursor:pointer}
-.tab.on{color:var(--fg);border-color:var(--acc);font-weight:700}
-.bd{display:inline-block;min-width:20px;text-align:center;margin-left:6px;padding:0 6px;border-radius:9px;background:var(--acc);color:var(--accfg);font-size:11px;font-weight:700}
-input,select{background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:5px;padding:5px 7px;width:100%}
-table{border-collapse:collapse;width:100%}th,td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
-th{background:color-mix(in srgb,var(--acc) 10%,var(--card));font-weight:600}
-.cal td{width:15.5%;height:112px}.cal td.empty{background:color-mix(in srgb,var(--line) 35%,transparent)}
-.dn{color:var(--mut);font-size:12px;display:flex;justify-content:space-between;align-items:center}
-.dc{--c:#888;border-left:5px solid var(--c);background:color-mix(in srgb,var(--c) 15%,var(--card));border-radius:4px;padding:3px 6px;margin-top:3px;font-size:12px;cursor:pointer}
-.st{display:block;margin-top:2px;border-radius:9px;padding:0 8px;font-size:11px;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--fg)}
-.st.Bevestigd{background:var(--warn);color:#fff;border-color:var(--warn)}.st.Geleverd{background:var(--ok);color:#fff;border-color:var(--ok)}
-.add{color:var(--acc);font-weight:700;cursor:pointer;padding:0 6px}
-.bar{display:flex;height:9px;border-radius:5px;overflow:hidden;background:var(--line)}.bar i{display:block}
-.kpi b{font-size:26px;line-height:1.1;display:block}
-.sw{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:4px;vertical-align:-1px}
-#modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:12px;z-index:30}
+::selection{background:var(--volt);color:#0f1419}
+body{background:radial-gradient(900px 420px at 92% -12%,rgba(198,244,50,.2),transparent 62%),radial-gradient(700px 380px at 0% -10%,rgba(120,150,255,.1),transparent 60%),var(--bg);color:var(--fg);font-family:'Geist',system-ui,sans-serif;font-size:14px;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+/* kop */
+.hd{background:transparent;padding-top:6px}
+.brand{font:600 24px/1.1 'Bricolage Grotesque','Geist',sans-serif;letter-spacing:-.03em}
+.brand small{display:block;margin-top:4px;font:400 12.5px 'Geist',sans-serif;letter-spacing:0;color:var(--mut)}
+.navs{width:fit-content;max-width:calc(100% - 24px);margin:2px 12px 14px;padding:4px;gap:2px;border-radius:14px;background:var(--seg)}
+.tab{padding:7px 13px;border-radius:10px;color:var(--mut);font-weight:500;font-size:13px;white-space:nowrap;cursor:pointer;transition:color .2s,background .2s,box-shadow .2s}
+.tab:hover{color:var(--fg)}
+.tab.on{background:var(--segon);color:var(--fg);box-shadow:0 1px 2px rgba(15,20,25,.1),0 0 0 1px var(--line)}
+.bd{display:inline-block;min-width:19px;margin-left:7px;padding:0 6px;border-radius:99px;background:var(--volt);color:#0f1419;font-size:11px;font-weight:600;line-height:18px;text-align:center}
+/* basis */
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh)}
+.btn{padding:6px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--fg);font:500 13px 'Geist',sans-serif;cursor:pointer;transition:background .2s,border-color .2s,transform .1s}
+.btn:hover{background:var(--seg)}.btn:active{transform:scale(.98)}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:var(--accfg)}.btn.pri:hover{filter:brightness(1.15)}
+.btn.del{color:var(--bad)}.btn.del:hover{background:color-mix(in srgb,var(--bad) 10%,transparent);border-color:var(--bad)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+input,select{width:100%;padding:8px 11px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--fg);font:400 14px 'Geist',sans-serif;transition:border-color .2s,box-shadow .2s}
+input:focus,select:focus{outline:none;border-color:var(--fg);box-shadow:0 0 0 4px color-mix(in srgb,var(--volt) 55%,transparent)}
+input:disabled{background:transparent;color:var(--mut);border-color:var(--line)}
+main h1{font-family:'Bricolage Grotesque','Geist',sans-serif;font-size:34px!important;line-height:1.1!important;font-weight:600!important;letter-spacing:-.035em;margin-bottom:16px!important}
+main h2{margin:12px 0 10px!important;color:var(--mut);font:500 12px 'Geist',sans-serif!important;text-transform:uppercase;letter-spacing:.1em}
+/* tabellen */
+table{border-collapse:collapse;width:100%}
+th,td{padding:11px 14px;border:0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:transparent;color:var(--mut);font-size:11.5px;font-weight:500;letter-spacing:.04em}
+table:not(.cal) tbody tr:last-child td{border-bottom:0}
+table:not(.cal) tbody tr{transition:background .15s}table:not(.cal) tbody tr:hover{background:var(--seg)}
+/* kalender */
+.cal{border-collapse:separate;border-spacing:0;overflow:hidden}
+.cal th,.cal td{border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.cal tr>*:last-child{border-right:0}.cal tbody tr:last-child td{border-bottom:0}
+.cal th{padding:11px;text-align:center}
+.cal td{width:15.5%;height:122px;padding:7px 8px}
+.cal td.empty{background:color-mix(in srgb,var(--seg) 70%,transparent)}
+.dn{display:flex;justify-content:space-between;align-items:center;color:var(--mut);font-size:11.5px}
+.dn b{color:var(--fg);font:600 14px 'Bricolage Grotesque','Geist',sans-serif;letter-spacing:-.02em}
+.add{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;padding:0;border-radius:50%;background:var(--seg);color:var(--fg);font-size:15px;line-height:1;cursor:pointer;transition:all .2s}
+.add:hover{background:var(--volt);color:#0f1419}
+.dc{--c:#888;margin-top:5px;padding:6px 9px;border-radius:11px;background:color-mix(in srgb,var(--c) 12%,var(--card));box-shadow:inset 3px 0 0 var(--c),inset 0 0 0 1px color-mix(in srgb,var(--c) 18%,transparent);font-size:12.5px;line-height:1.4;cursor:pointer;transition:background .2s,transform .15s}
+.dc:hover{background:color-mix(in srgb,var(--c) 20%,var(--card));transform:translateY(-1px)}
+.dc b{font-weight:600}
+.st{display:inline-block;margin:4px 8px 0 0;padding:1px 9px;border:0;border-radius:99px;background:var(--seg);color:var(--mut);font:500 11px 'Geist',sans-serif;cursor:pointer;transition:all .2s}
+.st:hover{background:var(--bd);color:var(--fg)}
+.st.Bevestigd{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+.st.Geleverd{background:var(--volt);color:#0f1419}
+/* voortgang en kpi */
+.bar{display:flex;height:8px;border-radius:99px;background:var(--seg);overflow:hidden}.bar i{display:block;height:100%}
+.card.kpi{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:2px;min-height:118px;padding:18px 20px!important}
+.kpi>span:first-child{display:block;font-size:12.5px;font-weight:500;line-height:1.3}
+.kpi b{display:block;margin:14px 0 0;font:600 44px/1 'Bricolage Grotesque','Geist',sans-serif;letter-spacing:-.04em}
+.kpi .text-xs{display:block;margin-top:4px;font-size:12px;color:var(--mut)}
+.xl\:grid-cols-6>.kpi:nth-child(1){background:var(--hero);border-color:var(--hero);color:#eef1f5}
+.xl\:grid-cols-6>.kpi:nth-child(1)>span:first-child,.xl\:grid-cols-6>.kpi:nth-child(1) .text-xs{color:rgba(238,241,245,.6)!important}
+.xl\:grid-cols-6>.kpi:nth-child(1) b{color:var(--volt)}
+.xl\:grid-cols-6>.kpi:nth-child(4){background:var(--volt);border-color:var(--volt);color:#0f1419}
+.xl\:grid-cols-6>.kpi:nth-child(4)>span:first-child,.xl\:grid-cols-6>.kpi:nth-child(4) .text-xs{color:rgba(15,20,25,.62)!important}
+.sw{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px;border-radius:50%}
+#modal{position:fixed;inset:0;background:rgba(10,14,18,.4);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:12px;z-index:30}
 #modal.on{display:flex}
-#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--acc);color:var(--accfg);padding:8px 14px;border-radius:6px;display:none;z-index:40}
+#modal .card{border-radius:22px;box-shadow:0 30px 80px -24px rgba(0,0,0,.45)}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:10px 16px 10px 14px;border-radius:99px;background:#0f1419;color:#eef1f5;font-size:13px;box-shadow:var(--sh);display:none;z-index:40}
+#toast::before{content:'';display:inline-block;width:8px;height:8px;margin-right:9px;border-radius:50%;background:var(--volt)}
 @page{size:A3 landscape;margin:10mm}
 @media print{*{-webkit-print-color-adjust:exact;print-color-adjust:exact}.noprint{display:none!important}body{background:#fff;color:#000;font-size:13px}main{padding:0!important}.cal{table-layout:fixed}.cal th{font-size:15px;text-align:center;padding:6px}.cal td{width:17.8%;height:36mm;font-size:13px;padding:4px 6px}.cal th:last-child,.cal td:last-child{width:11%}.dc{font-size:12.5px;padding:3px 7px}.dn{font-size:13px}.st{display:inline-block;font-size:11px}.card,tr{break-inside:avoid}h1{font-size:26px}.kpi b{font-size:24px}.ph{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid #0f2a43;margin-bottom:8px;padding-bottom:4px;font-size:12px}}
+@media print{body{background:#fff}.card{box-shadow:none!important;border-radius:0}main h1{font-size:28px!important}.kpi{background:#fff!important;color:#000!important}.kpi b{font-size:28px;color:#000!important}.kpi>span:first-child,.kpi .text-xs{color:#555!important}.cal{overflow:visible}.cal td.empty{background:#f3f4f6}.st.Geleverd{background:#c6f432;color:#0f1419}}
+
+.hd{position:relative;z-index:20}
+.ibtn{display:inline-flex;align-items:center;justify-content:center;gap:4px;height:38px;min-width:38px;padding:0 10px;border:1px solid var(--bd);border-radius:11px;background:var(--card);color:var(--fg);cursor:pointer;transition:background .2s,border-color .2s,transform .1s}
+.ibtn:hover{background:var(--seg)}.ibtn:active{transform:scale(.96)}
+.ibtn.on{background:var(--volt);border-color:var(--volt);color:#0f1419}
+.ibtn[hidden]{display:none}
+.ic{width:18px;height:18px;flex:none}
+.ibtn .ic:nth-child(2){width:14px;height:14px;opacity:.6}
+.menu{position:relative}
+.menu-list{display:none;position:absolute;right:0;top:calc(100% + 8px);z-index:50;min-width:280px;padding:6px;border:1px solid var(--line);border-radius:16px;background:var(--card);box-shadow:0 24px 60px -20px rgba(0,0,0,.4)}
+.menu.open .menu-list{display:block}
+.mh{padding:8px 10px 4px;color:var(--mut);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase}
+.mi{display:flex;width:100%;align-items:center;gap:10px;padding:8px 10px;border:0;border-radius:10px;background:transparent;color:var(--fg);font:500 13px 'Geist',sans-serif;text-align:left;cursor:pointer;transition:background .15s}
+.mi:hover{background:var(--seg)}
+.mi .ic{color:var(--mut)}
+.mi small{margin-left:auto;color:var(--mut);font-size:11.5px;font-weight:400}
+.mdiv{height:1px;margin:6px 4px;background:var(--line)}
 </style></head>
 <body>
-<header class="noprint" style="background:var(--acc);color:var(--accfg)">
+<header class="noprint hd">
  <div class="flex flex-wrap items-center gap-2 px-4 py-3">
-  <div class="mr-auto"><div class="text-lg font-bold">BESS Leveringskalender</div><div class="text-xs opacity-80">Leveringen GIGA Leopard, november 2026 t/m juni 2027 &middot; momentopname 16-11-2026, alleen lezen</div></div>
-  <button class="btn" id="editBtn" onclick="editAccess()">Bewerken ontgrendelen</button>
-  <button class="btn" onclick="expJSON()">Exporteer JSON</button><button class="btn" onclick="expCSV()">CSV (Excel)</button><button class="btn" onclick="expXLSX()">Excel (alle tabbladen)</button>
-  
-  <button class="btn" onclick="printOut()">Afdrukken (A3 Liggend)</button><button class="btn" onclick="printOut(true)">Alles afdrukken</button>
-  
+  <div class="mr-auto flex items-center gap-3"><svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="11" fill="#0f1419"/><path d="M20 6 9.5 20h7.2L15.5 30 26.5 15.5h-7.3z" fill="#c6f432"/></svg><div class="brand">BESS Leveringskalender<small>Leveringen GIGA Leopard, november 2026 t/m juni 2027 &middot; momentopname 16-11-2026, alleen lezen</small></div></div>
+  <div class="flex items-center gap-2"><button class="ibtn" id="impBtn" hidden title="Importeren (JSON)" aria-label="Importeren (JSON)" onclick="document.getElementById('imp').click()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg></button><div class="menu" id="expMenu"><button class="ibtn" id="expBtn" title="Exporteren en afdrukken" aria-label="Exporteren en afdrukken" aria-haspopup="true" aria-expanded="false" onclick="toggleMenu(event)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><div class="menu-list" role="menu"><div class="mh">Downloaden</div><button class="mi" role="menuitem" onclick="expJSON();closeMenu()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5c0 1.1.9 2 2 2h1"/><path d="M16 21h1a2 2 0 0 0 2-2v-5c0-1.1.9-2 2-2a2 2 0 0 1-2-2V5a2 2 0 0 0-2-2h-1"/></svg>Back-up<small>JSON</small></button><button class="mi" role="menuitem" onclick="expXLSX();closeMenu()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>Excel<small>alle tabbladen</small></button><button class="mi" role="menuitem" onclick="expCSVTab();closeMenu()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg>CSV<small>huidig tabblad</small></button><div class="mdiv"></div><div class="mh">Afdrukken, A3 liggend</div><button class="mi" role="menuitem" onclick="printOut();closeMenu()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Afdrukken<small>huidig tabblad</small></button><button class="mi" role="menuitem" onclick="printOut(true);closeMenu()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V6z"/><path d="M15 2v4h4"/><path d="M4 7v13a2 2 0 0 0 2 2h9"/></svg>Afdrukken<small>alle tabbladen</small></button></div></div><button class="ibtn" id="editBtn" title="Bewerken ontgrendelen" aria-label="Bewerken ontgrendelen" onclick="editAccess()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></button></div>
   <input id="imp" type="file" accept=".json,application/json" style="display:none" onchange="impJSON(this)">
  </div>
- <nav id="nav" class="flex overflow-x-auto px-2" style="background:var(--card);color:var(--fg)"></nav>
+ <nav id="nav" class="flex overflow-x-auto navs"></nav>
 </header>
-<main id="main" class="p-3 md:p-5"></main>
+<main id="main" class="p-3 md:p-6 mx-auto max-w-screen-2xl"></main>
 <div id="modal"></div><div id="toast"></div>
 <script>
 const MN=['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];
@@ -131,15 +186,27 @@ function saveM(){const x=val();if(validate(x).length)return;x.units=+x.units;
  if(x.id){Object.assign(S.deliveries.find(d=>d.id==x.id),x)}else{x.id=uid();S.deliveries.push(x)}
  save();closeM();render()}
 function delM(){S.deliveries=S.deliveries.filter(d=>d.id!=M.id);save();closeM();render()}
+/* ---------- menu en icoonknoppen ---------- */
+const IC_LOCK='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',IC_UNLOCK='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>';
+function setLock(on){const b=$('editBtn');b.classList.toggle('on',on);b.title=on?'Bewerken vergrendelen':'Bewerken ontgrendelen';b.setAttribute('aria-label',b.title);b.innerHTML=on?IC_UNLOCK:IC_LOCK;$('impBtn').hidden=!on}
+function toggleMenu(e){e.stopPropagation();const o=$('expMenu').classList.toggle('open');$('expBtn').setAttribute('aria-expanded',o)}
+function closeMenu(){$('expMenu').classList.remove('open');$('expBtn').setAttribute('aria-expanded','false')}
+document.addEventListener('click',e=>{if(!e.target.closest('#expMenu'))closeMenu()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+function expCSVTab(){const sn=id=>shipOf(id)?.name||'';let rows;
+ if(tab>=1&&tab<=8){const [y,m]=MON[tab-1],pre=y+'-'+p(m+1);rows=[['Datum','Schip','Veldhuisje','Blok','Units','Status'],...S.deliveries.filter(d=>d.date.startsWith(pre)).sort((a,b)=>a.date.localeCompare(b.date)).map(d=>[d.date,sn(d.shipId),d.hut,HB[d.hut]||'',d.units,d.status])]}
+ else if(tab==9){rows=[['Schip','Capaciteit','Gepland/bevestigd','Geleverd','Vrij','MarineTraffic'],...S.ships.map(s=>{const f=S.deliveries.filter(d=>d.shipId==s.id),t=sum(f),g=sum(f.filter(d=>d.status=='Geleverd'));return[s.name,s.cap,t-g,g,s.cap-t,s.trackingUrl||'']})]}
+ else{rows=[['Maand','Leverdagen','Gepland','Bevestigd','Geleverd','Maandtotaal'],...MON.map(([y,m])=>{const md=S.deliveries.filter(d=>d.date.startsWith(y+'-'+p(m+1))),b=s=>sum(md.filter(d=>d.status==s));return[MN[m]+' '+y,new Set(md.map(d=>d.date)).size,b('Gepland'),b('Bevestigd'),b('Geleverd'),sum(md)]})]}
+ dl('bess-'+TABS[tab].toLowerCase().replace(/\s+/g,'-')+'.csv',new Blob(['\ufeff'+rows.map(r=>r.join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'}))}
 /* ---------- lokale bewerktoegang ---------- */
 function editAccess(){
- if(EDIT){EDIT=false;$('editBtn').textContent='Bewerken ontgrendelen';render();return}
+ if(EDIT){EDIT=false;setLock(false);render();return}
  $('modal').innerHTML=`<div class="card p-4 w-full" style="max-width:380px"><h2 class="text-lg font-bold mb-2">Bewerken ontgrendelen</h2><p class="mb-2 text-sm" style="color:var(--mut)">Voer het wachtwoord in om wijzigingen aan de planning en schepenlijst toe te staan.</p><label>Wachtwoord<input id="editPw" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')checkEditPassword()"></label><div id="editError" class="text-sm mt-2" style="color:var(--bad)"></div><div class="flex gap-2 mt-4"><button class="btn pri" onclick="checkEditPassword()">Ontgrendelen</button><button class="btn" onclick="closeM()">Annuleren</button></div></div>`;
  $('modal').classList.add('on');$('editPw').focus();
 }
 function checkEditPassword(){
  if($('editPw').value!=='Leopard'){$('editError').textContent='Onjuist wachtwoord.';return}
- EDIT=true;$('editBtn').textContent='Bewerken uitschakelen';closeM();render();toast('Bewerken is ingeschakeld.');
+ EDIT=true;setLock(true);closeM();render();toast('Bewerken is ingeschakeld.');
 }
 /* ---------- schepenlijst ---------- */
 function safeTrackUrl(v){const raw=String(v||'').trim();if(!raw)return '';try{const u=new URL(raw);return ['http:','https:'].includes(u.protocol)?u.href:''}catch(e){return ''}}
@@ -197,7 +264,7 @@ async function initDB(){try{
 }catch(e){EDIT=true;lockUI();render()}}
 /* ---------- afdrukken ---------- */
 function allHtml(){const cur=tab;let h='';TABS.forEach((t,i)=>{tab=i;render();h+=`<section style="${i<9?'break-after:page;':''}margin-bottom:24px">${$('main').innerHTML}</section>`});tab=cur;render();return h}
-function printOut(all){if(!all){window.print();return}const html='<!doctype html><html lang="nl" data-theme="light"><head><meta charset="utf-8"><title>'+(all?'Alle tabbladen':TABS[tab])+'</title><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"><script src="https://cdn.tailwindcss.com/3.4.17"><\/script><style>'+document.querySelector('style').textContent+'<\/style></head><body><div class="ph"><b style="font-size:15px">BESS Leveringskalender GIGA Leopard</b><span>Afgedrukt op '+new Date().toLocaleDateString('nl-NL')+'</span></div><main>'+(all?allHtml():$('main').innerHTML)+'</main><script>addEventListener("load",function(){setTimeout(function(){print()},900)})<\/script></body></html>';
+function printOut(all){if(!all){window.print();return}const html='<!doctype html><html lang="nl" data-theme="light"><head><meta charset="utf-8"><title>'+(all?'Alle tabbladen':TABS[tab])+'</title><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..700&family=Geist:wght@400;500;600&display=swap" rel="stylesheet"><script src="https://cdn.tailwindcss.com/3.4.17"><\/script><style>'+document.querySelector('style').textContent+'<\/style></head><body><div class="ph"><b style="font-size:15px">BESS Leveringskalender GIGA Leopard</b><span>Afgedrukt op '+new Date().toLocaleDateString('nl-NL')+'</span></div><main>'+(all?allHtml():$('main').innerHTML)+'</main><script>addEventListener("load",function(){setTimeout(function(){print()},900)})<\/script></body></html>';
  dl('bess-'+(all?'alle-tabbladen':TABS[tab]).toLowerCase().replace(/\s+/g,'-')+'-print.html',new Blob([html],{type:'text/html'}));toast('Open het gedownloade bestand: het printvenster (A3 liggend) start automatisch.')}
 /* ---------- export, import, reset ---------- */
 function dl(name,data){const b=data instanceof Blob?data:new Blob([data]);const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
