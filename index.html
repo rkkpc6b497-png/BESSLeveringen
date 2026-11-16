@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="nl"><head><meta charset="utf-8"><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BESS Leveringskalender GIGA Leopard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<style>
+:root{--bg:#eceff2;--fg:#14202b;--card:#fff;--line:#d0d8df;--mut:#586674;--acc:#0f2a43;--accfg:#fff;--bad:#b42318;--ok:#067647;--warn:#9a6700;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0d1319;--fg:#e6ecf1;--card:#16202a;--line:#2b3a47;--mut:#9aa9b6;--acc:#5aa9e6;--accfg:#06121c;--bad:#ff8a80;--ok:#5fd39a;--warn:#f5c04a}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--fg);font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:6px}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--fg);padding:5px 10px;border-radius:5px;font-weight:500;cursor:pointer}
+.btn:hover{border-color:var(--acc)}.btn.pri{background:var(--acc);color:var(--accfg);border-color:var(--acc)}
+.btn:disabled{opacity:.4;cursor:not-allowed}.btn.del{color:var(--bad)}
+.tab{padding:8px 12px;white-space:nowrap;border-bottom:3px solid transparent;color:var(--mut);font-weight:500;cursor:pointer}
+.tab.on{color:var(--fg);border-color:var(--acc);font-weight:700}
+.bd{display:inline-block;min-width:20px;text-align:center;margin-left:6px;padding:0 6px;border-radius:9px;background:var(--acc);color:var(--accfg);font-size:11px;font-weight:700}
+input,select{background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:5px;padding:5px 7px;width:100%}
+table{border-collapse:collapse;width:100%}th,td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+th{background:color-mix(in srgb,var(--acc) 10%,var(--card));font-weight:600}
+.cal td{width:15.5%;height:112px}.cal td.empty{background:color-mix(in srgb,var(--line) 35%,transparent)}
+.dn{color:var(--mut);font-size:12px;display:flex;justify-content:space-between;align-items:center}
+.dc{--c:#888;border-left:5px solid var(--c);background:color-mix(in srgb,var(--c) 15%,var(--card));border-radius:4px;padding:3px 6px;margin-top:3px;font-size:12px;cursor:pointer}
+.st{display:block;margin-top:2px;border-radius:9px;padding:0 8px;font-size:11px;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--fg)}
+.st.Bevestigd{background:var(--warn);color:#fff;border-color:var(--warn)}.st.Geleverd{background:var(--ok);color:#fff;border-color:var(--ok)}
+.add{color:var(--acc);font-weight:700;cursor:pointer;padding:0 6px}
+.bar{display:flex;height:9px;border-radius:5px;overflow:hidden;background:var(--line)}.bar i{display:block}
+.kpi b{font-size:26px;line-height:1.1;display:block}
+.sw{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:12px;z-index:30}
+#modal.on{display:flex}
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--acc);color:var(--accfg);padding:8px 14px;border-radius:6px;display:none;z-index:40}
+@page{size:A3 landscape;margin:10mm}
+@media print{*{-webkit-print-color-adjust:exact;print-color-adjust:exact}.noprint{display:none!important}body{background:#fff;color:#000;font-size:13px}main{padding:0!important}.cal{table-layout:fixed}.cal th{font-size:15px;text-align:center;padding:6px}.cal td{width:17.8%;height:36mm;font-size:13px;padding:4px 6px}.cal th:last-child,.cal td:last-child{width:11%}.dc{font-size:12.5px;padding:3px 7px}.dn{font-size:13px}.st{display:inline-block;font-size:11px}.card,tr{break-inside:avoid}h1{font-size:26px}.kpi b{font-size:24px}.ph{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid #0f2a43;margin-bottom:8px;padding-bottom:4px;font-size:12px}}
+</style></head>
+<body>
+<header class="noprint" style="background:var(--acc);color:var(--accfg)">
+ <div class="flex flex-wrap items-center gap-2 px-4 py-3">
+  <div class="mr-auto"><div class="text-lg font-bold">BESS Leveringskalender</div><div class="text-xs opacity-80">Leveringen GIGA Leopard, november 2026 t/m juni 2027 &middot; momentopname 16-11-2026, alleen lezen</div></div>
+  <button class="btn" onclick="expJSON()">Exporteer JSON</button><button class="btn" onclick="expCSV()">CSV (Excel)</button><button class="btn" onclick="expXLSX()">Excel (alle tabbladen)</button>
+  
+  <button class="btn" onclick="printOut()">Afdrukken (A3 Liggend)</button><button class="btn" onclick="printOut(true)">Alles afdrukken</button>
+  
+  <input id="imp" type="file" accept=".json,application/json" style="display:none" onchange="impJSON(this)">
+ </div>
+ <nav id="nav" class="flex overflow-x-auto px-2" style="background:var(--card);color:var(--fg)"></nav>
+</header>
+<main id="main" class="p-3 md:p-5"></main>
+<div id="modal"></div><div id="toast"></div>
+<script>
+const MN=['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];
+const MON=[[2026,10],[2026,11],[2027,0],[2027,1],[2027,2],[2027,3],[2027,4],[2027,5]];
+const TABS=['Totaaloverzicht',...MON.map(([y,m])=>MN[m]+' '+y),'Schepenlijst'];
+const BL={Alpha:{c:'#2563eb',h:{'1A':32,'1B':32}},Bravo:{c:'#0d9488',h:{'1C':20,'1D':24}},Charlie:{c:'#d97706',h:{'3A':24,'3B':28}},Delta:{c:'#9333ea',h:{'3C':28,'3D':28}},Echo:{c:'#e11d48',h:{'5A':24}},Foxtrot:{c:'#65a30d',h:{'5B':28,'5C':28,'5D':24}}};
+const HUT={},HB={};for(const b in BL)for(const h in BL[b].h){HUT[h]=BL[b].h[h];HB[h]=b}
+const BCAP=b=>Object.values(BL[b].h).reduce((a,x)=>a+x,0);
+const ST=['Gepland','Bevestigd','Geleverd'],NEED=320,KEY='bess-v1';
+const DEF=[['MSC Iris',14],['MSC Sonia',20],['MSC Marie',38],['MSC Mariachristina',40],['MSC Saudi Arabia',32],['MSC Fatma',40],['MSC Santia',34],['MSC Monica Christina',40],['MSC Allicante VI',6]];
+const p=n=>String(n).padStart(2,'0'),ds=(y,m,d)=>`${y}-${p(m+1)}-${p(d)}`,uid=()=>'x'+Math.random().toString(36).slice(2,9);
+const sum=a=>a.reduce((t,d)=>t+d.units,0),$=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fresh=()=>({ships:DEF.map((s,i)=>({id:'s'+(i+1),name:s[0],cap:s[1]})),deliveries:[]});
+const SNAP={"ships":[{"cap":14,"id":"s1","name":"MSC Iris"},{"cap":20,"id":"s2","name":"MSC Sonia"},{"cap":38,"id":"s3","name":"MSC Marie"},{"cap":40,"id":"s4","name":"MSC Mariacristina"},{"cap":32,"id":"s5","name":"MSC Sahara XVI"},{"cap":40,"id":"s6","name":"MSC Fatma"},{"cap":34,"id":"s7","name":"MSC Santhya"},{"cap":40,"id":"s8","name":"MSC Monica Cristina"},{"cap":6,"id":"s9","name":"MSC Allicante VI"}],"deliveries":[{"date":"2026-11-10","hut":"1A","id":"xn1x57g2","shipId":"s2","status":"Geleverd","units":8},{"date":"2026-11-11","hut":"1A","id":"xsum242g","shipId":"s2","status":"Geleverd","units":7},{"date":"2026-11-12","hut":"1A","id":"xa4z3yw9","shipId":"s2","status":"Geleverd","units":1},{"date":"2026-11-25","hut":"1A","id":"xbusn8dz","shipId":"s2","status":"Gepland","units":4},{"date":"2026-11-25","hut":"1A","id":"xzq8zizi","shipId":"s1","status":"Gepland","units":4},{"date":"2026-11-26","hut":"1A","id":"xog7i4z1","shipId":"s1","status":"Gepland","units":8},{"date":"2026-11-27","hut":"1B","id":"xllv099k","shipId":"s1","status":"Gepland","units":2},{"date":"2026-11-27","hut":"1B","id":"xlwqh0cg","shipId":"s3","status":"Gepland","units":6},{"date":"2026-11-30","hut":"1B","id":"x4ervnw8","shipId":"s3","status":"Gepland","units":8},{"date":"2026-12-01","hut":"1B","id":"xal8455h","shipId":"s3","status":"Gepland","units":6},{"date":"2026-12-07","hut":"1B","id":"x2hymlhx","shipId":"s6","status":"Gepland","units":8},{"date":"2026-12-08","hut":"1B","id":"x6804383","shipId":"s6","status":"Gepland","units":2},{"date":"2026-12-08","hut":"1C","id":"xitv823z","shipId":"s3","status":"Gepland","units":6},{"date":"2026-12-09","hut":"1C","id":"xn0l992e","shipId":"s3","status":"Gepland","units":8},{"date":"2026-12-10","hut":"1C","id":"x415r8nk","shipId":"s3","status":"Gepland","units":4},{"date":"2026-12-10","hut":"1C","id":"x43xqxzb","shipId":"s4","status":"Gepland","units":2},{"date":"2026-12-10","hut":"1D","id":"xs4q0s0u","shipId":"s4","status":"Gepland","units":2},{"date":"2026-12-11","hut":"1D","id":"x643qwmx","shipId":"s4","status":"Gepland","units":8},{"date":"2026-12-14","hut":"1D","id":"xnrab394","shipId":"s6","status":"Gepland","units":4},{"date":"2026-12-15","hut":"1D","id":"xm0cliku","shipId":"s6","status":"Gepland","units":6},{"date":"2027-01-04","hut":"5A","id":"xqitzgb3","shipId":"s4","status":"Gepland","units":8},{"date":"2026-12-14","hut":"1D","id":"xdgu5z96","shipId":"s4","status":"Gepland","units":4},{"date":"2027-01-05","hut":"5A","id":"x40neaps","shipId":"s4","status":"Gepland","units":8},{"date":"2027-01-06","hut":"5A","id":"x4iboj8g","shipId":"s4","status":"Gepland","units":8},{"date":"2027-01-07","hut":"3A","id":"x7wrgcoh","shipId":"s6","status":"Gepland","units":8},{"date":"2027-01-08","hut":"3A","id":"xataojeg","shipId":"s6","status":"Gepland","units":8},{"date":"2027-01-11","hut":"3A","id":"xlyd1ni8","shipId":"s6","status":"Gepland","units":4},{"date":"2027-01-11","hut":"3A","id":"xs4zl01f","shipId":"s5","status":"Gepland","units":4},{"date":"2027-01-12","hut":"3B","id":"x99ws883","shipId":"s5","status":"Gepland","units":8},{"date":"2027-01-13","hut":"3B","id":"x0vnbw2f","shipId":"s5","status":"Gepland","units":8},{"date":"2027-01-14","hut":"3B","id":"x2hvlk81","shipId":"s5","status":"Gepland","units":8},{"date":"2027-01-15","hut":"3B","id":"xxutwytx","shipId":"s5","status":"Gepland","units":4},{"date":"2027-01-20","hut":"5B","id":"x15j3u9w","shipId":"s7","status":"Gepland","units":4},{"date":"2027-01-21","hut":"5B","id":"xxzxu0m1","shipId":"s7","status":"Gepland","units":6},{"date":"2027-01-22","hut":"5B","id":"xc1mk5ap","shipId":"s7","status":"Gepland","units":8},{"date":"2027-01-25","hut":"5B","id":"xn0elk5h","shipId":"s7","status":"Gepland","units":8},{"date":"2027-01-26","hut":"5B","id":"xtgolb2p","shipId":"s7","status":"Gepland","units":2},{"date":"2027-01-26","hut":"5C","id":"xe8wwzv3","shipId":"s7","status":"Gepland","units":6},{"date":"2027-01-27","hut":"5C","id":"xyounrkg","shipId":"s8","status":"Gepland","units":8},{"date":"2027-01-28","hut":"5C","id":"xcakybxy","shipId":"s8","status":"Gepland","units":8},{"date":"2027-01-29","hut":"5C","id":"x8l3uh4f","shipId":"s8","status":"Gepland","units":6},{"date":"2027-01-29","hut":"5D","id":"xii38cr4","shipId":"s8","status":"Gepland","units":2},{"date":"2027-02-01","hut":"5D","id":"x2bwofry","shipId":"s8","status":"Gepland","units":8},{"date":"2027-02-02","hut":"5D","id":"x46nzc07","shipId":"s8","status":"Gepland","units":8},{"date":"2027-02-03","hut":"5D","id":"xvlj8qv1","shipId":"s9","status":"Gepland","units":6}]};let S,tab=0,M=null;
+try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.ships)&&Array.isArray(s.deliveries))S=s}catch(e){}
+S=SNAP;
+let DB=null,EDIT=false,LOCK=null,CANW=false,OWN=false;
+const ed=()=>{if(EDIT)return true;toast('Alleen-lezen momentopname.');return false};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}if(DB&&EDIT)DB.doc('plan/main').set({ships:S.ships,deliveries:S.deliveries}).catch(()=>toast('Opslaan in de gedeelde planning mislukt.'))};
+function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',3200)}
+const shipOf=id=>S.ships.find(s=>s.id==id);
+const used=(f,ex)=>sum(S.deliveries.filter(d=>f(d)&&d.id!=ex));
+const mUnits=i=>{const [y,m]=MON[i];return sum(S.deliveries.filter(d=>d.date.startsWith(y+'-'+p(m+1))))};
+function validate(x){const e=[],u=+x.units;
+ if(!Number.isInteger(u)||u<1||u>8)e.push('Aantal units moet een geheel getal van 1 tot en met 8 zijn.');
+ const day=S.deliveries.filter(d=>d.date==x.date&&d.id!=x.id);
+ const sh2=new Set(day.map(d=>d.shipId));if(x.shipId)sh2.add(x.shipId);if(sh2.size>2)e.push('Maximaal 2 scheepsladingen (verschillende schepen) per kalenderdag. Meerdere veldhuisjes per schip mag wel.');
+ if(sum(day)+u>8)e.push(`Daglimiet Rotterdam: ${sum(day)} + ${u} is meer dan 8 units.`);
+ const sh=shipOf(x.shipId);
+ if(!sh)e.push('Kies een schip.');else{const t=used(d=>d.shipId==sh.id,x.id)+u;if(t>sh.cap)e.push(`${sh.name}: ${t} van ${sh.cap} units, capaciteit overschreden.`)}
+ if(!HUT[x.hut])e.push('Kies een veldhuisje.');else{const t=used(d=>d.hut==x.hut,x.id)+u;if(t>HUT[x.hut])e.push(`Veldhuisje ${x.hut}: ${t} van ${HUT[x.hut]} units, capaciteit overschreden.`)}
+ return e}
+/* ---------- navigatie ---------- */
+function go(i){tab=i;render();scrollTo(0,0)}
+function render(){
+ $('nav').innerHTML=TABS.map((t,i)=>{const n=i==0?0:i==9?S.ships.length:mUnits(i-1);return `<button class="tab ${i==tab?'on':''}" onclick="go(${i})">${t}${i==0||n<=0?'':`<span class="bd">${n}</span>`}</button>`}).join('');
+ $('main').innerHTML=tab==0?dash():tab==9?shipsV():monthV(tab-1)}
+const bar=(a,b,max,c)=>`<div class="bar"><i style="width:${a/max*100}%;background:${c}"></i><i style="width:${b/max*100}%;background:${c};opacity:.45"></i></div>`;
+/* ---------- maandkalender ---------- */
+function monthV(i){const [y,m]=MON[i],last=new Date(y,m+1,0),pre=y+'-'+p(m+1);
+ const md=S.deliveries.filter(d=>d.date.startsWith(pre)),by=s=>sum(md.filter(d=>d.status==s));
+ const st=new Date(y,m,1);st.setDate(1-((st.getDay()+6)%7));let rows='';
+ for(let w=new Date(st);w<=last;w.setDate(w.getDate()+7)){let cells='',any=false,wd=[];
+  for(let k=0;k<5;k++){const d=new Date(w);d.setDate(w.getDate()+k);if(d.getMonth()!=m){cells+='<td class="empty"></td>';continue}
+   any=true;const key=ds(y,m,d.getDate()),dl=S.deliveries.filter(x=>x.date==key);wd.push(...dl);
+   cells+=`<td><div class="dn"><span><b>${d.getDate()}</b>${dl.length?` &nbsp;${sum(dl)}/8 units`:''}</span>${EDIT&&sum(dl)<8?`<span class="add noprint" title="Levering toevoegen" onclick="openM('${key}')">+</span>`:''}</div>${dl.map(card).join('')}</td>`}
+  if(!any)continue;const t=sum(wd),g=sum(wd.filter(x=>x.status=='Geleverd'));
+  rows+=`<tr>${cells}<td style="background:color-mix(in srgb,var(--acc) 8%,var(--card))"><b style="font-size:20px">${t}</b> units<div class="text-xs" style="color:var(--ok)">Geleverd ${g}</div><div class="text-xs" style="color:var(--mut)">Gepland ${t-g}</div></td></tr>`}
+ const sm=[['Leverdagen',new Set(md.map(d=>d.date)).size],['Gepland',by('Gepland')],['Bevestigd',by('Bevestigd')],['Geleverd',by('Geleverd')],['Maandtotaal',sum(md)]];
+ return `<h1 class="text-xl font-bold mb-2">${MN[m]} ${y}</h1>
+ <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-2">${sm.map(s=>`<div class="card p-2 kpi"><span style="color:var(--mut)">${s[0]}</span><b>${s[1]}</b></div>`).join('')}</div>
+ <div class="mb-2 flex flex-wrap gap-x-4 gap-y-1">${Object.keys(BL).map(b=>`<span><i class="sw" style="background:${BL[b].c}"></i>Blok ${b}</span>`).join('')}</div>
+ <div class="overflow-x-auto"><table class="cal card"><thead><tr>${['Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Weektotaal'].map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`}
+function card(d){const s=shipOf(d.shipId),b=HB[d.hut];
+ return `<div class="dc" style="--c:${b?BL[b].c:'#888'}" onclick="openM('${d.date}','${d.id}')"><b>${d.units} units</b> &middot; ${s?esc(s.name):'?'}<br>${d.hut} &middot; ${b||''}<button class="st ${d.status}" title="Status doorzetten" onclick="event.stopPropagation();adv('${d.id}')">${d.status}</button></div>`}
+function adv(id){if(!ed())return;const d=S.deliveries.find(x=>x.id==id);d.status=ST[(ST.indexOf(d.status)+1)%3];save();render()}
+/* ---------- invoermodal ---------- */
+function openM(date,id){if(!ed())return;const d=id?S.deliveries.find(x=>x.id==id):{id:null,date,units:1,shipId:'',hut:'',status:'Gepland'};M=d;
+ const so=S.ships.map(s=>`<option value="${s.id}" ${s.id==d.shipId?'selected':''}>${esc(s.name)} (vrij ${s.cap-used(x=>x.shipId==s.id,d.id)} van ${s.cap})</option>`).join('');
+ const ho=Object.keys(BL).map(b=>`<optgroup label="Blok ${b}">${Object.keys(BL[b].h).map(h=>`<option value="${h}" ${h==d.hut?'selected':''}>${h} (bezet ${used(x=>x.hut==h,d.id)} van ${HUT[h]})</option>`).join('')}</optgroup>`).join('');
+ $('modal').innerHTML=`<div class="card p-4 w-full" style="max-width:460px"><h2 class="text-lg font-bold mb-2">${id?'Levering bewerken':'Levering plannen'} &middot; ${d.date.split('-').reverse().join('-')}</h2>
+ <div class="grid gap-2" oninput="chk()" onchange="chk()">
+ <label>Aantal BESS-units (1 t/m 8)<input id="fu" type="number" min="1" max="8" value="${d.units}"></label>
+ <label>Schip<select id="fs"><option value="">Kies een schip</option>${so}</select></label>
+ <label>Bestemd veldhuisje<select id="fh"><option value="">Kies een veldhuisje</option>${ho}</select></label>
+ <label>Status<select id="ft">${ST.map(s=>`<option ${s==d.status?'selected':''}>${s}</option>`).join('')}</select></label></div>
+ <div id="info" class="text-xs mt-3 grid gap-1"></div>
+ <div class="flex gap-2 mt-4"><button id="sv" class="btn pri" onclick="saveM()">Opslaan</button><button class="btn" onclick="closeM()">Annuleren</button>${id?`<button class="btn del ml-auto" onclick="delM()">Verwijderen</button>`:''}</div></div>`;
+ $('modal').classList.add('on');chk()}
+const closeM=()=>$('modal').classList.remove('on');
+function val(){return{id:M.id,date:M.date,units:$('fu').value,shipId:$('fs').value,hut:$('fh').value,status:$('ft').value}}
+function chk(){const x=val(),e=validate(x),u=+x.units||0,sh=shipOf(x.shipId),day=S.deliveries.filter(d=>d.date==x.date&&d.id!=x.id);
+ const ss=new Set(day.map(d=>d.shipId));if(x.shipId)ss.add(x.shipId);const l=[`Dag: ${sum(day)+u} van 8 units, ${ss.size} van 2 scheepsladingen`];
+ if(sh)l.push(`Schip ${esc(sh.name)}: ${used(d=>d.shipId==sh.id,x.id)+u} van ${sh.cap} units`);
+ if(HUT[x.hut])l.push(`Veldhuisje ${x.hut} (Blok ${HB[x.hut]}): ${used(d=>d.hut==x.hut,x.id)+u} van ${HUT[x.hut]} units`);
+ $('info').innerHTML=l.map(t=>`<div style="color:var(--mut)">${t}</div>`).join('')+e.map(t=>`<div style="color:var(--bad);font-weight:600">${t}</div>`).join('');
+ $('sv').disabled=e.length>0}
+function saveM(){const x=val();if(validate(x).length)return;x.units=+x.units;
+ if(x.id){Object.assign(S.deliveries.find(d=>d.id==x.id),x)}else{x.id=uid();S.deliveries.push(x)}
+ save();closeM();render()}
+function delM(){S.deliveries=S.deliveries.filter(d=>d.id!=M.id);save();closeM();render()}
+/* ---------- schepenlijst ---------- */
+function shipsV(){const cap=S.ships.reduce((t,s)=>t+s.cap,0);
+ return `<h1 class="text-xl font-bold mb-2">Schepenlijst</h1><p class="mb-3" style="color:var(--mut)">${S.ships.length} schepen, gezamenlijke capaciteit ${cap} units. Nieuwe schepen zijn direct beschikbaar in alle maandkalenders.</p>
+ <div class="card overflow-x-auto"><table><thead><tr><th>Schip</th><th style="width:120px">Capaciteit</th><th>Ingepland</th><th>Vrij</th><th></th></tr></thead><tbody>${S.ships.map(s=>{const u=used(d=>d.shipId==s.id);
+ return `<tr><td><input ${EDIT?'':'disabled'} value="${esc(s.name)}" onchange="renShip('${s.id}',this.value)"></td><td><input ${EDIT?'':'disabled'} type="number" min="1" value="${s.cap}" onchange="capShip('${s.id}',this.value)"></td><td>${u}</td><td>${s.cap-u}</td><td><button class="btn del" ${u?'disabled title="Schip heeft ingeplande units"':''} onclick="delShip('${s.id}')">Verwijderen</button></td></tr>`}).join('')}</tbody></table></div>
+ <div class="card p-3 mt-3 ${EDIT?'flex':'hidden'} flex-wrap gap-2 items-end"><label class="flex-1" style="min-width:180px">Nieuw schip<input id="ns" placeholder="Naam van het schip"></label><label style="width:120px">Capaciteit<input id="nc" type="number" min="1" value="20"></label><button class="btn pri" onclick="addShip()">Schip toevoegen</button></div>`}
+function addShip(){if(!ed())return;const n=$('ns').value.trim(),c=+$('nc').value;if(!n||!(c>=1))return toast('Vul een naam en een capaciteit van minimaal 1 in.');S.ships.push({id:uid(),name:n,cap:Math.floor(c)});save();render()}
+function renShip(id,v){if(!ed())return render();if(v.trim())shipOf(id).name=v.trim();save();render()}
+function capShip(id,v){if(!ed())return render();const s=shipOf(id),u=used(d=>d.shipId==id);v=Math.floor(+v);if(!(v>=1)||v<u)toast(`Capaciteit kan niet lager dan de ${u} ingeplande units.`);else s.cap=v;save();render()}
+function delShip(id){if(!ed())return;S.ships=S.ships.filter(s=>s.id!=id);save();render()}
+/* ---------- dashboard ---------- */
+function dash(){const tot=sum(S.deliveries),del=sum(S.deliveries.filter(d=>d.status=='Geleverd')),cap=S.ships.reduce((t,s)=>t+s.cap,0),days=new Set(S.deliveries.map(d=>d.date)).size;
+ const k=[['Totale projectbehoefte',NEED,'units'],['Bekende scheepscapaciteit',cap,'units'],['Totaal ingepland',tot,`${(tot/NEED*100).toFixed(1)}%`],['Daadwerkelijk geleverd',del,`${(del/NEED*100).toFixed(1)}%`],['Resterend te leveren',NEED-del,'units'],['Actieve leveringsdagen',days,'dagen']];
+ const mrows=MON.map(([y,m],i)=>{const md=S.deliveries.filter(d=>d.date.startsWith(y+'-'+p(m+1))),b=s=>sum(md.filter(d=>d.status==s));
+  return `<tr style="cursor:pointer" onclick="go(${i+1})"><td><b>${MN[m]} ${y}</b></td><td>${new Set(md.map(d=>d.date)).size}</td><td>${b('Gepland')}</td><td>${b('Bevestigd')}</td><td>${b('Geleverd')}</td><td><b>${sum(md)}</b></td></tr>`}).join('');
+ const blocks=Object.keys(BL).map(b=>{const f=S.deliveries.filter(d=>HB[d.hut]==b),g=sum(f.filter(d=>d.status=='Geleverd')),t=sum(f),c=BCAP(b),col=BL[b].c;
+  return `<div class="card p-3" style="border-top:4px solid ${col}"><div class="font-bold">Blok ${b}</div><div class="text-xs mb-2" style="color:var(--mut)">${Object.keys(BL[b].h).join(', ')} &middot; capaciteit ${c}</div>${bar(g,t-g,c,col)}<div class="text-xs mt-1">Geleverd ${g} &middot; Gepland/bevestigd ${t-g} &middot; Beschikbaar ${c-t}</div></div>`}).join('');
+ const huts=Object.keys(HUT).map(h=>{const f=S.deliveries.filter(d=>d.hut==h),g=sum(f.filter(d=>d.status=='Geleverd')),t=sum(f),col=BL[HB[h]].c;
+  return `<div class="card p-3"><div class="flex justify-between"><b>${h}</b><span class="text-xs" style="color:var(--mut)">Blok ${HB[h]}</span></div>${bar(g,t-g,HUT[h],col)}<div class="text-xs mt-1">${t} van ${HUT[h]} (${(t/HUT[h]*100).toFixed(0)}%) &middot; resterend ${HUT[h]-t}</div></div>`}).join('');
+ const ships=S.ships.map(s=>{const f=S.deliveries.filter(d=>d.shipId==s.id),g=sum(f.filter(d=>d.status=='Geleverd')),t=sum(f);
+  return `<tr><td>${esc(s.name)}</td><td>${s.cap}</td><td>${t-g}</td><td>${g}</td><td>${s.cap-t}</td><td style="width:30%">${bar(g,t-g,s.cap,'var(--acc)')}</td></tr>`}).join('');
+ return `<h1 class="text-xl font-bold mb-3">Totaaloverzicht</h1>
+ ${cap<NEED?`<div class="card p-3 mb-3" style="border-left:5px solid var(--warn)"><b style="color:var(--warn)">Scheepscapaciteit te laag.</b> Bekend: ${cap} units, nodig: ${NEED}. Er ontbreken nog ${NEED-cap} units; voeg schepen toe op het tabblad Schepenlijst.</div>`:''}
+ <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2 mb-4">${k.map(x=>`<div class="card p-3 kpi"><span style="color:var(--mut)">${x[0]}</span><b>${x[1]}</b><span class="text-xs">${x[2]}</span></div>`).join('')}</div>
+ <h2 class="font-bold mb-1">Maandoverzicht</h2><div class="card overflow-x-auto mb-4"><table><thead><tr><th>Maand</th><th>Leverdagen</th><th>Gepland</th><th>Bevestigd</th><th>Geleverd</th><th>Maandtotaal</th></tr></thead><tbody>${mrows}</tbody></table></div>
+ <h2 class="font-bold mb-1">Voortgang per commercieel blok</h2><div class="grid md:grid-cols-3 gap-2 mb-4">${blocks}</div>
+ <h2 class="font-bold mb-1">Voortgang per veldhuisje</h2><div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-2 mb-4">${huts}</div>
+ <h2 class="font-bold mb-1">Voortgang per schip</h2><div class="card overflow-x-auto"><table><thead><tr><th>Schip</th><th>Capaciteit</th><th>Gepland</th><th>Geleverd</th><th>Vrij</th><th>Benutting</th></tr></thead><tbody>${ships}</tbody></table></div>`}
+/* ---------- gedeelde planning ---------- */
+const lockUI=()=>{$('lk').textContent=!DB?'Lokale modus':EDIT?'Bewerken actief · Vergrendel':'Alleen lezen · Ontgrendel'};
+async function hash(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('bess|'+s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function lockBtn(){if(!DB)return toast('De gedeelde planning is niet beschikbaar; je werkt lokaal.');
+ if(EDIT){EDIT=false;try{sessionStorage.removeItem('bess-edit')}catch(e){}lockUI();render();return}
+ if(!CANW)return toast('Jouw account heeft alleen leesrechten. Vraag de eigenaar om bewerkrechten.');
+ const first=!LOCK;
+ $('modal').innerHTML=`<div class="card p-4" style="max-width:380px"><h2 class="text-lg font-bold mb-2">${first?'Wachtwoord instellen':'Bewerken ontgrendelen'}</h2><p class="mb-2 text-xs" style="color:var(--mut)">${first?'Er is nog geen wachtwoord. Kies er een; collega’s met bewerkrechten gebruiken het om te ontgrendelen.':'Voer het wachtwoord in.'}</p><input id="pw" type="password" onkeydown="if(event.key=='Enter')unlock()"><div class="flex gap-2 mt-3"><button class="btn pri" onclick="unlock()">${first?'Instellen':'Ontgrendelen'}</button><button class="btn" onclick="closeM()">Annuleren</button></div></div>`;
+ $('modal').classList.add('on');$('pw').focus()}
+async function unlock(){const v=$('pw').value;if(!v)return;const h=await hash(v);
+ if(!LOCK){try{await DB.doc('plan/lock').set({hash:h})}catch(e){return toast('Wachtwoord instellen mislukt.')}LOCK=h}
+ else if(h!==LOCK)return toast('Onjuist wachtwoord.');
+ EDIT=true;try{sessionStorage.setItem('bess-edit','1')}catch(e){}closeM();lockUI();render()}
+async function initDB(){try{
+ const [db,user]=await Promise.all([claude.use('db'),claude.use('user')]);
+ if(!db){EDIT=true;lockUI();render();return toast('Gedeelde planning niet beschikbaar: lokale modus.')}
+ DB=db;CANW=user?(await user.can('data.write'))!==false:true;OWN=user?await user.isOwner():false;
+ try{EDIT=CANW&&sessionStorage.getItem('bess-edit')=='1'}catch(e){}
+ db.doc('plan/lock').onSnapshot(s=>{LOCK=s.exists?s.data().hash:null});
+ db.doc('plan/main').onSnapshot(s=>{const d=s.exists?s.data():null;
+  if(d&&Array.isArray(d.ships)&&Array.isArray(d.deliveries)){S={ships:d.ships,deliveries:d.deliveries};try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+  else if(!s.exists&&OWN&&CANW)db.doc('plan/main').set({ships:S.ships,deliveries:S.deliveries}).catch(()=>{});
+  lockUI();render()},()=>toast('Gedeelde planning kon niet worden geladen.'));
+}catch(e){EDIT=true;lockUI();render()}}
+/* ---------- afdrukken ---------- */
+function allHtml(){const cur=tab;let h='';TABS.forEach((t,i)=>{tab=i;render();h+=`<section style="${i<9?'break-after:page;':''}margin-bottom:24px">${$('main').innerHTML}</section>`});tab=cur;render();return h}
+function printOut(all){if(!all){window.print();return}const html='<!doctype html><html lang="nl" data-theme="light"><head><meta charset="utf-8"><title>'+(all?'Alle tabbladen':TABS[tab])+'</title><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"><script src="https://cdn.tailwindcss.com/3.4.17"><\/script><style>'+document.querySelector('style').textContent+'<\/style></head><body><div class="ph"><b style="font-size:15px">BESS Leveringskalender GIGA Leopard</b><span>Afgedrukt op '+new Date().toLocaleDateString('nl-NL')+'</span></div><main>'+(all?allHtml():$('main').innerHTML)+'</main><script>addEventListener("load",function(){setTimeout(function(){print()},900)})<\/script></body></html>';
+ dl('bess-'+(all?'alle-tabbladen':TABS[tab]).toLowerCase().replace(/\s+/g,'-')+'-print.html',new Blob([html],{type:'text/html'}));toast('Open het gedownloade bestand: het printvenster (A3 liggend) start automatisch.')}
+/* ---------- export, import, reset ---------- */
+function dl(name,data){const b=data instanceof Blob?data:new Blob([data]);const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+function expXLSX(){if(typeof XLSX=='undefined')return toast('Excel-bibliotheek niet geladen.');
+ const wb=XLSX.utils.book_new(),A=(n,rows,w)=>{const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=(w||[]).map(x=>({wch:x}));XLSX.utils.book_append_sheet(wb,ws,n)};
+ const D=S.deliveries,sn=id=>shipOf(id)?.name||'',by=f=>D.filter(f),g=a=>sum(a.filter(d=>d.status=='Geleverd')),tot=sum(D),del=g(D),cap=S.ships.reduce((t,s)=>t+s.cap,0),dt=x=>x.date.split('-').reverse().join('-');
+ const o=[['BESS Leveringskalender GIGA Leopard'],[],['KPI','Waarde'],['Totale projectbehoefte',NEED],['Bekende scheepscapaciteit',cap],['Totaal ingepland',tot],['Ingepland %',+(tot/NEED*100).toFixed(1)],['Geleverd',del],['Geleverd %',+(del/NEED*100).toFixed(1)],['Resterend te leveren',NEED-del],['Actieve leveringsdagen',new Set(D.map(d=>d.date)).size],[],['Maand','Leverdagen','Gepland','Bevestigd','Geleverd','Maandtotaal']];
+ MON.forEach(([y,m])=>{const md=by(d=>d.date.startsWith(y+'-'+p(m+1))),b=s=>sum(md.filter(d=>d.status==s));o.push([MN[m]+' '+y,new Set(md.map(d=>d.date)).size,b('Gepland'),b('Bevestigd'),b('Geleverd'),sum(md)])});
+ o.push([],['Commercieel blok','Veldhuisjes','Capaciteit','Geleverd','Gepland/bevestigd','Beschikbaar']);
+ for(const b in BL){const f=by(d=>HB[d.hut]==b),t=sum(f),gg=g(f);o.push([b,Object.keys(BL[b].h).join(', '),BCAP(b),gg,t-gg,BCAP(b)-t])}
+ o.push([],['Veldhuisje','Blok','Capaciteit','Geleverd','Gepland/bevestigd','Bezetting %','Resterend']);
+ for(const h in HUT){const f=by(d=>d.hut==h),t=sum(f),gg=g(f);o.push([h,HB[h],HUT[h],gg,t-gg,+(t/HUT[h]*100).toFixed(0),HUT[h]-t])}
+ o.push([],['Schip','Capaciteit','Gepland/bevestigd','Geleverd','Vrij']);
+ S.ships.forEach(s=>{const f=by(d=>d.shipId==s.id),t=sum(f),gg=g(f);o.push([s.name,s.cap,t-gg,gg,s.cap-t])});
+ A('Totaaloverzicht',o,[28,16,18,14,18,14,12]);
+ MON.forEach(([y,m])=>{const pre=y+'-'+p(m+1),md=by(d=>d.date.startsWith(pre)),b=s=>sum(md.filter(d=>d.status==s)),last=new Date(y,m+1,0);
+  const r=[[MN[m]+' '+y],['Leverdagen','Gepland','Bevestigd','Geleverd','Maandtotaal'],[new Set(md.map(d=>d.date)).size,b('Gepland'),b('Bevestigd'),b('Geleverd'),sum(md)],[],['Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Weektotaal','Geleverd','Gepland']];
+  const st=new Date(y,m,1);st.setDate(1-((st.getDay()+6)%7));
+  for(let w=new Date(st);w<=last;w.setDate(w.getDate()+7)){const row=[];let any=false,wd=[];
+   for(let k=0;k<5;k++){const d=new Date(w);d.setDate(w.getDate()+k);if(d.getMonth()!=m){row.push('');continue}any=true;const dl2=S.deliveries.filter(x=>x.date==ds(y,m,d.getDate()));wd.push(...dl2);row.push(d.getDate()+(dl2.length?': ':'')+dl2.map(x=>`${x.units}× ${sn(x.shipId)} → ${x.hut} (${x.status})`).join(' | '))}
+   if(any){const t=sum(wd),gg=g(wd);row.push(t,gg,t-gg);r.push(row)}}
+  r.push([],['Datum','Units','Schip','Veldhuisje','Blok','Status']);
+  [...md].sort((a,c)=>a.date.localeCompare(c.date)).forEach(x=>r.push([dt(x),x.units,sn(x.shipId),x.hut,HB[x.hut]||'',x.status]));
+  A(MN[m]+' '+y,r,[34,34,34,34,34,12,10,10])});
+ A('Schepenlijst',[['Schip','Capaciteit','Gepland/bevestigd','Geleverd','Vrij'],...S.ships.map(s=>{const f=by(d=>d.shipId==s.id),t=sum(f),gg=g(f);return[s.name,s.cap,t-gg,gg,s.cap-t]})],[28,12,18,12,10]);
+ A('Alle leveringen',[['Datum','Schip','Veldhuisje','Blok','Units','Status'],...[...D].sort((a,c)=>a.date.localeCompare(c.date)).map(x=>[dt(x),sn(x.shipId),x.hut,HB[x.hut]||'',x.units,x.status])],[12,26,12,10,8,12]);
+ const arr=XLSX.write(wb,{bookType:'xlsx',type:'array'});
+ dl('bess-complete-export.xlsx',new Blob([arr],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}))}
+const expJSON=()=>dl('bess-planning.json',JSON.stringify(S,null,2));
+function expCSV(){const r=[...S.deliveries].sort((a,b)=>a.date.localeCompare(b.date)).map(d=>[d.date,shipOf(d.shipId)?.name||'',d.hut,HB[d.hut]||'',d.units,d.status].join(';'));
+ dl('bess-planning.csv',new Blob(['\ufeff'+['Datum;Schip;Veldhuisje;Blok;Units;Status',...r].join('\r\n')],{type:'text/csv;charset=utf-8'}))}
+function impJSON(i){if(!ed()){i.value='';return}const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const s=JSON.parse(r.result);if(!Array.isArray(s.ships)||!Array.isArray(s.deliveries))throw 0;S={ships:s.ships,deliveries:s.deliveries};save();render();toast('Planning geïmporteerd.')}catch(e){toast('Ongeldig JSON-bestand.')}i.value=''};r.readAsText(f)}
+function resetDlg(){if(!ed())return;$('modal').innerHTML=`<div class="card p-4" style="max-width:420px"><h2 class="text-lg font-bold mb-2">Reset planning</h2><p class="mb-3">Kies een nieuwe startsituatie. De huidige planning en schepenlijst worden vervangen.</p><div class="grid gap-2"><button class="btn pri" onclick="demo()">Voorbeeldplanning laden</button><button class="btn" onclick="clean()">Schone start (9 standaardschepen)</button><button class="btn" onclick="closeM()">Annuleren</button></div></div>`;$('modal').classList.add('on')}
+function clean(){S=fresh();save();closeM();render()}
+function demo(){S=fresh();const hk=Object.keys(HUT),sr=S.ships.map(s=>s.cap),hr=hk.map(h=>HUT[h]);let si=0,hi=0,n=0;
+ for(const [y,m] of MON.slice(0,3)){for(let d=1;d<=new Date(y,m+1,0).getDate()&&n<30;d++){const w=new Date(y,m,d).getDay(),date=ds(y,m,d);if(!w||w>5||date<'2026-11-02')continue;n++;
+  for(let k=0;k<2;k++){while(si<sr.length&&!sr[si])si++;while(hi<hk.length&&!hr[hi])hi++;if(si>=sr.length||hi>=hk.length)break;
+   const u=Math.min(k?3:5,sr[si],hr[hi]);S.deliveries.push({id:uid(),date,units:u,shipId:S.ships[si].id,hut:hk[hi],status:date<'2026-11-13'?'Geleverd':date<='2026-11-20'?'Bevestigd':'Gepland'});sr[si]-=u;hr[hi]-=u}}}
+ save();closeM();render()}
+$('modal').addEventListener('click',e=>{if(e.target.id=='modal')closeM()});
+EDIT=false;render();
+</script></body></html>
