@@ -53,7 +53,7 @@ th{background:color-mix(in srgb,var(--acc) 10%,var(--card));font-weight:600}
 const MN=['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];
 const MON=[[2026,10],[2026,11],[2027,0],[2027,1],[2027,2],[2027,3],[2027,4],[2027,5]];
 const TABS=['Totaaloverzicht',...MON.map(([y,m])=>MN[m]+' '+y),'Schepenlijst'];
-const BL={Alpha:{c:'#2563eb',h:{'1A':32,'1B':32}},Bravo:{c:'#0d9488',h:{'1C':20,'1D':24}},Charlie:{c:'#d97706',h:{'3A':24,'3B':28}},Delta:{c:'#9333ea',h:{'3C':28,'3D':28}},Echo:{c:'#e11d48',h:{'5A':24}},Foxtrot:{c:'#65a30d',h:{'5B':28,'5C':28,'5D':24}}};
+const BL={Alpha:{c:'#dc2626',h:{'1A':32,'1B':32}},Bravo:{c:'#eab308',h:{'1C':20,'1D':24}},Charlie:{c:'#7c3aed',h:{'3A':24,'3B':28}},Delta:{c:'#ec4899',h:{'3C':28,'3D':28}},Echo:{c:'#16a34a',h:{'5A':24}},Foxtrot:{c:'#2563eb',h:{'5B':28,'5C':28,'5D':24}}};
 const HUT={},HB={};for(const b in BL)for(const h in BL[b].h){HUT[h]=BL[b].h[h];HB[h]=b}
 const BCAP=b=>Object.values(BL[b].h).reduce((a,x)=>a+x,0);
 const ST=['Gepland','Bevestigd','Geleverd'],NEED=320,KEY='bess-v1';
