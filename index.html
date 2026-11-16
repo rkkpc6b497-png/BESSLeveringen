@@ -146,9 +146,9 @@ function dash(){const tot=sum(S.deliveries),del=sum(S.deliveries.filter(d=>d.sta
  const mrows=MON.map(([y,m],i)=>{const md=S.deliveries.filter(d=>d.date.startsWith(y+'-'+p(m+1))),b=s=>sum(md.filter(d=>d.status==s));
   return `<tr style="cursor:pointer" onclick="go(${i+1})"><td><b>${MN[m]} ${y}</b></td><td>${new Set(md.map(d=>d.date)).size}</td><td>${b('Gepland')}</td><td>${b('Bevestigd')}</td><td>${b('Geleverd')}</td><td><b>${sum(md)}</b></td></tr>`}).join('');
  const blocks=Object.keys(BL).map(b=>{const f=S.deliveries.filter(d=>HB[d.hut]==b),g=sum(f.filter(d=>d.status=='Geleverd')),t=sum(f),c=BCAP(b),col=BL[b].c;
-  return `<div class="card p-3" style="border-top:4px solid ${col}"><div class="font-bold">Blok ${b}</div><div class="text-xs mb-2" style="color:var(--mut)">${Object.keys(BL[b].h).join(', ')} &middot; capaciteit ${c}</div>${bar(g,t-g,c,col)}<div class="text-xs mt-1">Geleverd ${g} &middot; Gepland/bevestigd ${t-g} &middot; Beschikbaar ${c-t}</div></div>`}).join('');
+  return `<div class="card p-3" style="border-top:4px solid ${col}"><div class="font-bold">Blok ${b}</div><div class="text-xs mb-2" style="color:var(--mut)">${Object.keys(BL[b].h).join(', ')} &middot; capaciteit ${c}</div>${bar(g,t-g,c,col)}<div class="text-xs mt-1">Geleverd ${g} &middot; Gepland ${t-g} &middot; Resterend ${c-t}</div></div>`}).join('');
  const huts=Object.keys(HUT).map(h=>{const f=S.deliveries.filter(d=>d.hut==h),g=sum(f.filter(d=>d.status=='Geleverd')),t=sum(f),col=BL[HB[h]].c;
-  return `<div class="card p-3"><div class="flex justify-between"><b>${h}</b><span class="text-xs" style="color:var(--mut)">Blok ${HB[h]}</span></div>${bar(g,t-g,HUT[h],col)}<div class="text-xs mt-1">${t} van ${HUT[h]} (${(t/HUT[h]*100).toFixed(0)}%) &middot; resterend ${HUT[h]-t}</div></div>`}).join('');
+  return `<div class="card p-3"><div class="flex justify-between"><b>${h}</b><span class="text-xs" style="color:var(--mut)">Blok ${HB[h]}</span></div>${bar(g,t-g,HUT[h],col)}<div class="text-xs mt-1">${g} van ${HUT[h]} geleverd (${(g/HUT[h]*100).toFixed(0)}%) &middot; Gepland ${t-g} &middot; Resterend ${HUT[h]-t}</div></div>`}).join('');
  const ships=S.ships.map(s=>{const f=S.deliveries.filter(d=>d.shipId==s.id),g=sum(f.filter(d=>d.status=='Geleverd')),t=sum(f);
   return `<tr><td>${esc(s.name)}</td><td>${s.cap}</td><td>${t-g}</td><td>${g}</td><td>${s.cap-t}</td><td style="width:30%">${bar(g,t-g,s.cap,'var(--acc)')}</td></tr>`}).join('');
  return `<h1 class="text-xl font-bold mb-3">Totaaloverzicht</h1>
@@ -193,10 +193,10 @@ function expXLSX(){if(typeof XLSX=='undefined')return toast('Excel-bibliotheek n
  const D=S.deliveries,sn=id=>shipOf(id)?.name||'',by=f=>D.filter(f),g=a=>sum(a.filter(d=>d.status=='Geleverd')),tot=sum(D),del=g(D),cap=S.ships.reduce((t,s)=>t+s.cap,0),dt=x=>x.date.split('-').reverse().join('-');
  const o=[['BESS Leveringskalender GIGA Leopard'],[],['KPI','Waarde'],['Totale projectbehoefte',NEED],['Bekende scheepscapaciteit',cap],['Totaal ingepland',tot],['Ingepland %',+(tot/NEED*100).toFixed(1)],['Geleverd',del],['Geleverd %',+(del/NEED*100).toFixed(1)],['Resterend te leveren',NEED-del],['Actieve leveringsdagen',new Set(D.map(d=>d.date)).size],[],['Maand','Leverdagen','Gepland','Bevestigd','Geleverd','Maandtotaal']];
  MON.forEach(([y,m])=>{const md=by(d=>d.date.startsWith(y+'-'+p(m+1))),b=s=>sum(md.filter(d=>d.status==s));o.push([MN[m]+' '+y,new Set(md.map(d=>d.date)).size,b('Gepland'),b('Bevestigd'),b('Geleverd'),sum(md)])});
- o.push([],['Commercieel blok','Veldhuisjes','Capaciteit','Geleverd','Gepland/bevestigd','Beschikbaar']);
+ o.push([],['Commercieel blok','Veldhuisjes','Capaciteit','Geleverd','Gepland','Resterend']);
  for(const b in BL){const f=by(d=>HB[d.hut]==b),t=sum(f),gg=g(f);o.push([b,Object.keys(BL[b].h).join(', '),BCAP(b),gg,t-gg,BCAP(b)-t])}
- o.push([],['Veldhuisje','Blok','Capaciteit','Geleverd','Gepland/bevestigd','Bezetting %','Resterend']);
- for(const h in HUT){const f=by(d=>d.hut==h),t=sum(f),gg=g(f);o.push([h,HB[h],HUT[h],gg,t-gg,+(t/HUT[h]*100).toFixed(0),HUT[h]-t])}
+ o.push([],['Veldhuisje','Blok','Capaciteit','Geleverd','Gepland','Geleverd %','Resterend']);
+ for(const h in HUT){const f=by(d=>d.hut==h),t=sum(f),gg=g(f);o.push([h,HB[h],HUT[h],gg,t-gg,+(gg/HUT[h]*100).toFixed(0),HUT[h]-t])}
  o.push([],['Schip','Capaciteit','Gepland/bevestigd','Geleverd','Vrij']);
  S.ships.forEach(s=>{const f=by(d=>d.shipId==s.id),t=sum(f),gg=g(f);o.push([s.name,s.cap,t-gg,gg,s.cap-t])});
  A('Totaaloverzicht',o,[28,16,18,14,18,14,12]);
