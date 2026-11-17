@@ -15,7 +15,10 @@
     ::selection{background:var(--volt);color:#0f1419}
     body{background:radial-gradient(900px 420px at 92% -12%,rgba(198,244,50,.2),transparent 62%),radial-gradient(700px 380px at 0% -10%,rgba(120,150,255,.1),transparent 60%),var(--bg);color:var(--fg);font-family:'Geist',system-ui,sans-serif;font-size:14px;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
     /* kop */
-    .hd{background:transparent;padding-top:6px;position:relative;z-index:20}
+    .hd{position:sticky;top:0;z-index:20;padding-top:2px;background:color-mix(in srgb,var(--bg) 86%,transparent);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);border-bottom:1px solid var(--line)}
+    .hd>div:first-child{padding-top:10px;padding-bottom:6px}
+    .hd .navs{margin-bottom:10px}
+    @media(max-width:640px){.brand small{display:none}}
     .brand{font:600 24px/1.1 'Bricolage Grotesque','Geist',sans-serif;letter-spacing:-.03em}
     .brand small{display:block;margin-top:4px;font:400 12.5px 'Geist',sans-serif;letter-spacing:0;color:var(--mut)}
     .navs{width:fit-content;max-width:calc(100% - 24px);margin:2px 12px 14px;padding:4px;gap:2px;border-radius:14px;background:var(--seg)}
@@ -253,7 +256,7 @@ const SNAP = {
 };
 
 const SNAP_VERSION = '2026-11-17';
-let S, tab = 0, M = null, EDIT = false, STALE = false;
+let S, tab = 0, M = null, EDIT = false, STALE = false, SHOW_DONE = false;
 try {
   if (/[?&]reset\b/.test(location.search)) localStorage.removeItem(KEY);
   const s = JSON.parse(localStorage.getItem(KEY));
@@ -269,6 +272,8 @@ S.ships.forEach(s => {
   const d = SNAP.ships.find(x => x.id === s.id);
   if (!Object.prototype.hasOwnProperty.call(s, 'trackingUrl')) s.trackingUrl = d ? (d.trackingUrl || '') : '';
   if (!Object.prototype.hasOwnProperty.call(s, 'arrived')) s.arrived = d ? !!d.arrived : false;
+  if (!Object.prototype.hasOwnProperty.call(s, 'departed')) s.departed = d ? !!d.departed : false;
+  if (s.departed && !s.arrived) s.departed = false;
 });
 
 const ed = () => {
@@ -323,12 +328,35 @@ function toggleArrival(id) {
   const s = shipOf(id);
   if (!s) return;
   s.arrived = !s.arrived;
+  if (!s.arrived) s.departed = false;
   save();
   render();
   toast(`${s.name}: ${s.arrived ? 'gemarkeerd als aangemeerd' : 'status teruggezet naar onderweg'}.`);
 }
 
+function toggleDeparture(id) {
+  if (!ed()) return;
+  const s = shipOf(id);
+  if (!s) return;
+  if (!s.arrived) {
+    toast(`${s.name}: vink eerst Aangemeerd aan voordat je Vertrokken kunt kiezen.`);
+    render();
+    return;
+  }
+  s.departed = !s.departed;
+  save();
+  render();
+  toast(`${s.name}: ${s.departed ? 'gelost en vertrokken uit Rotterdam' : 'status teruggezet naar aan de kade'}.`);
+}
+
+function toggleDone() {
+  SHOW_DONE = !SHOW_DONE;
+  render();
+}
+
 function renderArrivalPill(s, deadlineISO) {
+  if (shipDone(s)) return `<span class="pill ok">Compleet geleverd</span>`;
+  if (s.departed) return `<span class="pill ok">Vertrokken (gelost)</span>`;
   if (s.arrived) {
     return `<span class="pill ok">Aangemeerd</span>`;
   }
@@ -340,6 +368,10 @@ function renderArrivalPill(s, deadlineISO) {
 }
 
 /* ---------- Buffer Maasvlakte: units van aangemeerde schepen die nog niet in Farmsum zijn geleverd ---------- */
+function shipDone(s) {
+  return s.cap > 0 && sum(S.deliveries.filter(d => d.shipId == s.id && d.status == 'Geleverd')) >= s.cap;
+}
+
 function bufferOf(s) {
   if (!s.arrived) return 0;
   return sum(S.deliveries.filter(d => d.shipId == s.id && d.status != 'Geleverd'));
@@ -440,7 +472,7 @@ function monthV(i) {
 
 function card(d) {
   const s = shipOf(d.shipId), b = HB[d.hut];
-  const mooredTag = s && s.arrived ? ` <span title="Schip is aangemeerd" style="color:var(--ok);font-weight:600">&bull; Aangemeerd</span>` : '';
+  const mooredTag = s && s.arrived ? ` <span title="${s.departed ? 'Schip is gelost en vertrokken' : 'Schip is aangemeerd'}" style="color:var(--ok);font-weight:600">&bull; ${s.departed ? 'Gelost' : 'Aangemeerd'}</span>` : '';
   return `<div class="dc" style="--c:${b ? BL[b].c : '#888'}" onclick="openM('${d.date}','${d.id}')">
     <b>${d.units} units</b> &middot; ${s ? esc(s.name) : '?'}${mooredTag}<br>
     ${d.hut} &middot; ${b || ''}
@@ -461,7 +493,7 @@ function openM(date, id) {
   if (!ed()) return;
   const d = id ? S.deliveries.find(x => x.id == id) : { id: null, date, units: 1, shipId: '', hut: '', status: 'Gepland' };
   M = d;
-  const so = S.ships.map(s => `<option value="${s.id}" ${s.id == d.shipId ? 'selected' : ''}>${esc(s.name)} (vrij ${s.cap - used(x => x.shipId == s.id, d.id)} van ${s.cap}${s.arrived ? ' · aangemeerd' : ''})</option>`).join('');
+  const so = S.ships.map(s => `<option value="${s.id}" ${s.id == d.shipId ? 'selected' : ''}>${esc(s.name)} (vrij ${s.cap - used(x => x.shipId == s.id, d.id)} van ${s.cap}${s.departed ? ' · gelost' : s.arrived ? ' · aangemeerd' : ''})</option>`).join('');
   const ho = Object.keys(BL).map(b => `<optgroup label="Blok ${b}">${Object.keys(BL[b].h).map(h => `<option value="${h}" ${h == d.hut ? 'selected' : ''}>${h} (bezet ${used(x => x.hut == h, d.id)} van ${HUT[h]})</option>`).join('')}</optgroup>`).join('');
 
   $('modal').innerHTML = `<div class="card p-5 w-full" style="max-width:460px">
@@ -495,7 +527,7 @@ function chk() {
   const l = [`Dag: ${sum(day) + u} van 8 units, ${ss.size} van 2 scheepsladingen`];
   if (sh) {
     const dtInfo = getShipDates(sh.id);
-    l.push(`Schip ${esc(sh.name)}: ${used(d => d.shipId == sh.id, x.id) + u} van ${sh.cap} units (${sh.arrived ? 'aangemeerd' : 'uiterste aanmeerdatum ' + dtInfo.deadlineLabel})`);
+    l.push(`Schip ${esc(sh.name)}: ${used(d => d.shipId == sh.id, x.id) + u} van ${sh.cap} units (${sh.departed ? 'gelost en vertrokken' : sh.arrived ? 'aangemeerd' : 'uiterste aanmeerdatum ' + dtInfo.deadlineLabel})`);
   }
   if (HUT[x.hut]) l.push(`Veldhuisje ${x.hut} (Blok ${HB[x.hut]}): ${used(d => d.hut == x.hut, x.id) + u} van ${HUT[x.hut]} units`);
   $('info').innerHTML = l.map(t => `<div style="color:var(--mut)">${t}</div>`).join('') + e.map(t => `<div style="color:var(--bad);font-weight:600">${t}</div>`).join('');
@@ -551,9 +583,9 @@ function expCSVTab() {
     const [y, m] = MON[tab - 1], pre = y + '-' + p(m + 1);
     rows = [['Datum','Schip','Veldhuisje','Blok','Units','Status'], ...S.deliveries.filter(d => d.date.startsWith(pre)).sort((a, b) => a.date.localeCompare(b.date)).map(d => [d.date, sn(d.shipId), d.hut, HB[d.hut] || '', d.units, d.status])];
   } else if (tab == 9) {
-    rows = [['Schip','Capaciteit','Ingepland','Geleverd','Vrij','Eerste levering','Uiterste aanmeerdatum','Aangemeerd','Buffer Maasvlakte','MarineTraffic'], ...S.ships.map(s => {
+    rows = [['Schip','Capaciteit','Ingepland','Geleverd','Vrij','Eerste levering','Uiterste aanmeerdatum','Aangemeerd','Vertrokken (gelost)','Buffer Maasvlakte','MarineTraffic'], ...S.ships.map(s => {
       const f = S.deliveries.filter(d => d.shipId == s.id), t = sum(f), g = sum(f.filter(d => d.status == 'Geleverd')), dtInfo = getShipDates(s.id);
-      return [s.name, s.cap, t - g, g, s.cap - t, dtInfo.firstLabel, dtInfo.deadlineLabel, s.arrived ? 'Ja' : 'Nee', bufferOf(s), s.trackingUrl || ''];
+      return [s.name, s.cap, t - g, g, s.cap - t, dtInfo.firstLabel, dtInfo.deadlineLabel, s.arrived ? 'Ja' : 'Nee', s.departed ? 'Ja' : 'Nee', bufferOf(s), s.trackingUrl || ''];
     })];
   } else {
     rows = [['Maand','Leverdagen','Gepland','Bevestigd','Geleverd','Maandtotaal'], ...MON.map(([y, m]) => {
@@ -613,7 +645,7 @@ function shipsV() {
   const cap = S.ships.reduce((t, s) => t + s.cap, 0);
   const mooredCount = S.ships.filter(s => s.arrived).length;
   return `<h1>Schepenlijst</h1>
-  <p class="mb-4" style="color:var(--mut)">${S.ships.length} schepen (${mooredCount} aangemeerd), gezamenlijke capaciteit ${cap} units. De uiterste aanmeerdatum ligt automatisch 7 dagen vóór de eerste levering vanuit het schip.</p>
+  <p class="mb-4" style="color:var(--mut)">${S.ships.length} schepen (${mooredCount} aangemeerd), gezamenlijke capaciteit ${cap} units. De uiterste aanmeerdatum ligt automatisch 7 dagen vóór de eerste levering vanuit het schip. Een vertrokken schip is gelost in Rotterdam; de units blijven in de buffer tot ze in Farmsum zijn geleverd.</p>
   <div class="card overflow-x-auto">
     <table>
       <thead>
@@ -622,6 +654,7 @@ function shipsV() {
           <th style="width:105px">Capaciteit</th>
           <th>Uiterste aanmeerdatum</th>
           <th>Aangemeerd</th>
+          <th>Vertrokken (gelost)</th>
           <th style="min-width:240px">MarineTraffic</th>
           <th>Ingepland</th>
           <th>Vrij</th>
@@ -646,7 +679,16 @@ function shipsV() {
                      <input type="checkbox" ${s.arrived ? 'checked' : ''} onchange="toggleArrival('${s.id}')" style="width:18px;height:18px;accent-color:var(--ok);cursor:pointer">
                      <span class="text-xs font-medium">${s.arrived ? 'Aangemeerd' : 'Onderweg'}</span>
                    </label>`
-                : renderArrivalPill(s, dtInfo.deadlineISO)
+                : (s.arrived ? '<span class="pill ok">Aangemeerd</span>' : renderArrivalPill(s, dtInfo.deadlineISO))
+              }
+            </td>
+            <td>
+              ${EDIT
+                ? `<label class="inline-flex items-center gap-2 select-none ${s.arrived ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}" ${s.arrived ? '' : 'title="Vink eerst Aangemeerd aan"'}>
+                     <input type="checkbox" ${s.departed ? 'checked' : ''} ${s.arrived ? '' : 'disabled'} onchange="toggleDeparture('${s.id}')" style="width:18px;height:18px;accent-color:var(--ok);cursor:pointer">
+                     <span class="text-xs font-medium">${s.departed ? 'Vertrokken' : s.arrived ? 'Aan de kade' : '-'}</span>
+                   </label>`
+                : (s.departed ? '<span class="pill ok">Vertrokken (gelost)</span>' : s.arrived ? '<span class="pill wait">Aan de kade</span>' : '<span class="text-xs" style="color:var(--mut)">-</span>')
               }
             </td>
             <td>
@@ -692,7 +734,7 @@ function addShip() {
   const n = $('ns').value.trim(), c = +$('nc').value, t = $('nt').value.trim(), url = safeTrackUrl(t);
   if (!n || !(c >= 1)) return toast('Vul een naam en een capaciteit van minimaal 1 in.');
   if (t && !url) return toast('Vul een geldige http(s)-URL in.');
-  S.ships.push({ id: uid(), name: n, cap: Math.floor(c), trackingUrl: url, arrived: false });
+  S.ships.push({ id: uid(), name: n, cap: Math.floor(c), trackingUrl: url, arrived: false, departed: false });
   save(); render();
 }
 
@@ -722,14 +764,14 @@ function delShip(id) {
 /* ---------- Dashboard ---------- */
 function dash() {
   const tot = sum(S.deliveries), del = sum(S.deliveries.filter(d => d.status == 'Geleverd')), cap = S.ships.reduce((t, s) => t + s.cap, 0), days = new Set(S.deliveries.map(d => d.date)).size;
-  const moored = S.ships.filter(s => s.arrived).length, buffer = S.ships.reduce((t, s) => t + bufferOf(s), 0);
+  const departed = S.ships.filter(s => s.departed).length, moored = S.ships.filter(s => s.arrived).length, buffer = S.ships.reduce((t, s) => t + bufferOf(s), 0);
   const k = [
     ['Totale projectbehoefte', NEED, 'units'],
     ['Totaal ingepland', tot, `${(tot / NEED * 100).toFixed(1)}% van de behoefte`],
     ['Daadwerkelijk geleverd', del, `${(del / NEED * 100).toFixed(1)}%`],
     ['Resterend te leveren', NEED - del, 'units'],
     ['Actieve leveringsdagen', days, 'dagen'],
-    ['Buffer Maasvlakte', buffer, `units · ${moored} van ${S.ships.length} schepen aangemeerd`]
+    ['Buffer Maasvlakte', buffer, `units · ${moored} van ${S.ships.length} aangemeerd${departed ? `, ${departed} vertrokken` : ''}`]
   ];
 
   const mrows = MON.map(([y, m], i) => {
@@ -763,7 +805,8 @@ function dash() {
     </div>`;
   }).join('');
 
-  const ships = S.ships.map(s => {
+  const doneCount = S.ships.filter(shipDone).length;
+  const ships = S.ships.filter(s => SHOW_DONE || !shipDone(s)).map(s => {
     const f = S.deliveries.filter(d => d.shipId == s.id);
     const g = sum(f.filter(d => d.status == 'Geleverd'));
     const t = sum(f);
@@ -793,8 +836,11 @@ function dash() {
   <h2>Voortgang per veldhuisje</h2>
   <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-2.5 mb-5">${huts}</div>
   <h2>Voortgang &amp; status per schip</h2>
-  <div class="card overflow-x-auto"><table><thead><tr><th>Schip</th><th>Capaciteit</th><th>Gepland</th><th>Geleverd</th><th>Vrij</th><th>Uiterste aanmeerdatum</th><th>Status</th><th>Buffer Maasvlakte</th><th>Benutting</th><th>MarineTraffic</th></tr></thead><tbody>${ships}</tbody></table></div>
-  <p class="text-xs mt-2" style="color:var(--mut)">Buffer Maasvlakte = ingeplande units van aangemeerde schepen die nog niet in Farmsum zijn geleverd.</p>`;
+  <div class="card overflow-x-auto"><table><thead><tr><th>Schip</th><th>Capaciteit</th><th>Gepland</th><th>Geleverd</th><th>Vrij</th><th>Uiterste aanmeerdatum</th><th>Status</th><th>Buffer Maasvlakte</th><th>Benutting</th><th>MarineTraffic</th></tr></thead><tbody>${ships || '<tr><td colspan="10" class="text-xs" style="color:var(--mut)">Alle schepen zijn compleet geleverd.</td></tr>'}</tbody></table></div>
+  <div class="flex flex-wrap items-center gap-3 mt-2">
+    <p class="text-xs" style="color:var(--mut)">Buffer Maasvlakte = ingeplande units van aangemeerde schepen die nog niet in Farmsum zijn geleverd. Compleet geleverde schepen staan niet in dit overzicht.</p>
+    ${doneCount ? `<button class="btn" onclick="toggleDone()">${SHOW_DONE ? 'Verberg' : 'Toon'} compleet geleverde schepen (${doneCount})</button>` : ''}
+  </div>`;
 }
 
 /* ---------- Afdrukken ---------- */
@@ -866,10 +912,10 @@ function expXLSX() {
     const f = by(d => d.hut == h), t = sum(f), gg = g(f);
     o.push([h, HB[h], HUT[h], gg, t - gg, +(gg / HUT[h] * 100).toFixed(0), HUT[h] - t]);
   }
-  o.push([], ['Schip', 'Capaciteit', 'Gepland/bevestigd', 'Geleverd', 'Vrij', 'Uiterste aanmeerdatum', 'Aangemeerd', 'Buffer Maasvlakte']);
+  o.push([], ['Schip', 'Capaciteit', 'Gepland/bevestigd', 'Geleverd', 'Vrij', 'Uiterste aanmeerdatum', 'Aangemeerd', 'Vertrokken (gelost)', 'Buffer Maasvlakte']);
   S.ships.forEach(s => {
     const f = by(d => d.shipId == s.id), t = sum(f), gg = g(f), dtInfo = getShipDates(s.id);
-    o.push([s.name, s.cap, t - gg, gg, s.cap - t, dtInfo.deadlineLabel, s.arrived ? 'Ja' : 'Nee', bufferOf(s)]);
+    o.push([s.name, s.cap, t - gg, gg, s.cap - t, dtInfo.deadlineLabel, s.arrived ? 'Ja' : 'Nee', s.departed ? 'Ja' : 'Nee', bufferOf(s)]);
   });
   A('Totaaloverzicht', o, [28, 16, 18, 14, 18, 22, 14]);
 
@@ -906,9 +952,9 @@ function expXLSX() {
     A(MN[m] + ' ' + y, r, [34, 34, 34, 34, 34, 12, 10, 10]);
   });
 
-  A('Schepenlijst', [['Schip', 'Capaciteit', 'Gepland/bevestigd', 'Geleverd', 'Vrij', 'Eerste levering', 'Uiterste aanmeerdatum', 'Aangemeerd', 'Buffer Maasvlakte'], ...S.ships.map(s => {
+  A('Schepenlijst', [['Schip', 'Capaciteit', 'Gepland/bevestigd', 'Geleverd', 'Vrij', 'Eerste levering', 'Uiterste aanmeerdatum', 'Aangemeerd', 'Vertrokken (gelost)', 'Buffer Maasvlakte'], ...S.ships.map(s => {
     const f = by(d => d.shipId == s.id), t = sum(f), gg = g(f), dtInfo = getShipDates(s.id);
-    return [s.name, s.cap, t - gg, gg, s.cap - t, dtInfo.firstLabel, dtInfo.deadlineLabel, s.arrived ? 'Ja' : 'Nee', bufferOf(s)];
+    return [s.name, s.cap, t - gg, gg, s.cap - t, dtInfo.firstLabel, dtInfo.deadlineLabel, s.arrived ? 'Ja' : 'Nee', s.departed ? 'Ja' : 'Nee', bufferOf(s)];
   })], [26, 12, 18, 12, 10, 16, 22, 12]);
 
   A('Alle leveringen', [['Datum', 'Schip', 'Veldhuisje', 'Blok', 'Units', 'Status'], ...[...D].sort((a, c) => a.date.localeCompare(c.date)).map(x => [fmtDate(x.date), sn(x.shipId), x.hut, HB[x.hut] || '', x.units, x.status])], [12, 26, 12, 10, 8, 12]);
@@ -929,6 +975,8 @@ function impJSON(i) {
       if (!Array.isArray(s.ships) || !Array.isArray(s.deliveries)) throw 0;
       s.ships.forEach(sh => {
         if (!Object.prototype.hasOwnProperty.call(sh, 'arrived')) sh.arrived = false;
+        if (!Object.prototype.hasOwnProperty.call(sh, 'departed')) sh.departed = false;
+        if (sh.departed && !sh.arrived) sh.departed = false;
         if (!Object.prototype.hasOwnProperty.call(sh, 'trackingUrl')) sh.trackingUrl = '';
       });
       S = { ships: s.ships, deliveries: s.deliveries };
