@@ -100,7 +100,10 @@
     .mi .ic{color:var(--mut)}
     .mi small{margin-left:auto;color:var(--mut);font-size:11.5px;font-weight:400}
     .mdiv{height:1px;margin:6px 4px;background:var(--line)}
-  </style>
+  .ibtn.pub{gap:6px;font:600 13px 'Geist',sans-serif}
+.ibtn.pub.on{background:var(--volt);border-color:var(--volt);color:#0f1419}
+.ibtn:disabled{opacity:.5;cursor:wait}
+</style>
 </head>
 <body>
 <header class="noprint hd">
@@ -116,6 +119,8 @@
       </div>
     </div>
     <div class="flex items-center gap-2">
+      <button class="ibtn pub" id="discBtn" hidden title="Niet-gepubliceerde wijzigingen verwerpen" aria-label="Wijzigingen verwerpen" onclick="discardDraft()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>
+      <button class="ibtn pub on" id="pubBtn" hidden title="Wijzigingen publiceren naar GitHub" aria-label="Wijzigingen publiceren" onclick="publish()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg><span class="hidden sm:inline">Publiceer</span></button>
       <button class="ibtn" id="impBtn" hidden title="Importeren (JSON)" aria-label="Importeren (JSON)" onclick="document.getElementById('imp').click()">
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
       </button>
@@ -148,6 +153,11 @@
             <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V6z"/><path d="M15 2v4h4"/><path d="M4 7v13a2 2 0 0 0 2 2h9"/></svg>
             Afdrukken<small>alle tabbladen</small>
           </button>
+          <div id="tokWrap" hidden>
+            <div class="mdiv"></div>
+            <div class="mh">Publiceren</div>
+            <button class="mi" role="menuitem" onclick="tokenDlg();closeMenu()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>GitHub-token<small>instellen</small></button>
+          </div>
         </div>
       </div>
       <button class="ibtn" id="editBtn" title="Bewerken ontgrendelen" aria-label="Bewerken ontgrendelen" onclick="editAccess()">
@@ -633,27 +643,35 @@ const SNAP = {
   ]
 };
 
-const SNAP_VERSION = '2026-11-18';
-const SNAP_DATE = '18-11-2026';
-let S, tab = 0, M = null, EDIT = false, STALE = false, SHOW_DONE = false;
+SNAP.updatedAt = '2026-11-18T00:00:00.000Z';
+const GH = { owner: 'rkkpc6b497-png', repo: 'BESSLeveringen', branch: 'main', path: 'planning.json' };
+const DRAFT_KEY = 'bess-draft', TOKEN_KEY = 'bess-gh-token';
+let S, tab = 0, M = null, EDIT = false, SHOW_DONE = false, DIRTY = false, BASE = SNAP.updatedAt, LAST_REMOTE = null, REMOTE_NEWER = false;
+
+function normalize(st) {
+  st.deliveries.sort((a, b) => a.date.localeCompare(b.date));
+  st.ships.forEach(s => {
+    const d = SNAP.ships.find(x => x.id === s.id);
+    if (!Object.prototype.hasOwnProperty.call(s, 'trackingUrl')) s.trackingUrl = d ? (d.trackingUrl || '') : '';
+    if (!Object.prototype.hasOwnProperty.call(s, 'arrived')) s.arrived = d ? !!d.arrived : false;
+    if (!Object.prototype.hasOwnProperty.call(s, 'departed')) s.departed = d ? !!d.departed : false;
+    if (s.departed && !s.arrived) s.departed = false;
+  });
+  return st;
+}
+const clone = o => JSON.parse(JSON.stringify(o));
+
 try {
-  if (/[?&]reset\b/.test(location.search)) localStorage.removeItem(KEY);
-  const s = JSON.parse(localStorage.getItem(KEY));
-  if (s && Array.isArray(s.ships) && Array.isArray(s.deliveries) && (s.snapVersion === SNAP_VERSION || s.localEdit)) {
-    S = s;
-    STALE = s.snapVersion !== SNAP_VERSION;
+  localStorage.removeItem(KEY);
+  if (/[?&]reset\b/.test(location.search)) localStorage.removeItem(DRAFT_KEY);
+  const dr = JSON.parse(localStorage.getItem(DRAFT_KEY));
+  if (dr && dr.state && Array.isArray(dr.state.ships) && Array.isArray(dr.state.deliveries)) {
+    S = dr.state;
+    BASE = dr.base || BASE;
+    DIRTY = true;
   }
 } catch (e) {}
-S = S || JSON.parse(JSON.stringify(SNAP));
-if (!S.snapVersion) S.snapVersion = SNAP_VERSION;
-S.deliveries.sort((a, b) => a.date.localeCompare(b.date));
-S.ships.forEach(s => {
-  const d = SNAP.ships.find(x => x.id === s.id);
-  if (!Object.prototype.hasOwnProperty.call(s, 'trackingUrl')) s.trackingUrl = d ? (d.trackingUrl || '') : '';
-  if (!Object.prototype.hasOwnProperty.call(s, 'arrived')) s.arrived = d ? !!d.arrived : false;
-  if (!Object.prototype.hasOwnProperty.call(s, 'departed')) s.departed = d ? !!d.departed : false;
-  if (s.departed && !s.arrived) s.departed = false;
-});
+S = normalize(S || clone({ ships: SNAP.ships, deliveries: SNAP.deliveries }));
 
 const ed = () => {
   if (EDIT) return true;
@@ -662,9 +680,16 @@ const ed = () => {
 };
 
 const save = () => {
-  S.localEdit = true;
-  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
+  DIRTY = true;
+  try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ base: BASE, state: S })); } catch (e) {}
+  updatePublishUI();
 };
+
+function fmtStamp(iso) {
+  try {
+    return new Date(iso).toLocaleString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  } catch (e) { return iso; }
+}
 
 function toast(t) {
   const e = $('toast');
@@ -787,7 +812,7 @@ function go(i) {
 }
 
 function render() {
-  $('subTitle').textContent = `Leveringen GIGA Leopard, november 2026 t/m juni 2027 · ${S.localEdit ? 'lokaal gewijzigd' : 'stand ' + SNAP_DATE} · ${EDIT ? 'bewerken actief' : 'alleen lezen'}`;
+  $('subTitle').textContent = `Leveringen GIGA Leopard, november 2026 t/m juni 2027 · ${DIRTY ? 'niet gepubliceerd' : 'stand ' + fmtStamp(BASE)} · ${EDIT ? 'bewerken actief' : 'alleen lezen'}`;
   $('nav').innerHTML = TABS.map((t, i) => {
     const n = i == 0 ? 0 : i == 9 ? S.ships.length : mUnits(i - 1);
     return `<button class="tab ${i == tab ? 'on' : ''}" onclick="go(${i})">${t}${i == 0 || n <= 0 ? '' : `<span class="bd">${n}</span>`}</button>`;
@@ -939,6 +964,7 @@ function setLock(on) {
   b.setAttribute('aria-label', b.title);
   b.innerHTML = on ? IC_UNLOCK : IC_LOCK;
   $('impBtn').hidden = !on;
+  updatePublishUI();
 }
 
 function toggleMenu(e) {
@@ -975,6 +1001,150 @@ function expCSVTab() {
   dl('bess-' + TABS[tab].toLowerCase().replace(/\s+/g, '-') + '.csv', new Blob(['\ufeff' + rows.map(r => r.join(';')).join('\r\n')], { type: 'text/csv;charset=utf-8' }));
 }
 
+/* ---------- Delen via GitHub ---------- */
+const GH_API = `https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${GH.path}`;
+const ghHeaders = t => ({ 'Accept': 'application/vnd.github+json', 'Authorization': 'Bearer ' + t, 'X-GitHub-Api-Version': '2022-11-28' });
+const b64enc = s => btoa(unescape(encodeURIComponent(s)));
+const b64dec = s => decodeURIComponent(escape(atob(s.replace(/\n/g, ''))));
+const getToken = () => { try { return localStorage.getItem(TOKEN_KEY) || ''; } catch (e) { return ''; } };
+
+function updatePublishUI() {
+  const show = EDIT && DIRTY;
+  $('pubBtn').hidden = !show;
+  $('discBtn').hidden = !show;
+  $('tokWrap').hidden = !EDIT;
+  $('pubBtn').title = REMOTE_NEWER ? 'Let op: er staat een nieuwere planning op GitHub' : 'Wijzigingen publiceren naar GitHub';
+}
+
+async function loadRemote(manual) {
+  let r;
+  try {
+    const res = await fetch(`${GH.path}?t=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error(res.status);
+    r = await res.json();
+  } catch (e) {
+    if (manual) toast('Kon de gedeelde planning niet laden.');
+    return;
+  }
+  if (!r || !Array.isArray(r.ships) || !Array.isArray(r.deliveries) || !r.updatedAt) return;
+  LAST_REMOTE = r;
+  if (r.updatedAt <= BASE) return;
+  if (DIRTY) {
+    if (!REMOTE_NEWER) toast('Er staat een nieuwere planning op GitHub. Publiceer of verwerp jouw wijzigingen.');
+    REMOTE_NEWER = true;
+    updatePublishUI();
+    return;
+  }
+  if ($('modal').classList.contains('on')) return;
+  S = normalize({ ships: r.ships, deliveries: r.deliveries });
+  BASE = r.updatedAt;
+  render();
+  toast('Planning bijgewerkt (stand ' + fmtStamp(BASE) + ').');
+}
+
+async function publish() {
+  if (!ed()) return;
+  const token = getToken();
+  if (!token) { tokenDlg(true); return; }
+  const btn = $('pubBtn');
+  btn.disabled = true;
+  try {
+    let sha;
+    const g = await fetch(`${GH_API}?ref=${GH.branch}&t=${Date.now()}`, { headers: ghHeaders(token), cache: 'no-store' });
+    if (g.status === 401 || g.status === 403) { toast('GitHub weigert het token. Controleer of het niet verlopen is en schrijfrechten (Contents) heeft.'); tokenDlg(true); return; }
+    if (g.ok) {
+      const j = await g.json();
+      sha = j.sha;
+      try {
+        const cur = JSON.parse(b64dec(j.content));
+        if (cur.updatedAt && cur.updatedAt > BASE && !confirm('Er is intussen een nieuwere planning gepubliceerd (' + fmtStamp(cur.updatedAt) + '). Als je doorgaat, overschrijft jouw versie die. Doorgaan?')) return;
+      } catch (e) {}
+    } else if (g.status !== 404) {
+      throw new Error('Ophalen mislukt (' + g.status + ')');
+    }
+    const stamp = new Date().toISOString();
+    const body = {
+      message: 'Planning bijgewerkt ' + fmtStamp(stamp),
+      branch: GH.branch,
+      content: b64enc(JSON.stringify({ updatedAt: stamp, ships: S.ships, deliveries: S.deliveries }, null, 2) + '\n')
+    };
+    if (sha) body.sha = sha;
+    const p = await fetch(GH_API, { method: 'PUT', headers: { ...ghHeaders(token), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (p.status === 401 || p.status === 403) { toast('Publiceren niet toegestaan (' + p.status + '). Controleer de rechten van je token.'); tokenDlg(true); return; }
+    if (p.status === 409 || p.status === 422) { toast('Publiceren botste met een andere wijziging. Probeer het opnieuw.'); return; }
+    if (!p.ok) throw new Error('Publiceren mislukt (' + p.status + ')');
+    BASE = stamp;
+    DIRTY = false;
+    REMOTE_NEWER = false;
+    try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+    render();
+    updatePublishUI();
+    toast('Gepubliceerd. Collega’s zien de nieuwe planning binnen enkele minuten.');
+  } catch (e) {
+    toast('Publiceren mislukt: ' + ((e && e.message) || e));
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function discardDraft() {
+  if (!confirm('Alle niet-gepubliceerde wijzigingen verwerpen?')) return;
+  try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+  const src = LAST_REMOTE && LAST_REMOTE.updatedAt > SNAP.updatedAt ? LAST_REMOTE : SNAP;
+  S = normalize(clone({ ships: src.ships, deliveries: src.deliveries }));
+  BASE = src.updatedAt;
+  DIRTY = false;
+  REMOTE_NEWER = false;
+  render();
+  updatePublishUI();
+  toast('Wijzigingen verworpen.');
+}
+
+function tokenDlg(thenPublish) {
+  const has = !!getToken();
+  $('modal').innerHTML = `<div class="card p-5 w-full" style="max-width:480px">
+    <h2 class="text-lg font-bold mb-2" style="text-transform:none;letter-spacing:0;color:var(--fg)">GitHub-token</h2>
+    <p class="mb-2 text-sm" style="color:var(--mut)">Om te publiceren heeft deze pagina een persoonlijk toegangstoken van GitHub nodig. Het wordt alleen in deze browser bewaard.</p>
+    <ol class="mb-3 text-sm list-decimal pl-5" style="color:var(--mut)">
+      <li>Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener" style="color:var(--fg);text-decoration:underline">GitHub, nieuw token</a>.</li>
+      <li>Kies bij <b>Repository access</b> alleen <b>${esc(GH.repo)}</b>.</li>
+      <li>Zet bij <b>Permissions, Repository</b> de optie <b>Contents</b> op <b>Read and write</b>.</li>
+      <li>Kies een vervaldatum, maak het token aan en plak het hieronder.</li>
+    </ol>
+    <input id="ghTok" type="password" autocomplete="off" placeholder="github_pat_...">
+    <div id="ghErr" class="text-sm mt-2" style="color:var(--bad)"></div>
+    <div class="flex flex-wrap gap-2 mt-4">
+      <button class="btn pri" onclick="saveToken(${thenPublish ? 'true' : 'false'})">Opslaan en testen</button>
+      ${has ? '<button class="btn del" onclick="clearToken()">Token verwijderen</button>' : ''}
+      <button class="btn" onclick="closeM()">Annuleren</button>
+    </div>
+  </div>`;
+  $('modal').classList.add('on');
+  $('ghTok').focus();
+}
+
+async function saveToken(thenPublish) {
+  const t = $('ghTok').value.trim();
+  if (!t) { $('ghErr').textContent = 'Plak eerst een token.'; return; }
+  $('ghErr').textContent = 'Testen…';
+  try {
+    const res = await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}`, { headers: ghHeaders(t) });
+    if (!res.ok) { $('ghErr').textContent = res.status === 401 ? 'Token ongeldig of verlopen.' : `GitHub antwoordde met ${res.status}. Controleer of het token toegang heeft tot ${GH.repo}.`; return; }
+    const j = await res.json();
+    if (j.permissions && j.permissions.push === false) { $('ghErr').textContent = 'Dit token heeft alleen leesrechten. Zet Contents op Read and write.'; return; }
+  } catch (e) { $('ghErr').textContent = 'Kon GitHub niet bereiken.'; return; }
+  try { localStorage.setItem(TOKEN_KEY, t); } catch (e) { $('ghErr').textContent = 'Token kon niet worden bewaard in deze browser.'; return; }
+  closeM();
+  toast('Token opgeslagen.');
+  if (thenPublish) publish();
+}
+
+function clearToken() {
+  try { localStorage.removeItem(TOKEN_KEY); } catch (e) {}
+  closeM();
+  toast('Token verwijderd uit deze browser.');
+}
+
 /* ---------- Lokale bewerktoegang ---------- */
 function editAccess() {
   if (EDIT) {
@@ -1007,7 +1177,7 @@ function checkEditPassword() {
   setLock(true);
   closeM();
   render();
-  toast('Bewerken actief. Wijzigingen blijven alleen in deze browser; exporteer een JSON-back-up om ze te delen.');
+  toast('Bewerken actief. Collega’s zien wijzigingen pas nadat je op Publiceer klikt.');
 }
 
 /* ---------- Schepenlijst ---------- */
@@ -1375,7 +1545,11 @@ function impJSON(i) {
 
 $('modal').addEventListener('click', e => { if (e.target.id == 'modal') closeM(); });
 render();
-if (STALE) toast('Er is een nieuwere versie van de planning. Jouw lokale wijzigingen blijven zichtbaar; open de pagina met ?reset om de gedeelde versie te laden.');
+updatePublishUI();
+if (DIRTY) toast('Je hebt niet-gepubliceerde wijzigingen. Ontgrendel bewerken om te publiceren.');
+loadRemote();
+setInterval(loadRemote, 120000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) loadRemote(); });
 </script>
 </body>
 </html>

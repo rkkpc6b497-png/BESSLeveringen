@@ -1,0 +1,439 @@
+{
+  "updatedAt": "2026-11-18T00:00:00.000Z",
+  "ships": [
+    {
+      "arrived": true,
+      "cap": 14,
+      "departed": true,
+      "id": "s1",
+      "name": "MSC Iris",
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:9908656/zoom:13"
+    },
+    {
+      "arrived": true,
+      "cap": 20,
+      "departed": true,
+      "id": "s2",
+      "name": "MSC Sonia",
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:411685/zoom:14"
+    },
+    {
+      "arrived": true,
+      "cap": 38,
+      "departed": true,
+      "id": "s3",
+      "name": "MSC Marie",
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:8412551/zoom:13"
+    },
+    {
+      "arrived": false,
+      "cap": 40,
+      "departed": false,
+      "id": "s4",
+      "name": "MSC Mariacristina",
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:8880594/zoom:13"
+    },
+    {
+      "arrived": false,
+      "cap": 32,
+      "departed": false,
+      "id": "s5",
+      "name": "MSC Sahara XVI",
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:10060855/zoom:13"
+    },
+    {
+      "arrived": false,
+      "cap": 40,
+      "departed": false,
+      "id": "s6",
+      "name": "MSC Fatma",
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:7263661/zoom:13"
+    },
+    {
+      "arrived": false,
+      "cap": 34,
+      "departed": false,
+      "id": "s7",
+      "name": "MSC Santhya III",
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:416514/zoom:14"
+    },
+    {
+      "arrived": false,
+      "cap": 40,
+      "departed": false,
+      "id": "s8",
+      "name": "MSC Monica Cristina",
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:7854968/zoom:10"
+    },
+    {
+      "arrived": false,
+      "cap": 6,
+      "departed": false,
+      "id": "s9",
+      "name": "MSC Allicante VI",
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:758634/zoom:14"
+    }
+  ],
+  "deliveries": [
+    {
+      "date": "2026-11-10",
+      "hut": "1A",
+      "id": "xn1x57g2",
+      "shipId": "s2",
+      "status": "Geleverd",
+      "units": 8
+    },
+    {
+      "date": "2026-11-11",
+      "hut": "1A",
+      "id": "xsum242g",
+      "shipId": "s2",
+      "status": "Geleverd",
+      "units": 7
+    },
+    {
+      "date": "2026-11-12",
+      "hut": "1A",
+      "id": "xa4z3yw9",
+      "shipId": "s2",
+      "status": "Geleverd",
+      "units": 1
+    },
+    {
+      "date": "2026-11-25",
+      "hut": "1A",
+      "id": "xbusn8dz",
+      "shipId": "s2",
+      "status": "Gepland",
+      "units": 4
+    },
+    {
+      "date": "2026-11-25",
+      "hut": "1A",
+      "id": "xzq8zizi",
+      "shipId": "s1",
+      "status": "Gepland",
+      "units": 4
+    },
+    {
+      "date": "2026-11-26",
+      "hut": "1A",
+      "id": "xog7i4z1",
+      "shipId": "s1",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2026-11-27",
+      "hut": "1B",
+      "id": "xllv099k",
+      "shipId": "s1",
+      "status": "Gepland",
+      "units": 2
+    },
+    {
+      "date": "2026-11-27",
+      "hut": "1B",
+      "id": "xlwqh0cg",
+      "shipId": "s3",
+      "status": "Gepland",
+      "units": 6
+    },
+    {
+      "date": "2026-11-30",
+      "hut": "1B",
+      "id": "x4ervnw8",
+      "shipId": "s3",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2026-12-01",
+      "hut": "1B",
+      "id": "xal8455h",
+      "shipId": "s3",
+      "status": "Gepland",
+      "units": 6
+    },
+    {
+      "date": "2026-12-07",
+      "hut": "1B",
+      "id": "x2hymlhx",
+      "shipId": "s6",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2026-12-08",
+      "hut": "1B",
+      "id": "x6804383",
+      "shipId": "s6",
+      "status": "Gepland",
+      "units": 2
+    },
+    {
+      "date": "2026-12-08",
+      "hut": "1C",
+      "id": "xitv823z",
+      "shipId": "s3",
+      "status": "Gepland",
+      "units": 6
+    },
+    {
+      "date": "2026-12-09",
+      "hut": "1C",
+      "id": "xn0l992e",
+      "shipId": "s3",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2026-12-10",
+      "hut": "1C",
+      "id": "x415r8nk",
+      "shipId": "s3",
+      "status": "Gepland",
+      "units": 4
+    },
+    {
+      "date": "2026-12-10",
+      "hut": "1C",
+      "id": "x43xqxzb",
+      "shipId": "s4",
+      "status": "Gepland",
+      "units": 2
+    },
+    {
+      "date": "2026-12-10",
+      "hut": "1D",
+      "id": "xs4q0s0u",
+      "shipId": "s4",
+      "status": "Gepland",
+      "units": 2
+    },
+    {
+      "date": "2026-12-11",
+      "hut": "1D",
+      "id": "x643qwmx",
+      "shipId": "s4",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2026-12-14",
+      "hut": "1D",
+      "id": "xdgu5z96",
+      "shipId": "s4",
+      "status": "Gepland",
+      "units": 4
+    },
+    {
+      "date": "2026-12-14",
+      "hut": "1D",
+      "id": "xnrab394",
+      "shipId": "s6",
+      "status": "Gepland",
+      "units": 4
+    },
+    {
+      "date": "2026-12-15",
+      "hut": "1D",
+      "id": "xm0cliku",
+      "shipId": "s6",
+      "status": "Gepland",
+      "units": 6
+    },
+    {
+      "date": "2027-01-04",
+      "hut": "5A",
+      "id": "xqitzgb3",
+      "shipId": "s4",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2027-01-05",
+      "hut": "5A",
+      "id": "x40neaps",
+      "shipId": "s4",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2027-01-06",
+      "hut": "5A",
+      "id": "x4iboj8g",
+      "shipId": "s4",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2027-01-07",
+      "hut": "3A",
+      "id": "x7wrgcoh",
+      "shipId": "s6",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2027-01-08",
+      "hut": "3A",
+      "id": "xataojeg",
+      "shipId": "s6",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2027-01-11",
+      "hut": "3A",
+      "id": "xlyd1ni8",
+      "shipId": "s6",
+      "status": "Gepland",
+      "units": 4
+    },
+    {
+      "date": "2027-01-11",
+      "hut": "3A",
+      "id": "xs4zl01f",
+      "shipId": "s5",
+      "status": "Gepland",
+      "units": 4
+    },
+    {
+      "date": "2027-01-12",
+      "hut": "3B",
+      "id": "x99ws883",
+      "shipId": "s5",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2027-01-13",
+      "hut": "3B",
+      "id": "x0vnbw2f",
+      "shipId": "s5",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2027-01-14",
+      "hut": "3B",
+      "id": "x2hvlk81",
+      "shipId": "s5",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2027-01-15",
+      "hut": "3B",
+      "id": "xxutwytx",
+      "shipId": "s5",
+      "status": "Gepland",
+      "units": 4
+    },
+    {
+      "date": "2027-01-20",
+      "hut": "5B",
+      "id": "x15j3u9w",
+      "shipId": "s7",
+      "status": "Gepland",
+      "units": 4
+    },
+    {
+      "date": "2027-01-21",
+      "hut": "5B",
+      "id": "xxzxu0m1",
+      "shipId": "s7",
+      "status": "Gepland",
+      "units": 6
+    },
+    {
+      "date": "2027-01-22",
+      "hut": "5B",
+      "id": "xc1mk5ap",
+      "shipId": "s7",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2027-01-25",
+      "hut": "5B",
+      "id": "xn0elk5h",
+      "shipId": "s7",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2027-01-26",
+      "hut": "5C",
+      "id": "xe8wwzv3",
+      "shipId": "s7",
+      "status": "Gepland",
+      "units": 6
+    },
+    {
+      "date": "2027-01-26",
+      "hut": "5B",
+      "id": "xtgolb2p",
+      "shipId": "s7",
+      "status": "Gepland",
+      "units": 2
+    },
+    {
+      "date": "2027-01-27",
+      "hut": "5C",
+      "id": "xyounrkg",
+      "shipId": "s8",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2027-01-28",
+      "hut": "5C",
+      "id": "xcakybxy",
+      "shipId": "s8",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2027-01-29",
+      "hut": "5C",
+      "id": "x8l3uh4f",
+      "shipId": "s8",
+      "status": "Gepland",
+      "units": 6
+    },
+    {
+      "date": "2027-01-29",
+      "hut": "5D",
+      "id": "xii38cr4",
+      "shipId": "s8",
+      "status": "Gepland",
+      "units": 2
+    },
+    {
+      "date": "2027-02-01",
+      "hut": "5D",
+      "id": "x2bwofry",
+      "shipId": "s8",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2027-02-02",
+      "hut": "5D",
+      "id": "x46nzc07",
+      "shipId": "s8",
+      "status": "Gepland",
+      "units": 8
+    },
+    {
+      "date": "2027-02-03",
+      "hut": "5D",
+      "id": "xvlj8qv1",
+      "shipId": "s9",
+      "status": "Gepland",
+      "units": 6
+    }
+  ]
+}
