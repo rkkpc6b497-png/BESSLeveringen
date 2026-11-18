@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-18T00:00:00.000Z",
+  "updatedAt": "2026-11-18T07:37:14.825Z",
   "ships": [
     {
       "arrived": true,
@@ -104,7 +104,7 @@
       "hut": "1A",
       "id": "xbusn8dz",
       "shipId": "s2",
-      "status": "Gepland",
+      "status": "Bevestigd",
       "units": 4
     },
     {
@@ -112,7 +112,7 @@
       "hut": "1A",
       "id": "xzq8zizi",
       "shipId": "s1",
-      "status": "Gepland",
+      "status": "Bevestigd",
       "units": 4
     },
     {
@@ -120,7 +120,7 @@
       "hut": "1A",
       "id": "xog7i4z1",
       "shipId": "s1",
-      "status": "Gepland",
+      "status": "Bevestigd",
       "units": 8
     },
     {
@@ -128,7 +128,7 @@
       "hut": "1B",
       "id": "xllv099k",
       "shipId": "s1",
-      "status": "Gepland",
+      "status": "Bevestigd",
       "units": 2
     },
     {
@@ -136,7 +136,7 @@
       "hut": "1B",
       "id": "xlwqh0cg",
       "shipId": "s3",
-      "status": "Gepland",
+      "status": "Bevestigd",
       "units": 6
     },
     {
@@ -144,7 +144,7 @@
       "hut": "1B",
       "id": "x4ervnw8",
       "shipId": "s3",
-      "status": "Gepland",
+      "status": "Bevestigd",
       "units": 8
     },
     {
@@ -152,7 +152,7 @@
       "hut": "1B",
       "id": "xal8455h",
       "shipId": "s3",
-      "status": "Gepland",
+      "status": "Bevestigd",
       "units": 6
     },
     {
@@ -222,16 +222,16 @@
     {
       "date": "2026-12-14",
       "hut": "1D",
-      "id": "xdgu5z96",
-      "shipId": "s4",
+      "id": "xnrab394",
+      "shipId": "s6",
       "status": "Gepland",
       "units": 4
     },
     {
       "date": "2026-12-14",
       "hut": "1D",
-      "id": "xnrab394",
-      "shipId": "s6",
+      "id": "xdgu5z96",
+      "shipId": "s4",
       "status": "Gepland",
       "units": 4
     },
@@ -365,19 +365,19 @@
     },
     {
       "date": "2027-01-26",
-      "hut": "5C",
-      "id": "xe8wwzv3",
-      "shipId": "s7",
-      "status": "Gepland",
-      "units": 6
-    },
-    {
-      "date": "2027-01-26",
       "hut": "5B",
       "id": "xtgolb2p",
       "shipId": "s7",
       "status": "Gepland",
       "units": 2
+    },
+    {
+      "date": "2027-01-26",
+      "hut": "5C",
+      "id": "xe8wwzv3",
+      "shipId": "s7",
+      "status": "Gepland",
+      "units": 6
     },
     {
       "date": "2027-01-27",
