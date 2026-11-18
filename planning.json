@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-18T10:31:31.269Z",
+  "updatedAt": "2026-11-18T10:33:49.516Z",
   "ships": [
     {
       "arrived": true,
@@ -50,7 +50,7 @@
       "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:7263661/zoom:13"
     },
     {
-      "arrived": true,
+      "arrived": false,
       "cap": 34,
       "departed": false,
       "id": "s7",
