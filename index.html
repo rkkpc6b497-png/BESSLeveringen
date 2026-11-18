@@ -157,6 +157,7 @@
             <div class="mdiv"></div>
             <div class="mh">Publiceren</div>
             <button class="mi" role="menuitem" onclick="tokenDlg();closeMenu()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>GitHub-token<small>instellen</small></button>
+            <button class="mi" role="menuitem" onclick="toggleAuto();closeMenu()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-9-9c2.5 0 4.8 1 6.4 2.6L21 8"/><path d="M21 3v5h-5"/></svg>Automatisch publiceren<small id="autoLbl">aan</small></button>
           </div>
         </div>
       </div>
@@ -681,8 +682,10 @@ const ed = () => {
 
 const save = () => {
   DIRTY = true;
+  REV++;
   try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ base: BASE, state: S })); } catch (e) {}
   updatePublishUI();
+  scheduleAutoPublish();
 };
 
 function fmtStamp(iso) {
@@ -1006,6 +1009,9 @@ const GH_API = `https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${G
 const ghHeaders = t => ({ 'Accept': 'application/vnd.github+json', 'Authorization': 'Bearer ' + t, 'X-GitHub-Api-Version': '2022-11-28' });
 const b64enc = s => btoa(unescape(encodeURIComponent(s)));
 const b64dec = s => decodeURIComponent(escape(atob(s.replace(/\n/g, ''))));
+const AUTO_KEY = 'bess-autopub';
+const autoOn = () => { try { return localStorage.getItem(AUTO_KEY) !== '0'; } catch (e) { return true; } };
+let PUBLISHING = false, AP_T = null, REV = 0;
 const getToken = () => { try { return localStorage.getItem(TOKEN_KEY) || ''; } catch (e) { return ''; } };
 
 function updatePublishUI() {
@@ -1013,6 +1019,7 @@ function updatePublishUI() {
   $('pubBtn').hidden = !show;
   $('discBtn').hidden = !show;
   $('tokWrap').hidden = !EDIT;
+  $('autoLbl').textContent = autoOn() ? 'aan' : 'uit';
   $('pubBtn').title = REMOTE_NEWER ? 'Let op: er staat een nieuwere planning op GitHub' : 'Wijzigingen publiceren naar GitHub';
 }
 
@@ -1042,27 +1049,52 @@ async function loadRemote(manual) {
   toast('Planning bijgewerkt (stand ' + fmtStamp(BASE) + ').');
 }
 
-async function publish() {
+function scheduleAutoPublish() {
+  clearTimeout(AP_T);
+  if (!EDIT || !DIRTY || !autoOn() || !getToken()) return;
+  AP_T = setTimeout(() => publish(true), 2500);
+}
+
+function toggleAuto() {
+  try { localStorage.setItem(AUTO_KEY, autoOn() ? '0' : '1'); } catch (e) {}
+  updatePublishUI();
+  toast(autoOn() ? 'Automatisch publiceren staat aan.' : 'Automatisch publiceren staat uit. Gebruik de knop Publiceer.');
+  scheduleAutoPublish();
+}
+
+async function publish(auto) {
+  if (auto !== true) auto = false;
   if (!ed()) return;
   const token = getToken();
-  if (!token) { tokenDlg(true); return; }
+  if (!token) { if (!auto) tokenDlg(true); return; }
+  if (PUBLISHING) { if (auto) scheduleAutoPublish(); return; }
+  PUBLISHING = true;
   const btn = $('pubBtn');
   btn.disabled = true;
   try {
     let sha;
     const g = await fetch(`${GH_API}?ref=${GH.branch}&t=${Date.now()}`, { headers: ghHeaders(token), cache: 'no-store' });
-    if (g.status === 401 || g.status === 403) { toast('GitHub weigert het token. Controleer of het niet verlopen is en schrijfrechten (Contents) heeft.'); tokenDlg(true); return; }
+    if (g.status === 401 || g.status === 403) { toast('GitHub weigert het token. Controleer of het niet verlopen is en schrijfrechten (Contents) heeft.'); if (!auto) tokenDlg(true); return; }
     if (g.ok) {
       const j = await g.json();
       sha = j.sha;
       try {
         const cur = JSON.parse(b64dec(j.content));
-        if (cur.updatedAt && cur.updatedAt > BASE && !confirm('Er is intussen een nieuwere planning gepubliceerd (' + fmtStamp(cur.updatedAt) + '). Als je doorgaat, overschrijft jouw versie die. Doorgaan?')) return;
+        if (cur.updatedAt && cur.updatedAt > BASE) {
+          if (auto) {
+            REMOTE_NEWER = true;
+            updatePublishUI();
+            toast('Automatisch publiceren gepauzeerd: er staat een nieuwere planning op GitHub. Klik op Publiceer om te kiezen.');
+            return;
+          }
+          if (!confirm('Er is intussen een nieuwere planning gepubliceerd (' + fmtStamp(cur.updatedAt) + '). Als je doorgaat, overschrijft jouw versie die. Doorgaan?')) return;
+        }
       } catch (e) {}
     } else if (g.status !== 404) {
       throw new Error('Ophalen mislukt (' + g.status + ')');
     }
     const stamp = new Date().toISOString();
+    const rev = REV;
     const body = {
       message: 'Planning bijgewerkt ' + fmtStamp(stamp),
       branch: GH.branch,
@@ -1070,19 +1102,25 @@ async function publish() {
     };
     if (sha) body.sha = sha;
     const p = await fetch(GH_API, { method: 'PUT', headers: { ...ghHeaders(token), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    if (p.status === 401 || p.status === 403) { toast('Publiceren niet toegestaan (' + p.status + '). Controleer de rechten van je token.'); tokenDlg(true); return; }
+    if (p.status === 401 || p.status === 403) { toast('Publiceren niet toegestaan (' + p.status + '). Controleer de rechten van je token.'); if (!auto) tokenDlg(true); return; }
     if (p.status === 409 || p.status === 422) { toast('Publiceren botste met een andere wijziging. Probeer het opnieuw.'); return; }
     if (!p.ok) throw new Error('Publiceren mislukt (' + p.status + ')');
     BASE = stamp;
-    DIRTY = false;
     REMOTE_NEWER = false;
-    try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+    if (REV === rev) {
+      DIRTY = false;
+      try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+    } else {
+      try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ base: BASE, state: S })); } catch (e) {}
+      scheduleAutoPublish();
+    }
     render();
     updatePublishUI();
     toast('Gepubliceerd. Collega’s zien de nieuwe planning binnen enkele minuten.');
   } catch (e) {
     toast('Publiceren mislukt: ' + ((e && e.message) || e));
   } finally {
+    PUBLISHING = false;
     btn.disabled = false;
   }
 }
