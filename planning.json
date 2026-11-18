@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-18T11:06:29.132Z",
+  "updatedAt": "2026-11-18T11:08:25.865Z",
   "ships": [
     {
       "arrived": true,
@@ -42,7 +42,7 @@
       "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:10060855/zoom:13"
     },
     {
-      "arrived": true,
+      "arrived": false,
       "cap": 40,
       "departed": false,
       "id": "s6",
@@ -58,7 +58,7 @@
       "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:416514/zoom:14"
     },
     {
-      "arrived": true,
+      "arrived": false,
       "cap": 40,
       "departed": false,
       "id": "s8",
