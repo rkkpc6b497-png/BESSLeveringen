@@ -574,6 +574,7 @@ const SNAP = {
       "cap": 14,
       "departed": true,
       "id": "s1",
+      "mmsi": "636025656",
       "name": "MSC Iris",
       "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:9908656/zoom:13"
     },
@@ -582,6 +583,7 @@ const SNAP = {
       "cap": 20,
       "departed": true,
       "id": "s2",
+      "mmsi": "353160000",
       "name": "MSC Sonia",
       "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:411685/zoom:14"
     },
@@ -590,6 +592,7 @@ const SNAP = {
       "cap": 38,
       "departed": true,
       "id": "s3",
+      "mmsi": "636023678",
       "name": "MSC Marie",
       "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:8412551/zoom:13"
     },
@@ -598,6 +601,7 @@ const SNAP = {
       "cap": 40,
       "departed": false,
       "id": "s4",
+      "mmsi": "636024272",
       "name": "MSC Mariacristina",
       "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:8880594/zoom:13"
     },
@@ -606,6 +610,7 @@ const SNAP = {
       "cap": 32,
       "departed": false,
       "id": "s5",
+      "mmsi": "636025762",
       "name": "MSC Sahara XVI",
       "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:10060855/zoom:13"
     },
@@ -614,6 +619,7 @@ const SNAP = {
       "cap": 40,
       "departed": false,
       "id": "s6",
+      "mmsi": "636021768",
       "name": "MSC Fatma",
       "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:7263661/zoom:13"
     },
@@ -622,6 +628,7 @@ const SNAP = {
       "cap": 34,
       "departed": false,
       "id": "s7",
+      "mmsi": "636027046",
       "name": "MSC Santhya III",
       "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:416514/zoom:14"
     },
@@ -630,6 +637,7 @@ const SNAP = {
       "cap": 40,
       "departed": false,
       "id": "s8",
+      "mmsi": "636022448",
       "name": "MSC Monica Cristina",
       "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:7854968/zoom:10"
     },
@@ -638,6 +646,7 @@ const SNAP = {
       "cap": 6,
       "departed": false,
       "id": "s9",
+      "mmsi": "255917293",
       "name": "MSC Allicante VI",
       "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:758634/zoom:14"
     }
@@ -656,6 +665,7 @@ function normalize(st) {
     if (!Object.prototype.hasOwnProperty.call(s, 'trackingUrl')) s.trackingUrl = d ? (d.trackingUrl || '') : '';
     if (!Object.prototype.hasOwnProperty.call(s, 'arrived')) s.arrived = d ? !!d.arrived : false;
     if (!Object.prototype.hasOwnProperty.call(s, 'departed')) s.departed = d ? !!d.departed : false;
+    if (!Object.prototype.hasOwnProperty.call(s, 'mmsi')) s.mmsi = d ? (d.mmsi || '') : '';
     if (s.departed && !s.arrived) s.departed = false;
   });
   return st;
@@ -1183,6 +1193,53 @@ function clearToken() {
   toast('Token verwijderd uit deze browser.');
 }
 
+/* ---------- AIS-tracking (gevuld door de geplande GitHub-taak) ---------- */
+const TRACK_URL = `https://raw.githubusercontent.com/${GH.owner}/${GH.repo}/tracking/tracking.json`;
+let TRACK = null;
+
+async function loadTrack() {
+  try {
+    const res = await fetch(`${TRACK_URL}?t=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error(res.status);
+    const j = await res.json();
+    if (!j || !j.vessels) return;
+    const changed = !TRACK || TRACK.updatedAt !== j.updatedAt;
+    TRACK = j;
+    if (changed && (tab === 0 || tab === 9) && !$('modal').classList.contains('on')) render();
+  } catch (e) {}
+}
+
+const NAV_STATUS = { 0: 'Onderweg', 1: 'Voor anker', 2: 'Niet bestuurbaar', 3: 'Beperkt manoeuvreerbaar', 4: 'Beperkt door diepgang', 5: 'Afgemeerd', 6: 'Aan de grond', 7: 'Vissend', 8: 'Zeilend' };
+const inRotterdam = v => v.lat >= 51.84 && v.lat <= 52.02 && v.lon >= 3.80 && v.lon <= 4.45;
+
+function agoText(iso) {
+  const m = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+  if (!Number.isFinite(m)) return '';
+  if (m < 1) return 'zojuist';
+  if (m < 60) return `${m} min geleden`;
+  const hr = Math.round(m / 60);
+  return hr < 48 ? `${hr} u geleden` : `${Math.round(hr / 24)} d geleden`;
+}
+
+function trackCell(s, deadlineISO) {
+  const dim = t => `<span class="text-xs" style="color:var(--mut)">${t}</span>`;
+  if (!s.mmsi) return dim('Geen MMSI');
+  const v = TRACK && TRACK.vessels && TRACK.vessels[s.mmsi];
+  if (!v || typeof v.lat !== 'number') return dim('Nog geen signaal');
+  const port = inRotterdam(v), still = v.sog == null || v.sog < 1;
+  const stale = Date.now() - new Date(v.positionAt).getTime() > 12 * 3600e3;
+  const status = port ? 'In havengebied Rotterdam' : (NAV_STATUS[v.navStatus] || (still ? 'Stilliggend' : 'Onderweg'));
+  const pos = `${Math.abs(v.lat).toFixed(2)}°${v.lat >= 0 ? 'N' : 'S'} ${Math.abs(v.lon).toFixed(2)}°${v.lon >= 0 ? 'E' : 'W'}`;
+  const map = `https://www.openstreetmap.org/?mlat=${v.lat}&mlon=${v.lon}#map=6/${v.lat}/${v.lon}`;
+  const etaLate = !s.arrived && v.eta && deadlineISO && v.eta.slice(0, 10) > deadlineISO;
+  return `<div class="font-medium">${status}</div>
+    <div class="text-xs" style="color:var(--mut)">${pos}${v.sog != null ? ' · ' + v.sog.toFixed(1) + ' kn' : ''} · <a href="${map}" target="_blank" rel="noopener noreferrer" style="color:var(--acc);text-decoration:underline">kaart &nearr;</a></div>
+    <div class="text-xs" style="color:${stale ? 'var(--warn)' : 'var(--mut)'}">${agoText(v.positionAt)}${stale ? ' (verouderd)' : ''}</div>
+    ${v.destination ? `<div class="text-xs">Naar ${esc(v.destination)}${v.eta ? ' · ETA ' + fmtDate(v.eta.slice(0, 10)) : ''}</div>` : ''}
+    ${etaLate ? '<span class="pill late">ETA na uiterste aanmeerdatum</span>' : ''}
+    ${port && !s.arrived && still ? (EDIT ? `<button class="btn mt-1" onclick="toggleArrival('${s.id}')">Markeer als aangemeerd</button>` : '<span class="pill wait">Lijkt aangemeerd</span>') : ''}`;
+}
+
 /* ---------- Lokale bewerktoegang ---------- */
 function editAccess() {
   if (EDIT) {
@@ -1243,6 +1300,7 @@ function shipsV() {
           <th>Aangemeerd</th>
           <th>Vertrokken (gelost)</th>
           <th style="min-width:240px">MarineTraffic</th>
+          <th>MMSI (AIS)</th>
           <th>Ingepland</th>
           <th>Vrij</th>
           <th></th>
@@ -1289,6 +1347,9 @@ function shipsV() {
                   : '<span class="text-xs" style="color:var(--mut)">Geen link</span>'
               }
             </td>
+            <td>${EDIT
+              ? `<input id="mmsi-${s.id}" inputmode="numeric" maxlength="9" placeholder="9 cijfers" value="${esc(s.mmsi || '')}" style="width:118px" aria-label="MMSI van ${esc(s.name)}">`
+              : (s.mmsi ? esc(s.mmsi) : '<span class="text-xs" style="color:var(--mut)">-</span>')}</td>
             <td>${u}</td>
             <td>${s.cap - u}</td>
             <td><button class="btn del" ${u ? 'disabled title="Schip heeft ingeplande units"' : ''} onclick="delShip('${s.id}')">Verwijderen</button></td>
@@ -1301,6 +1362,7 @@ function shipsV() {
     <label class="flex-1 text-xs" style="min-width:180px;color:var(--mut)">Nieuw schip<input id="ns" placeholder="Naam van het schip" class="mt-1"></label>
     <label class="text-xs" style="width:120px;color:var(--mut)">Capaciteit<input id="nc" type="number" min="1" value="20" class="mt-1"></label>
     <label class="flex-1 text-xs" style="min-width:240px;color:var(--mut)">MarineTraffic-link (optioneel)<input id="nt" type="url" placeholder="https://www.marinetraffic.com/..." class="mt-1"></label>
+    <label class="text-xs" style="width:140px;color:var(--mut)">MMSI (optioneel)<input id="nm" inputmode="numeric" maxlength="9" placeholder="9 cijfers" class="mt-1"></label>
     <button class="btn pri" onclick="addShip()">Schip toevoegen</button>
   </div>`;
 }
@@ -1311,17 +1373,21 @@ function trackShip(id) {
   if (v && !url) { toast('Vul een geldige http(s)-URL in.'); input?.focus(); return; }
   const s = shipOf(id);
   if (!s) return;
+  const mIn = $('mmsi-' + id), mm = mIn ? mIn.value.trim() : '';
+  if (mm && !/^\d{9}$/.test(mm)) { toast('Een MMSI bestaat uit precies 9 cijfers.'); mIn?.focus(); return; }
   s.trackingUrl = url;
+  s.mmsi = mm;
   save(); render();
-  toast(url ? 'MarineTraffic-link opgeslagen.' : 'MarineTraffic-link verwijderd.');
+  toast('Schipgegevens opgeslagen.');
 }
 
 function addShip() {
   if (!ed()) return;
-  const n = $('ns').value.trim(), c = +$('nc').value, t = $('nt').value.trim(), url = safeTrackUrl(t);
+  const n = $('ns').value.trim(), c = +$('nc').value, t = $('nt').value.trim(), url = safeTrackUrl(t), nmv = $('nm').value.trim();
   if (!n || !(c >= 1)) return toast('Vul een naam en een capaciteit van minimaal 1 in.');
   if (t && !url) return toast('Vul een geldige http(s)-URL in.');
-  S.ships.push({ id: uid(), name: n, cap: Math.floor(c), trackingUrl: url, arrived: false, departed: false });
+  if (nmv && !/^\d{9}$/.test(nmv)) return toast('Een MMSI bestaat uit precies 9 cijfers.');
+  S.ships.push({ id: uid(), name: n, cap: Math.floor(c), trackingUrl: url, mmsi: nmv, arrived: false, departed: false });
   save(); render();
 }
 
@@ -1413,6 +1479,7 @@ function dash() {
       <td>${dtInfo.deadlineLabel}</td>
       <td>${renderArrivalPill(s, dtInfo.deadlineISO)}</td>
       <td>${s.arrived ? `<b>${bufferOf(s)}</b>` : '<span class="text-xs" style="color:var(--mut)">-</span>'}</td>
+      <td style="min-width:200px">${trackCell(s, dtInfo.deadlineISO)}</td>
       <td style="width:20%">${bar(g, t - g, s.cap, 'var(--acc)')}</td>
       <td>${url ? `<a class="btn inline-block" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Volg schip &nearr;</a>` : '<span class="text-xs" style="color:var(--mut)">Geen link</span>'}</td>
     </tr>`;
@@ -1428,7 +1495,7 @@ function dash() {
   <h2>Voortgang per veldhuisje</h2>
   <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-2.5 mb-5">${huts}</div>
   <h2>Voortgang &amp; status per schip</h2>
-  <div class="card overflow-x-auto"><table><thead><tr><th>Schip</th><th>Capaciteit</th><th>Gepland</th><th>Geleverd</th><th>Vrij</th><th>Uiterste aanmeerdatum</th><th>Status</th><th>Buffer Maasvlakte</th><th>Benutting</th><th>MarineTraffic</th></tr></thead><tbody>${ships || '<tr><td colspan="10" class="text-xs" style="color:var(--mut)">Alle schepen zijn compleet geleverd.</td></tr>'}</tbody></table></div>
+  <div class="card overflow-x-auto"><table><thead><tr><th>Schip</th><th>Capaciteit</th><th>Gepland</th><th>Geleverd</th><th>Vrij</th><th>Uiterste aanmeerdatum</th><th>Status</th><th>Buffer Maasvlakte</th><th>Laatste positie (AIS)</th><th>Benutting</th><th>MarineTraffic</th></tr></thead><tbody>${ships || '<tr><td colspan="11" class="text-xs" style="color:var(--mut)">Alle schepen zijn compleet geleverd.</td></tr>'}</tbody></table></div>
   <div class="flex flex-wrap items-center gap-3 mt-2">
     <p class="text-xs" style="color:var(--mut)">Buffer Maasvlakte = ingeplande units van aangemeerde schepen die nog niet in Farmsum zijn geleverd. Gesorteerd op uiterste aanmeerdatum. Compleet geleverde schepen staan niet in dit overzicht.</p>
     ${doneCount ? `<button class="btn" onclick="toggleDone()">${SHOW_DONE ? 'Verberg' : 'Toon'} compleet geleverde schepen (${doneCount})</button>` : ''}
@@ -1586,8 +1653,10 @@ render();
 updatePublishUI();
 if (DIRTY) toast('Je hebt niet-gepubliceerde wijzigingen. Ontgrendel bewerken om te publiceren.');
 loadRemote();
+loadTrack();
 setInterval(loadRemote, 120000);
-document.addEventListener('visibilitychange', () => { if (!document.hidden) loadRemote(); });
+setInterval(loadTrack, 300000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { loadRemote(); loadTrack(); } });
 </script>
 </body>
 </html>

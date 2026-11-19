@@ -1,0 +1,47 @@
+name: Scheepstracking
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tracking
+  cancel-in-progress: false
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Vorige gegevens ophalen
+        run: |
+          git fetch origin tracking || true
+          git show origin/tracking:tracking.json > "$RUNNER_TEMP/prev.json" 2>/dev/null || echo '{}' > "$RUNNER_TEMP/prev.json"
+
+      - name: Posities ophalen bij AISstream
+        env:
+          AISSTREAM_API_KEY: ${{ secrets.AISSTREAM_API_KEY }}
+          PREV_FILE: ${{ runner.temp }}/prev.json
+          OUT_FILE: ${{ runner.temp }}/tracking.json
+        run: node scripts/track.mjs
+
+      - name: Publiceren op de tracking-branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan tracking-data
+          git rm -rf --quiet .
+          cp "$RUNNER_TEMP/tracking.json" tracking.json
+          git add tracking.json
+          git commit -m "Scheepstracking $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin HEAD:tracking

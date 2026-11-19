@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-18T11:08:25.865Z",
+  "updatedAt": "2026-11-19T06:56:24.000Z",
   "ships": [
     {
       "arrived": true,
@@ -7,7 +7,8 @@
       "departed": true,
       "id": "s1",
       "name": "MSC Iris",
-      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:9908656/zoom:13"
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:9908656/zoom:13",
+      "mmsi": "636025656"
     },
     {
       "arrived": true,
@@ -15,7 +16,8 @@
       "departed": true,
       "id": "s2",
       "name": "MSC Sonia",
-      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:411685/zoom:14"
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:411685/zoom:14",
+      "mmsi": "353160000"
     },
     {
       "arrived": true,
@@ -23,7 +25,8 @@
       "departed": true,
       "id": "s3",
       "name": "MSC Marie",
-      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:8412551/zoom:13"
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:8412551/zoom:13",
+      "mmsi": "636023678"
     },
     {
       "arrived": false,
@@ -31,7 +34,8 @@
       "departed": false,
       "id": "s4",
       "name": "MSC Mariacristina",
-      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:8880594/zoom:13"
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:8880594/zoom:13",
+      "mmsi": "636024272"
     },
     {
       "arrived": false,
@@ -39,7 +43,8 @@
       "departed": false,
       "id": "s5",
       "name": "MSC Sahara XVI",
-      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:10060855/zoom:13"
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:10060855/zoom:13",
+      "mmsi": "636025762"
     },
     {
       "arrived": false,
@@ -47,7 +52,8 @@
       "departed": false,
       "id": "s6",
       "name": "MSC Fatma",
-      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:7263661/zoom:13"
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:7263661/zoom:13",
+      "mmsi": "636021768"
     },
     {
       "arrived": false,
@@ -55,7 +61,8 @@
       "departed": false,
       "id": "s7",
       "name": "MSC Santhya III",
-      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:416514/zoom:14"
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:416514/zoom:14",
+      "mmsi": "636027046"
     },
     {
       "arrived": false,
@@ -63,7 +70,8 @@
       "departed": false,
       "id": "s8",
       "name": "MSC Monica Cristina",
-      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:7854968/zoom:10"
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:7854968/zoom:10",
+      "mmsi": "636022448"
     },
     {
       "arrived": false,
@@ -71,7 +79,8 @@
       "departed": false,
       "id": "s9",
       "name": "MSC Allicante VI",
-      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:758634/zoom:14"
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:758634/zoom:14",
+      "mmsi": "255917293"
     }
   ],
   "deliveries": [
