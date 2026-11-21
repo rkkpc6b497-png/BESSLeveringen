@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-19T06:56:24.000Z",
+  "updatedAt": "2026-11-21T09:07:49.718Z",
   "ships": [
     {
       "arrived": true,
@@ -29,7 +29,7 @@
       "mmsi": "636023678"
     },
     {
-      "arrived": false,
+      "arrived": true,
       "cap": 40,
       "departed": false,
       "id": "s4",
