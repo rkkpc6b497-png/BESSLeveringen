@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-21T09:08:34.347Z",
+  "updatedAt": "2026-11-21T10:18:43.993Z",
   "ships": [
     {
       "arrived": true,
@@ -339,30 +339,6 @@
       "shipId": "s5",
       "status": "Gepland",
       "units": 4
-    },
-    {
-      "date": "2027-01-20",
-      "hut": "5B",
-      "id": "x15j3u9w",
-      "shipId": "s7",
-      "status": "Gepland",
-      "units": 4
-    },
-    {
-      "date": "2027-01-21",
-      "hut": "5B",
-      "id": "xxzxu0m1",
-      "shipId": "s7",
-      "status": "Gepland",
-      "units": 6
-    },
-    {
-      "date": "2027-01-22",
-      "hut": "5B",
-      "id": "xc1mk5ap",
-      "shipId": "s7",
-      "status": "Gepland",
-      "units": 8
     },
     {
       "date": "2027-01-25",
