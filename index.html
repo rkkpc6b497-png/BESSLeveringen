@@ -1001,9 +1001,9 @@ function expCSVTab() {
     const [y, m] = MON[tab - 1], pre = y + '-' + p(m + 1);
     rows = [['Datum','Schip','Veldhuisje','Blok','Units','Status'], ...S.deliveries.filter(d => d.date.startsWith(pre)).sort((a, b) => a.date.localeCompare(b.date)).map(d => [d.date, sn(d.shipId), d.hut, HB[d.hut] || '', d.units, d.status])];
   } else if (tab == 9) {
-    rows = [['Schip','Capaciteit','Ingepland','Geleverd','Vrij','Eerste levering','Uiterste aanmeerdatum','Aangemeerd','Vertrokken (gelost)','Buffer Maasvlakte','MarineTraffic'], ...S.ships.map(s => {
+    rows = [['Schip','Capaciteit','Ingepland','Geleverd','Eerste levering','Uiterste aanmeerdatum','Aangemeerd','Vertrokken (gelost)','Buffer Maasvlakte','MarineTraffic'], ...S.ships.map(s => {
       const f = S.deliveries.filter(d => d.shipId == s.id), t = sum(f), g = sum(f.filter(d => d.status == 'Geleverd')), dtInfo = getShipDates(s.id);
-      return [s.name, s.cap, t - g, g, s.cap - t, dtInfo.firstLabel, dtInfo.deadlineLabel, s.arrived ? 'Ja' : 'Nee', s.departed ? 'Ja' : 'Nee', bufferOf(s), s.trackingUrl || ''];
+      return [s.name, s.cap, t - g, g, dtInfo.firstLabel, dtInfo.deadlineLabel, s.arrived ? 'Ja' : 'Nee', s.departed ? 'Ja' : 'Nee', bufferOf(s), s.trackingUrl || ''];
     })];
   } else {
     rows = [['Maand','Leverdagen','Gepland','Bevestigd','Geleverd','Maandtotaal'], ...MON.map(([y, m]) => {
@@ -1302,7 +1302,6 @@ function shipsV() {
           <th style="min-width:240px">MarineTraffic</th>
           <th>MMSI (AIS)</th>
           <th>Ingepland</th>
-          <th>Vrij</th>
           <th></th>
         </tr>
       </thead>
@@ -1351,7 +1350,6 @@ function shipsV() {
               ? `<input id="mmsi-${s.id}" inputmode="numeric" maxlength="9" placeholder="9 cijfers" value="${esc(s.mmsi || '')}" style="width:118px" aria-label="MMSI van ${esc(s.name)}">`
               : (s.mmsi ? esc(s.mmsi) : '<span class="text-xs" style="color:var(--mut)">-</span>')}</td>
             <td>${u}</td>
-            <td>${s.cap - u}</td>
             <td><button class="btn del" ${u ? 'disabled title="Schip heeft ingeplande units"' : ''} onclick="delShip('${s.id}')">Verwijderen</button></td>
           </tr>`;
         }).join('')}
@@ -1464,26 +1462,47 @@ function dash() {
     if (da && db) return da.localeCompare(db) || a.name.localeCompare(b.name);
     return da ? -1 : db ? 1 : a.name.localeCompare(b.name);
   };
-  const ships = S.ships.filter(s => SHOW_DONE || !shipDone(s)).sort(byDeadline).map(s => {
-    const f = S.deliveries.filter(d => d.shipId == s.id);
-    const g = sum(f.filter(d => d.status == 'Geleverd'));
-    const t = sum(f);
-    const url = safeTrackUrl(s.trackingUrl);
-    const dtInfo = getShipDates(s.id);
+  const nowD = new Date(), todayISO = ds(nowD.getFullYear(), nowD.getMonth(), nowD.getDate());
+  const dayDiff = iso => Math.round((new Date(iso + 'T00:00:00') - new Date(todayISO + 'T00:00:00')) / 86400000);
+  const countdown = dd => dd > 1 ? `over ${dd} dagen` : dd === 1 ? 'morgen' : dd === 0 ? 'vandaag' : `${-dd} ${-dd === 1 ? 'dag' : 'dagen'} verstreken`;
+  const nonLink = '<span class="text-xs" style="color:var(--mut)">Geen link</span>';
+
+  /* Onderweg: nog niet aangemeerd, gericht op tracking */
+  const onwayShips = S.ships.filter(s => !s.arrived).sort(byDeadline);
+  const onway = onwayShips.map(s => {
+    const dtInfo = getShipDates(s.id), url = safeTrackUrl(s.trackingUrl);
+    const dd = dtInfo.deadlineISO ? dayDiff(dtInfo.deadlineISO) : null;
     return `<tr>
       <td class="font-medium">${esc(s.name)}</td>
       <td>${s.cap}</td>
-      <td>${t - g}</td>
-      <td>${g}</td>
-      <td>${s.cap - t}</td>
-      <td>${dtInfo.deadlineLabel}</td>
+      <td><div class="font-medium">${dtInfo.deadlineLabel}</div>${dd === null ? '' : `<div class="text-xs" style="color:${dd < 0 ? 'var(--bad)' : 'var(--mut)'}">${countdown(dd)}</div>`}</td>
+      <td>${dtInfo.firstLabel}</td>
       <td>${renderArrivalPill(s, dtInfo.deadlineISO)}</td>
-      <td>${s.arrived ? `<b>${bufferOf(s)}</b>` : '<span class="text-xs" style="color:var(--mut)">-</span>'}</td>
-      <td style="min-width:200px">${trackCell(s, dtInfo.deadlineISO)}</td>
-      <td style="width:20%">${bar(g, t - g, s.cap, 'var(--acc)')}</td>
-      <td>${url ? `<a class="btn inline-block" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Volg schip &nearr;</a>` : '<span class="text-xs" style="color:var(--mut)">Geen link</span>'}</td>
+      <td style="min-width:220px">${trackCell(s, dtInfo.deadlineISO)}</td>
+      <td>${url ? `<a class="btn inline-block" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Volg schip &nearr;</a>` : nonLink}</td>
     </tr>`;
   }).join('');
+  const onwayFoot = onwayShips.length ? `<tfoot><tr><td class="font-medium">Totaal onderweg</td><td><b>${onwayShips.reduce((t, s) => t + s.cap, 0)}</b></td><td colspan="5"></td></tr></tfoot>` : '';
+
+  /* Aangemeerd en/of gelost: status van de aanwezige BESS-units */
+  const mooredShips = S.ships.filter(s => s.arrived && (SHOW_DONE || !shipDone(s))).sort(byDeadline);
+  const mooredRows = mooredShips.map(s => {
+    const f = S.deliveries.filter(d => d.shipId == s.id);
+    const g = sum(f.filter(d => d.status == 'Geleverd')), t = sum(f);
+    const open = f.filter(d => d.status != 'Geleverd').map(d => d.date).sort();
+    const dtInfo = getShipDates(s.id);
+    return `<tr>
+      <td class="font-medium">${esc(s.name)}</td>
+      <td>${renderArrivalPill(s, dtInfo.deadlineISO)}</td>
+      <td>${s.cap}</td>
+      <td><b>${bufferOf(s)}</b></td>
+      <td>${g}</td>
+      <td>${open.length ? fmtDate(open[0]) : '-'}</td>
+      <td>${open.length ? fmtDate(open[open.length - 1]) : '-'}</td>
+      <td style="width:22%">${bar(g, t - g, s.cap, 'var(--acc)')}</td>
+    </tr>`;
+  }).join('');
+  const mooredFoot = mooredShips.length ? `<tfoot><tr><td class="font-medium">Totaal</td><td></td><td><b>${mooredShips.reduce((t, s) => t + s.cap, 0)}</b></td><td><b>${mooredShips.reduce((t, s) => t + bufferOf(s), 0)}</b></td><td><b>${mooredShips.reduce((t, s) => t + sum(S.deliveries.filter(d => d.shipId == s.id && d.status == 'Geleverd')), 0)}</b></td><td colspan="3"></td></tr></tfoot>` : '';
 
   return `<h1>Totaaloverzicht</h1>
   ${cap < NEED ? `<div class="card p-3.5 mb-4" style="border-left:5px solid var(--warn)"><b style="color:var(--warn)">Scheepscapaciteit te laag.</b> Bekend: ${cap} units, nodig: ${NEED}. Er ontbreken nog ${NEED - cap} units; voeg schepen toe op het tabblad Schepenlijst.</div>` : ''}
@@ -1494,10 +1513,13 @@ function dash() {
   <div class="grid md:grid-cols-3 gap-2.5 mb-5">${blocks}</div>
   <h2>Voortgang per veldhuisje</h2>
   <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-2.5 mb-5">${huts}</div>
-  <h2>Voortgang &amp; status per schip</h2>
-  <div class="card overflow-x-auto"><table><thead><tr><th>Schip</th><th>Capaciteit</th><th>Gepland</th><th>Geleverd</th><th>Vrij</th><th>Uiterste aanmeerdatum</th><th>Status</th><th>Buffer Maasvlakte</th><th>Laatste positie (AIS)</th><th>Benutting</th><th>MarineTraffic</th></tr></thead><tbody>${ships || '<tr><td colspan="11" class="text-xs" style="color:var(--mut)">Alle schepen zijn compleet geleverd.</td></tr>'}</tbody></table></div>
+  <h2>Onderweg &middot; tracking</h2>
+  <div class="card overflow-x-auto mb-2"><table><thead><tr><th>Schip</th><th>Units</th><th>Uiterste aanmeerdatum</th><th>Eerste levering</th><th>Status</th><th>Laatste positie (AIS)</th><th>MarineTraffic</th></tr></thead><tbody>${onway || '<tr><td colspan="7" class="text-xs" style="color:var(--mut)">Alle schepen zijn aangemeerd.</td></tr>'}</tbody>${onwayFoot}</table></div>
+  <p class="text-xs mb-5" style="color:var(--mut)">Schepen die nog niet zijn aangemeerd, gesorteerd op uiterste aanmeerdatum. Positie, bestemming en ETA komen uit AIS.</p>
+  <h2>Aangemeerd &amp; gelost &middot; BESS-units op de Maasvlakte</h2>
+  <div class="card overflow-x-auto"><table><thead><tr><th>Schip</th><th>Status</th><th>Capaciteit</th><th>In buffer</th><th>Geleverd in Farmsum</th><th>Volgende levering</th><th>Buffer leeg op</th><th>Voortgang</th></tr></thead><tbody>${mooredRows || '<tr><td colspan="8" class="text-xs" style="color:var(--mut)">Nog geen schepen aangemeerd.</td></tr>'}</tbody>${mooredFoot}</table></div>
   <div class="flex flex-wrap items-center gap-3 mt-2">
-    <p class="text-xs" style="color:var(--mut)">Buffer Maasvlakte = ingeplande units van aangemeerde schepen die nog niet in Farmsum zijn geleverd. Gesorteerd op uiterste aanmeerdatum. Compleet geleverde schepen staan niet in dit overzicht.</p>
+    <p class="text-xs" style="color:var(--mut)">In buffer = ingeplande units van aangemeerde schepen die nog niet in Farmsum zijn geleverd. &ldquo;Buffer leeg op&rdquo; is de laatste geplande levering van dat schip. Compleet geleverde schepen staan niet in dit overzicht.</p>
     ${doneCount ? `<button class="btn" onclick="toggleDone()">${SHOW_DONE ? 'Verberg' : 'Toon'} compleet geleverde schepen (${doneCount})</button>` : ''}
   </div>`;
 }
@@ -1571,10 +1593,10 @@ function expXLSX() {
     const f = by(d => d.hut == h), t = sum(f), gg = g(f);
     o.push([h, HB[h], HUT[h], gg, t - gg, +(gg / HUT[h] * 100).toFixed(0), HUT[h] - t]);
   }
-  o.push([], ['Schip', 'Capaciteit', 'Gepland/bevestigd', 'Geleverd', 'Vrij', 'Uiterste aanmeerdatum', 'Aangemeerd', 'Vertrokken (gelost)', 'Buffer Maasvlakte']);
+  o.push([], ['Schip', 'Capaciteit', 'Gepland/bevestigd', 'Geleverd', 'Uiterste aanmeerdatum', 'Aangemeerd', 'Vertrokken (gelost)', 'Buffer Maasvlakte']);
   S.ships.forEach(s => {
     const f = by(d => d.shipId == s.id), t = sum(f), gg = g(f), dtInfo = getShipDates(s.id);
-    o.push([s.name, s.cap, t - gg, gg, s.cap - t, dtInfo.deadlineLabel, s.arrived ? 'Ja' : 'Nee', s.departed ? 'Ja' : 'Nee', bufferOf(s)]);
+    o.push([s.name, s.cap, t - gg, gg, dtInfo.deadlineLabel, s.arrived ? 'Ja' : 'Nee', s.departed ? 'Ja' : 'Nee', bufferOf(s)]);
   });
   A('Totaaloverzicht', o, [28, 16, 18, 14, 18, 22, 14]);
 
@@ -1611,9 +1633,9 @@ function expXLSX() {
     A(MN[m] + ' ' + y, r, [34, 34, 34, 34, 34, 12, 10, 10]);
   });
 
-  A('Schepenlijst', [['Schip', 'Capaciteit', 'Gepland/bevestigd', 'Geleverd', 'Vrij', 'Eerste levering', 'Uiterste aanmeerdatum', 'Aangemeerd', 'Vertrokken (gelost)', 'Buffer Maasvlakte'], ...S.ships.map(s => {
+  A('Schepenlijst', [['Schip', 'Capaciteit', 'Gepland/bevestigd', 'Geleverd', 'Eerste levering', 'Uiterste aanmeerdatum', 'Aangemeerd', 'Vertrokken (gelost)', 'Buffer Maasvlakte'], ...S.ships.map(s => {
     const f = by(d => d.shipId == s.id), t = sum(f), gg = g(f), dtInfo = getShipDates(s.id);
-    return [s.name, s.cap, t - gg, gg, s.cap - t, dtInfo.firstLabel, dtInfo.deadlineLabel, s.arrived ? 'Ja' : 'Nee', s.departed ? 'Ja' : 'Nee', bufferOf(s)];
+    return [s.name, s.cap, t - gg, gg, dtInfo.firstLabel, dtInfo.deadlineLabel, s.arrived ? 'Ja' : 'Nee', s.departed ? 'Ja' : 'Nee', bufferOf(s)];
   })], [26, 12, 18, 12, 10, 16, 22, 12]);
 
   A('Alle leveringen', [['Datum', 'Schip', 'Veldhuisje', 'Blok', 'Units', 'Status'], ...[...D].sort((a, c) => a.date.localeCompare(c.date)).map(x => [fmtDate(x.date), sn(x.shipId), x.hut, HB[x.hut] || '', x.units, x.status])], [12, 26, 12, 10, 8, 12]);
