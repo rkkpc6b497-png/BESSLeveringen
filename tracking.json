@@ -1,0 +1,56 @@
+{
+  "updatedAt": "2026-11-21T11:39:03.778Z",
+  "listenSeconds": 150,
+  "messages": 3,
+  "vessels": {
+    "353160000": {
+      "mmsi": "353160000",
+      "name": "MSC Sonia"
+    },
+    "636021768": {
+      "mmsi": "636021768",
+      "name": "MSC Fatma",
+      "lat": 36.25776,
+      "lon": -7.319036666666666,
+      "sog": 17.9,
+      "cog": 290.8,
+      "heading": 290,
+      "navStatus": 0,
+      "positionAt": "2026-11-21T11:38:24Z"
+    },
+    "636023678": {
+      "mmsi": "636023678",
+      "name": "MSC Marie"
+    },
+    "636024272": {
+      "mmsi": "636024272",
+      "name": "MSC Mariacristina",
+      "lat": 51.94786833333333,
+      "lon": 4.051121666666666,
+      "sog": 0,
+      "cog": 77.5,
+      "heading": 77,
+      "navStatus": 5,
+      "positionAt": "2026-11-21T03:23:36Z",
+      "destination": "NLRTM",
+      "eta": "2026-11-20T12:00:00.000Z",
+      "imo": 9968279,
+      "staticAt": "2026-11-21T11:37:55Z"
+    },
+    "636025656": {
+      "mmsi": "636025656",
+      "name": "MSC Iris",
+      "lat": 51.291626666666666,
+      "lon": 4.257655000000001,
+      "sog": 0,
+      "cog": 245.9,
+      "heading": 32,
+      "navStatus": 5,
+      "positionAt": "2026-11-20T15:32:22Z"
+    },
+    "636025762": {
+      "mmsi": "636025762",
+      "name": "MSC Sahara XVI"
+    }
+  }
+}
