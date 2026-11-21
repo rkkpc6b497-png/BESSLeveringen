@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-21T10:19:09.241Z",
+  "updatedAt": "2026-11-21T10:19:34.694Z",
   "ships": [
     {
       "arrived": true,
@@ -54,15 +54,6 @@
       "name": "MSC Fatma",
       "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:7263661/zoom:13",
       "mmsi": "636021768"
-    },
-    {
-      "arrived": false,
-      "cap": 34,
-      "departed": false,
-      "id": "s7",
-      "name": "MSC Santhya III",
-      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:416514/zoom:14",
-      "mmsi": "636027046"
     },
     {
       "arrived": false,
@@ -339,30 +330,6 @@
       "shipId": "s5",
       "status": "Gepland",
       "units": 4
-    },
-    {
-      "date": "2027-02-01",
-      "hut": "5D",
-      "id": "x2bwofry",
-      "shipId": "s8",
-      "status": "Gepland",
-      "units": 8
-    },
-    {
-      "date": "2027-02-02",
-      "hut": "5D",
-      "id": "x46nzc07",
-      "shipId": "s8",
-      "status": "Gepland",
-      "units": 8
-    },
-    {
-      "date": "2027-02-03",
-      "hut": "5D",
-      "id": "xvlj8qv1",
-      "shipId": "s9",
-      "status": "Gepland",
-      "units": 6
     }
   ]
 }
