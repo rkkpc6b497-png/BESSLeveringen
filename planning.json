@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-21T10:19:34.694Z",
+  "updatedAt": "2026-11-21T10:19:42.498Z",
   "ships": [
     {
       "arrived": true,
@@ -54,24 +54,6 @@
       "name": "MSC Fatma",
       "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:7263661/zoom:13",
       "mmsi": "636021768"
-    },
-    {
-      "arrived": false,
-      "cap": 40,
-      "departed": false,
-      "id": "s8",
-      "name": "MSC Monica Cristina",
-      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:7854968/zoom:10",
-      "mmsi": "636022448"
-    },
-    {
-      "arrived": false,
-      "cap": 6,
-      "departed": false,
-      "id": "s9",
-      "name": "MSC Allicante VI",
-      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:758634/zoom:14",
-      "mmsi": "255917293"
     }
   ],
   "deliveries": [
