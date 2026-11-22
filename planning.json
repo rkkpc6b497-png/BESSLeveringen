@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-21T10:19:42.498Z",
+  "updatedAt": "2026-11-22T18:36:49.026Z",
   "ships": [
     {
       "arrived": true,
@@ -31,7 +31,7 @@
     {
       "arrived": true,
       "cap": 40,
-      "departed": false,
+      "departed": true,
       "id": "s4",
       "name": "MSC Mariacristina",
       "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:8880594/zoom:13",
