@@ -44,4 +44,6 @@ jobs:
           git checkout --orphan tracking-data
           git rm -rf --quiet .
           cp "$RUNNER_TEMP/tracking.json" tracking.json
-    
+          git add tracking.json
+          git commit -m "Scheepstracking $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push --force origin HEAD:tracking
