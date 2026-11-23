@@ -1,8 +1,9 @@
 name: Scheepstracking
 
 on:
+  # Vangnet: GitHub draait deze planning niet betrouwbaar. De echte trigger is een externe planner (zie uitleg).
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '*/30 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -15,7 +16,7 @@ concurrency:
 jobs:
   track:
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
@@ -31,6 +32,7 @@ jobs:
       - name: Posities ophalen bij AISstream
         env:
           AISSTREAM_API_KEY: ${{ secrets.AISSTREAM_API_KEY }}
+          LISTEN_SECONDS: '300'
           PREV_FILE: ${{ runner.temp }}/prev.json
           OUT_FILE: ${{ runner.temp }}/tracking.json
         run: node scripts/track.mjs
@@ -42,6 +44,4 @@ jobs:
           git checkout --orphan tracking-data
           git rm -rf --quiet .
           cp "$RUNNER_TEMP/tracking.json" tracking.json
-          git add tracking.json
-          git commit -m "Scheepstracking $(date -u +%Y-%m-%dT%H:%MZ)"
-          git push --force origin HEAD:tracking
+    
