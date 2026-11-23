@@ -1480,6 +1480,10 @@ function dash() {
   const dayDiff = iso => Math.round((new Date(iso + 'T00:00:00') - new Date(todayISO + 'T00:00:00')) / 86400000);
   const countdown = dd => dd > 1 ? `over ${dd} dagen` : dd === 1 ? 'morgen' : dd === 0 ? 'vandaag' : `${-dd} ${-dd === 1 ? 'dag' : 'dagen'} verstreken`;
   const nonLink = '<span class="text-xs" style="color:var(--mut)">Geen link</span>';
+  const trackAge = TRACK && TRACK.updatedAt ? Date.now() - new Date(TRACK.updatedAt).getTime() : null;
+  const trackNote = !TRACK
+    ? 'Tracking-gegevens zijn nog niet geladen.'
+    : `Tracking laatst gecontroleerd: ${fmtStamp(TRACK.updatedAt)} (${agoText(TRACK.updatedAt)}).${trackAge > 3 * 3600e3 ? ' <b style="color:var(--warn)">Dat is langer geleden dan verwacht: de tracking-taak draait mogelijk niet, recente posities kunnen ontbreken.</b>' : ''}`;
 
   /* Onderweg: nog niet aangemeerd, gericht op tracking */
   const onwayShips = S.ships.filter(s => !s.arrived).sort(byDeadline);
@@ -1529,7 +1533,7 @@ function dash() {
   <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-2.5 mb-5">${huts}</div>
   <h2>Onderweg &middot; tracking</h2>
   <div class="card overflow-x-auto mb-2"><table><thead><tr><th>Schip</th><th>Units</th><th>Uiterste aanmeerdatum</th><th>Eerste levering</th><th>Status</th><th>Laatste positie (AIS)</th><th>MarineTraffic</th></tr></thead><tbody>${onway || '<tr><td colspan="7" class="text-xs" style="color:var(--mut)">Alle schepen zijn aangemeerd.</td></tr>'}</tbody>${onwayFoot}</table></div>
-  <p class="text-xs mb-5" style="color:var(--mut)">Schepen die nog niet zijn aangemeerd, gesorteerd op uiterste aanmeerdatum. Positie, bestemming en ETA komen uit AIS.</p>
+  <p class="text-xs mb-5" style="color:var(--mut)">Schepen die nog niet zijn aangemeerd, gesorteerd op uiterste aanmeerdatum. Positie, bestemming en ETA komen uit AIS en worden door grondstations langs de kust ontvangen; midden op zee kan een positie dus uren oud zijn. ${trackNote}</p>
   <h2>Aangemeerd &amp; gelost &middot; BESS-units op de Maasvlakte</h2>
   <div class="card overflow-x-auto"><table><thead><tr><th>Schip</th><th>Status</th><th>Capaciteit</th><th>In buffer</th><th>Geleverd in Farmsum</th><th>Volgende levering</th><th>Buffer leeg op</th><th>Voortgang</th></tr></thead><tbody>${mooredRows || '<tr><td colspan="8" class="text-xs" style="color:var(--mut)">Nog geen schepen aangemeerd.</td></tr>'}</tbody>${mooredFoot}</table></div>
   <div class="flex flex-wrap items-center gap-3 mt-2">
