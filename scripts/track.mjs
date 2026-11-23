@@ -7,7 +7,7 @@ if (!KEY) { console.error('AISSTREAM_API_KEY ontbreekt (repository secret).'); p
 
 const OUT = process.env.OUT_FILE || 'tracking.json';
 const PREV = process.env.PREV_FILE || 'prev.json';
-const LISTEN_MS = Number(process.env.LISTEN_SECONDS || 150) * 1000;
+const LISTEN_MS = Number(process.env.LISTEN_SECONDS || 300) * 1000;
 
 const planning = JSON.parse(fs.readFileSync('planning.json', 'utf8'));
 const ships = (planning.ships || []).filter(s => /^\d{9}$/.test(String(s.mmsi || '')));
@@ -65,12 +65,14 @@ function handle(msg) {
   }
 }
 
-if (mmsis.length) {
-  await new Promise(resolve => {
+const allSeen = () => seenPos.size === mmsis.length && seenStatic.size === mmsis.length;
+
+function listenOnce(msLeft) {
+  return new Promise(resolve => {
     const ws = new WebSocket(process.env.AIS_URL || 'wss://stream.aisstream.io/v0/stream');
     let done = false;
     const finish = () => { if (done) return; done = true; clearTimeout(timer); try { ws.close(); } catch (e) {} resolve(); };
-    const timer = setTimeout(finish, LISTEN_MS);
+    const timer = setTimeout(finish, msLeft);
     ws.onopen = () => ws.send(JSON.stringify({
       APIKey: KEY,
       BoundingBoxes: [[[-90, -180], [90, 180]]],
@@ -82,14 +84,25 @@ if (mmsis.length) {
       if (typeof text !== 'string') text = (text instanceof Blob) ? await text.text() : Buffer.from(text).toString('utf8');
       let msg; try { msg = JSON.parse(text); } catch (e) { return; }
       handle(msg);
-      if (fatal || (seenPos.size === mmsis.length && seenStatic.size === mmsis.length)) finish();
+      if (fatal || allSeen()) finish();
     };
     ws.onerror = e => { console.error('WebSocket-fout:', (e && e.message) || ''); finish(); };
     ws.onclose = finish;
   });
 }
 
-console.log(`Berichten ontvangen: ${count}. Posities: ${seenPos.size}/${mmsis.length}, statische gegevens: ${seenStatic.size}/${mmsis.length}.`);
+// Blijf luisteren tot de tijd om is; sluit AISstream de verbinding eerder, maak dan opnieuw verbinding.
+const deadline = Date.now() + LISTEN_MS;
+let attempts = 0;
+while (mmsis.length && !fatal && !allSeen() && Date.now() < deadline - 5000 && attempts < 20) {
+  attempts++;
+  await listenOnce(deadline - Date.now());
+  if (fatal || allSeen() || Date.now() >= deadline - 5000) break;
+  console.log('Verbinding gesloten voor het einde van het luistervenster; opnieuw verbinden...');
+  await new Promise(r => setTimeout(r, 3000));
+}
+
+console.log(`Verbindingen: ${attempts}. Berichten ontvangen: ${count}. Posities: ${seenPos.size}/${mmsis.length}, statische gegevens: ${seenStatic.size}/${mmsis.length}.`);
 if (fatal) process.exit(1);
 
 fs.writeFileSync(OUT, JSON.stringify({
