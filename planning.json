@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-24T11:11:55.428Z",
+  "updatedAt": "2026-11-24T12:31:05.722Z",
   "ships": [
     {
       "arrived": true,
@@ -54,6 +54,15 @@
       "name": "MSC Fatma",
       "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:7263661/zoom:13",
       "mmsi": "636021768"
+    },
+    {
+      "id": "x7kgzw5y",
+      "name": "Wilhelmshaven Express",
+      "cap": 20,
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/details/ships/shipid:9581371/mmsi:211151710/imo:9943918/vessel:WILHELMSHAVEN_EXPRESS",
+      "mmsi": "211151710",
+      "arrived": false,
+      "departed": false
     }
   ],
   "deliveries": [
