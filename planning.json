@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-24T12:40:27.401Z",
+  "updatedAt": "2026-11-24T12:41:40.275Z",
   "ships": [
     {
       "arrived": true,
@@ -77,7 +77,7 @@
       "id": "xqsdtizv",
       "name": "Tihama (Aalborg Express)",
       "cap": 4,
-      "trackingUrl": "https://www.marinetraffic.com/en/ais/details/ships/shipid:3842177/mmsi:218008040/imo:9736107/vessel:AALBORG_EXPRESS",
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:3842177/zoom:10",
       "mmsi": "218008040",
       "arrived": false,
       "departed": false
