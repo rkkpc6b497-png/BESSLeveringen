@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-24T12:39:16.563Z",
+  "updatedAt": "2026-11-24T12:39:30.421Z",
   "ships": [
     {
       "arrived": true,
@@ -94,7 +94,7 @@
     {
       "id": "xbmo9j71",
       "name": "Busan Express",
-      "cap": 16,
+      "cap": 20,
       "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:8446016/zoom:10",
       "mmsi": "218026640",
       "arrived": false,
