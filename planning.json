@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-24T12:31:05.722Z",
+  "updatedAt": "2026-11-24T12:32:44.395Z",
   "ships": [
     {
       "arrived": true,
@@ -61,6 +61,15 @@
       "cap": 20,
       "trackingUrl": "https://www.marinetraffic.com/en/ais/details/ships/shipid:9581371/mmsi:211151710/imo:9943918/vessel:WILHELMSHAVEN_EXPRESS",
       "mmsi": "211151710",
+      "arrived": false,
+      "departed": false
+    },
+    {
+      "id": "x0t0hdov",
+      "name": "Manila Express",
+      "cap": 20,
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/details/ships/shipid:7840474/mmsi:218006290/imo:9540120/vessel:MANILA_EXPRESS",
+      "mmsi": "218006290",
       "arrived": false,
       "departed": false
     }
