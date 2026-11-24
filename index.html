@@ -49,6 +49,10 @@
     .cal tr>*:last-child{border-right:0}.cal tbody tr:last-child td{border-bottom:0}
     .cal th{padding:11px;text-align:center}
     .cal td{width:15.5%;height:122px;padding:7px 8px}
+    .cal th.wk,.cal td.wk{width:48px;min-width:48px;padding:8px 4px;text-align:center}
+    .cal td.wk{background:var(--seg);color:var(--mut)}
+    .cal td.wk b{display:block;margin-top:2px;color:var(--fg);font:600 17px/1 'Bricolage Grotesque','Geist',sans-serif}
+    .wkl{font-size:10px;letter-spacing:.08em;text-transform:uppercase}
     .cal td.empty{background:color-mix(in srgb,var(--seg) 70%,transparent)}
     .dn{display:flex;justify-content:space-between;align-items:center;color:var(--mut);font-size:11.5px}
     .dn b{color:var(--fg);font:600 14px 'Bricolage Grotesque','Geist',sans-serif;letter-spacing:-.02em}
@@ -83,7 +87,7 @@
     #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:10px 16px 10px 14px;border-radius:99px;background:#0f1419;color:#eef1f5;font-size:13px;box-shadow:var(--sh);display:none;z-index:40}
     #toast::before{content:'';display:inline-block;width:8px;height:8px;margin-right:9px;border-radius:50%;background:var(--volt)}
     @page{size:A3 landscape;margin:10mm}
-    @media print{*{-webkit-print-color-adjust:exact;print-color-adjust:exact}.noprint{display:none!important}body{background:#fff;color:#000;font-size:13px}main{padding:0!important}.cal{table-layout:fixed}.cal th{font-size:15px;text-align:center;padding:6px}.cal td{width:17.8%;height:36mm;font-size:13px;padding:4px 6px}.cal th:last-child,.cal td:last-child{width:11%}.dc{font-size:12.5px;padding:3px 7px}.dn{font-size:13px}.st{display:inline-block;font-size:11px}.card,tr{break-inside:avoid;box-shadow:none!important;border-radius:0}h1,main h1{font-size:26px!important}.kpi{background:#fff!important;color:#000!important}.kpi b{font-size:24px;color:#000!important}.kpi>span:first-child,.kpi .text-xs{color:#555!important}.cal{overflow:visible}.cal td.empty{background:#f3f4f6}.st.Geleverd{background:#c6f432;color:#0f1419}.ph{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid #0f2a43;margin-bottom:8px;padding-bottom:4px;font-size:12px}}
+    @media print{*{-webkit-print-color-adjust:exact;print-color-adjust:exact}.noprint{display:none!important}body{background:#fff;color:#000;font-size:13px}main{padding:0!important}.cal{table-layout:fixed}.cal th{font-size:15px;text-align:center;padding:6px}.cal td{width:17%;height:36mm;font-size:13px;padding:4px 6px}.cal th:last-child,.cal td:last-child{width:12%}.cal th.wk,.cal td.wk{width:3%;min-width:0}.dc{font-size:12.5px;padding:3px 7px}.dn{font-size:13px}.st{display:inline-block;font-size:11px}.card,tr{break-inside:avoid;box-shadow:none!important;border-radius:0}h1,main h1{font-size:26px!important}.kpi{background:#fff!important;color:#000!important}.kpi b{font-size:24px;color:#000!important}.kpi>span:first-child,.kpi .text-xs{color:#555!important}.cal{overflow:visible}.cal td.empty{background:#f3f4f6}.st.Geleverd{background:#c6f432;color:#0f1419}.ph{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid #0f2a43;margin-bottom:8px;padding-bottom:4px;font-size:12px}}
     .ibtn{display:inline-flex;align-items:center;justify-content:center;gap:4px;height:38px;min-width:38px;padding:0 10px;border:1px solid var(--bd);border-radius:11px;background:var(--card);color:var(--fg);cursor:pointer;transition:background .2s,border-color .2s,transform .1s}
     .ibtn:hover{background:var(--seg)}.ibtn:active{transform:scale(.96)}
     .ibtn.on{background:var(--volt);border-color:var(--volt);color:#0f1419}
@@ -103,6 +107,7 @@
 .ibtn.pub.on{background:var(--volt);border-color:var(--volt);color:#0f1419}
 .ibtn:disabled{opacity:.5;cursor:wait}
 .draftbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin:10px 12px 0;padding:10px 14px;border-radius:14px;background:color-mix(in srgb,var(--warn) 12%,var(--card));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--warn) 35%,transparent)}
+.tab:disabled{opacity:.35;cursor:not-allowed}
 </style>
   <style id="tw">*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.mx-auto{margin-left:auto;margin-right:auto}.mb-1\.5{margin-bottom:.375rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.ml-auto{margin-left:auto}.mr-auto{margin-right:auto}.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.hidden{display:none}.w-full{width:100%}.max-w-screen-2xl{max-width:1536px}.flex-1{flex:1 1 0%}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-not-allowed{cursor:not-allowed}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;-moz-user-select:none;user-select:none}.list-decimal{list-style-type:decimal}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-6{grid-template-columns:repeat(6,minmax(0,1fr))}.flex-wrap{flex-wrap:wrap}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-x-4{-moz-column-gap:1rem;column-gap:1rem}.gap-y-1{row-gap:.25rem}.overflow-x-auto{overflow-x:auto}.p-2{padding:.5rem}.p-3{padding:.75rem}.p-3\.5{padding:.875rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.px-4{padding-left:1rem;padding-right:1rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.pl-5{padding-left:1.25rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.opacity-50{opacity:.5}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}@media (min-width:640px){.sm\:inline{display:inline}}@media (min-width:768px){.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.md\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}.md\:p-6{padding:1.5rem}}@media (min-width:1280px){.xl\:grid-cols-6{grid-template-columns:repeat(6,minmax(0,1fr))}}</style>
 </head>
@@ -177,8 +182,32 @@
 
 <script>
 const MN = ['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];
-const MON = [[2026,10],[2026,11],[2027,0],[2027,1],[2027,2],[2027,3],[2027,4],[2027,5]];
-const TABS = ['Totaaloverzicht', ...MON.map(([y,m]) => MN[m] + ' ' + y), 'Schepenlijst'];
+const FIRST_MONTH = [2026, 10];      // november 2026: vast begin van het project
+const MAX_MONTHS = 36;
+let MON = [], TABS = ['Totaaloverzicht', 'Schepenlijst'], SHIPS_TAB = 1;
+// ISO-weeknummer (week begint op maandag, week 1 bevat de eerste donderdag van het jaar)
+function isoWeek(d) {
+  const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
+  const y0 = Date.UTC(t.getUTCFullYear(), 0, 1);
+  return Math.ceil(((t - y0) / 86400000 + 1) / 7);
+}
+const monthKey = (y, m) => y + '-' + String(m + 1).padStart(2, '0');
+
+// Bepaalt de zichtbare maanden uit S.lastMonth (laatste maand), nooit korter dan de laatste maand met leveringen.
+function applyMonths() {
+  const idx = (y, m) => y * 12 + m;
+  let last = /^\d{4}-\d{2}$/.test(S.lastMonth || '') ? idx(+S.lastMonth.slice(0, 4), +S.lastMonth.slice(5, 7) - 1) : idx(2027, 5);
+  const maxD = S.deliveries.reduce((mx, d) => (d.date > mx ? d.date : mx), '');
+  if (maxD) last = Math.max(last, idx(+maxD.slice(0, 4), +maxD.slice(5, 7) - 1));
+  const first = idx(FIRST_MONTH[0], FIRST_MONTH[1]);
+  last = Math.min(Math.max(last, first), first + MAX_MONTHS - 1);
+  S.lastMonth = monthKey(Math.floor(last / 12), last % 12);
+  MON = [];
+  for (let k = first; k <= last; k++) MON.push([Math.floor(k / 12), k % 12]);
+  TABS = ['Totaaloverzicht', ...MON.map(([y, m]) => MN[m] + ' ' + y), 'Schepenlijst'];
+  SHIPS_TAB = TABS.length - 1;
+}
 const BL = {
   Alpha:   { c: '#dc2626', h: { '1A': 32, '1B': 32 } },
   Bravo:   { c: '#eab308', h: { '1C': 20, '1D': 24 } },
@@ -655,12 +684,14 @@ const SNAP = {
   ]
 };
 
+SNAP.lastMonth = '2027-06';
 SNAP.updatedAt = '2026-11-18T00:00:00.000Z';
 const GH = { owner: 'rkkpc6b497-png', repo: 'BESSLeveringen', branch: 'main', path: 'planning.json' };
 const DRAFT_KEY = 'bess-draft', TOKEN_KEY = 'bess-gh-token';
 let S, tab = 0, M = null, EDIT = false, SHOW_DONE = false, DIRTY = false, BASE = SNAP.updatedAt, LAST_REMOTE = null, REMOTE_NEWER = false;
 
 function normalize(st) {
+  if (!/^\d{4}-\d{2}$/.test(st.lastMonth || '')) st.lastMonth = SNAP.lastMonth || '2027-06';
   st.deliveries.sort((a, b) => a.date.localeCompare(b.date));
   st.ships.forEach(s => {
     const d = SNAP.ships.find(x => x.id === s.id);
@@ -827,12 +858,44 @@ function go(i) {
 }
 
 function render() {
-  $('subTitle').textContent = `Leveringen GIGA Leopard, november 2026 t/m juni 2027 · ${DIRTY ? 'niet gepubliceerd' : 'stand ' + fmtStamp(BASE)} · ${EDIT ? 'bewerken actief' : 'alleen lezen'}`;
+  const prevShips = SHIPS_TAB;
+  applyMonths();
+  if (tab === prevShips && prevShips !== SHIPS_TAB) tab = SHIPS_TAB;
+  else if (tab > SHIPS_TAB) tab = SHIPS_TAB;
+  const f = MON[0], l = MON[MON.length - 1];
+  $('subTitle').textContent = `Leveringen GIGA Leopard, ${MN[f[1]].toLowerCase()} ${f[0]} t/m ${MN[l[1]].toLowerCase()} ${l[0]} · ${DIRTY ? 'niet gepubliceerd' : 'stand ' + fmtStamp(BASE)} · ${EDIT ? 'bewerken actief' : 'alleen lezen'}`;
+  const lastKey = monthKey(l[0], l[1]);
+  const canRemove = MON.length > 1 && !S.deliveries.some(d => d.date.startsWith(lastKey));
   $('nav').innerHTML = TABS.map((t, i) => {
-    const n = i == 0 ? 0 : i == 9 ? S.ships.length : mUnits(i - 1);
+    const n = i == 0 ? 0 : i == SHIPS_TAB ? S.ships.length : mUnits(i - 1);
     return `<button class="tab ${i == tab ? 'on' : ''}" onclick="go(${i})">${t}${i == 0 || n <= 0 ? '' : `<span class="bd">${n}</span>`}</button>`;
-  }).join('');
-  $('main').innerHTML = tab == 0 ? dash() : tab == 9 ? shipsV() : monthV(tab - 1);
+  }).join('') + (EDIT ? `<button class="tab" title="Volgende maand toevoegen" onclick="addMonth()" ${MON.length >= MAX_MONTHS ? 'disabled' : ''}>+ maand</button><button class="tab" title="${canRemove ? 'Laatste maand verwijderen' : 'Alleen een lege laatste maand kan worden verwijderd'}" onclick="removeMonth()" ${canRemove ? '' : 'disabled'}>&minus; maand</button>` : '');
+  $('main').innerHTML = tab == 0 ? dash() : tab == SHIPS_TAB ? shipsV() : monthV(tab - 1);
+}
+
+function addMonth() {
+  if (!ed()) return;
+  if (MON.length >= MAX_MONTHS) return toast(`Maximaal ${MAX_MONTHS} maanden.`);
+  const [y, m] = MON[MON.length - 1], k = y * 12 + m + 1;
+  S.lastMonth = monthKey(Math.floor(k / 12), k % 12);
+  save();
+  render();
+  go(SHIPS_TAB - 1);
+  toast(`${MN[k % 12]} ${Math.floor(k / 12)} toegevoegd.`);
+}
+
+function removeMonth() {
+  if (!ed()) return;
+  if (MON.length <= 1) return toast('De eerste maand kan niet worden verwijderd.');
+  const [y, m] = MON[MON.length - 1], key = monthKey(y, m);
+  const n = S.deliveries.filter(d => d.date.startsWith(key)).length;
+  if (n) return toast(`${MN[m]} ${y} heeft nog ${n} ${n === 1 ? 'levering' : 'leveringen'}. Verplaats of verwijder die eerst.`);
+  if (!confirm(`${MN[m]} ${y} verwijderen?`)) return;
+  const k = y * 12 + m - 1;
+  S.lastMonth = monthKey(Math.floor(k / 12), k % 12);
+  save();
+  render();
+  toast(`${MN[m]} ${y} verwijderd.`);
 }
 
 const bar = (a, b, max, c) => `<div class="bar"><i style="width:${a / max * 100}%;background:${c}"></i><i style="width:${b / max * 100}%;background:${c};opacity:.45"></i></div>`;
@@ -867,8 +930,8 @@ function monthV(i) {
       </td>`;
     }
     if (!any) continue;
-    const t = sum(wd), g = sum(wd.filter(x => x.status == 'Geleverd'));
-    rows += `<tr>${cells}<td style="background:color-mix(in srgb,var(--acc) 8%,var(--card))">
+    const wk = isoWeek(w), t = sum(wd), g = sum(wd.filter(x => x.status == 'Geleverd'));
+    rows += `<tr><td class="wk" title="Week ${wk}"><span class="wkl">wk</span><b>${wk}</b></td>${cells}<td style="background:color-mix(in srgb,var(--acc) 8%,var(--card))">
       <b style="font-size:20px">${t}</b> units
       <div class="text-xs" style="color:var(--ok)">Geleverd ${g}</div>
       <div class="text-xs" style="color:var(--mut)">Gepland ${t - g}</div>
@@ -886,7 +949,7 @@ function monthV(i) {
   return `<h1>${MN[m]} ${y}</h1>
   <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-3">${sm.map(s => `<div class="card p-2 kpi"><span>${s[0]}</span><b>${s[1]}</b></div>`).join('')}</div>
   <div class="mb-3 flex flex-wrap gap-x-4 gap-y-1 text-xs" style="color:var(--mut)">${Object.keys(BL).map(b => `<span><i class="sw" style="background:${BL[b].c}"></i>Blok ${b}</span>`).join('')}</div>
-  <div class="overflow-x-auto"><table class="cal card"><thead><tr>${['Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Weektotaal'].map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`;
+  <div class="overflow-x-auto"><table class="cal card"><thead><tr>${['Wk','Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Weektotaal'].map(h => `<th${h === 'Wk' ? ' class="wk"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
 function card(d) {
@@ -999,10 +1062,10 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(
 function expCSVTab() {
   const sn = id => shipOf(id)?.name || '';
   let rows;
-  if (tab >= 1 && tab <= 8) {
+  if (tab >= 1 && tab < SHIPS_TAB) {
     const [y, m] = MON[tab - 1], pre = y + '-' + p(m + 1);
     rows = [['Datum','Schip','Veldhuisje','Blok','Units','Status'], ...S.deliveries.filter(d => d.date.startsWith(pre)).sort((a, b) => a.date.localeCompare(b.date)).map(d => [d.date, sn(d.shipId), d.hut, HB[d.hut] || '', d.units, d.status])];
-  } else if (tab == 9) {
+  } else if (tab == SHIPS_TAB) {
     rows = [['Schip','Capaciteit','Ingepland','Geleverd','Eerste levering','Uiterste aanmeerdatum','Aangemeerd','Vertrokken (gelost)','Buffer Maasvlakte','MarineTraffic'], ...S.ships.map(s => {
       const f = S.deliveries.filter(d => d.shipId == s.id), t = sum(f), g = sum(f.filter(d => d.status == 'Geleverd')), dtInfo = getShipDates(s.id);
       return [s.name, s.cap, t - g, g, dtInfo.firstLabel, dtInfo.deadlineLabel, s.arrived ? 'Ja' : 'Nee', s.departed ? 'Ja' : 'Nee', bufferOf(s), s.trackingUrl || ''];
@@ -1066,7 +1129,7 @@ async function loadRemote(manual) {
     return;
   }
   if ($('modal').classList.contains('on')) return;
-  S = normalize({ ships: r.ships, deliveries: r.deliveries });
+  S = normalize({ ships: r.ships, deliveries: r.deliveries, lastMonth: r.lastMonth });
   BASE = r.updatedAt;
   render();
   toast('Planning bijgewerkt (stand ' + fmtStamp(BASE) + ').');
@@ -1121,7 +1184,7 @@ async function publish(auto) {
     const body = {
       message: 'Planning bijgewerkt ' + fmtStamp(stamp),
       branch: GH.branch,
-      content: b64enc(JSON.stringify({ updatedAt: stamp, ships: S.ships, deliveries: S.deliveries }, null, 2) + '\n')
+      content: b64enc(JSON.stringify({ updatedAt: stamp, lastMonth: S.lastMonth, ships: S.ships, deliveries: S.deliveries }, null, 2) + '\n')
     };
     if (sha) body.sha = sha;
     const p = await fetch(GH_API, { method: 'PUT', headers: { ...ghHeaders(token), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
@@ -1152,7 +1215,7 @@ function discardDraft() {
   if (!confirm('Alle niet-gepubliceerde wijzigingen verwerpen?')) return;
   try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
   const src = LAST_REMOTE && LAST_REMOTE.updatedAt > SNAP.updatedAt ? LAST_REMOTE : SNAP;
-  S = normalize(clone({ ships: src.ships, deliveries: src.deliveries }));
+  S = normalize(clone({ ships: src.ships, deliveries: src.deliveries, lastMonth: src.lastMonth }));
   BASE = src.updatedAt;
   DIRTY = false;
   REMOTE_NEWER = false;
@@ -1219,7 +1282,7 @@ async function loadTrack() {
     if (!j || !j.vessels) return;
     const changed = !TRACK || TRACK.updatedAt !== j.updatedAt;
     TRACK = j;
-    if (changed && (tab === 0 || tab === 9) && !$('modal').classList.contains('on')) render();
+    if (changed && (tab === 0 || tab === SHIPS_TAB) && !$('modal').classList.contains('on')) render();
   } catch (e) {}
 }
 
@@ -1549,7 +1612,7 @@ function allHtml() {
   TABS.forEach((t, i) => {
     tab = i;
     render();
-    h += `<section style="${i < 9 ? 'break-after:page;' : ''}margin-bottom:24px">${$('main').innerHTML}</section>`;
+    h += `<section style="${i < SHIPS_TAB ? 'break-after:page;' : ''}margin-bottom:24px">${$('main').innerHTML}</section>`;
   });
   tab = cur;
   render();
@@ -1624,12 +1687,12 @@ function expXLSX() {
       [MN[m] + ' ' + y],
       ['Leverdagen', 'Gepland', 'Bevestigd', 'Geleverd', 'Maandtotaal'],
       [new Set(md.map(d => d.date)).size, b('Gepland'), b('Bevestigd'), b('Geleverd'), sum(md)], [],
-      ['Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Weektotaal', 'Geleverd', 'Gepland']
+      ['Week', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Weektotaal', 'Geleverd', 'Gepland']
     ];
     const st = new Date(y, m, 1);
     st.setDate(1 - ((st.getDay() + 6) % 7));
     for (let w = new Date(st); w <= last; w.setDate(w.getDate() + 7)) {
-      const row = [];
+      const row = [isoWeek(w)];
       let any = false, wd = [];
       for (let k = 0; k < 5; k++) {
         const d = new Date(w);
@@ -1648,7 +1711,7 @@ function expXLSX() {
     }
     r.push([], ['Datum', 'Units', 'Schip', 'Veldhuisje', 'Blok', 'Status']);
     [...md].sort((a, c) => a.date.localeCompare(c.date)).forEach(x => r.push([fmtDate(x.date), x.units, sn(x.shipId), x.hut, HB[x.hut] || '', x.status]));
-    A(MN[m] + ' ' + y, r, [34, 34, 34, 34, 34, 12, 10, 10]);
+    A(MN[m] + ' ' + y, r, [8, 34, 34, 34, 34, 34, 12, 10, 10]);
   });
 
   A('Schepenlijst', [['Schip', 'Capaciteit', 'Gepland/bevestigd', 'Geleverd', 'Eerste levering', 'Uiterste aanmeerdatum', 'Aangemeerd', 'Vertrokken (gelost)', 'Buffer Maasvlakte'], ...S.ships.map(s => {
@@ -1678,7 +1741,7 @@ function impJSON(i) {
         if (sh.departed && !sh.arrived) sh.departed = false;
         if (!Object.prototype.hasOwnProperty.call(sh, 'trackingUrl')) sh.trackingUrl = '';
       });
-      S = { ships: s.ships, deliveries: s.deliveries };
+      S = { ships: s.ships, deliveries: s.deliveries, lastMonth: s.lastMonth };
       save(); render(); toast('Planning geïmporteerd.');
     } catch (e) {
       toast('Ongeldig JSON-bestand.');
