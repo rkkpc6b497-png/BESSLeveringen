@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-24T12:39:30.421Z",
+  "updatedAt": "2026-11-24T12:40:06.275Z",
   "ships": [
     {
       "arrived": true,
@@ -59,7 +59,7 @@
       "id": "x7kgzw5y",
       "name": "Wilhelmshaven Express",
       "cap": 20,
-      "trackingUrl": "https://www.marinetraffic.com/en/ais/details/ships/shipid:9581371/mmsi:211151710/imo:9943918/vessel:WILHELMSHAVEN_EXPRESS",
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:9581371/zoom:14",
       "mmsi": "211151710",
       "arrived": false,
       "departed": false
