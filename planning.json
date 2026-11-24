@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-24T12:55:14.836Z",
+  "updatedAt": "2026-11-24T12:55:26.542Z",
   "ships": [
     {
       "arrived": true,
@@ -484,6 +484,14 @@
       "date": "2027-02-15",
       "units": 4,
       "shipId": "xbmo9j71",
+      "hut": "3D",
+      "status": "Gepland"
+    },
+    {
+      "id": "x9gbtume",
+      "date": "2027-02-16",
+      "units": 8,
+      "shipId": "x9qxg5tx",
       "hut": "3D",
       "status": "Gepland"
     }
