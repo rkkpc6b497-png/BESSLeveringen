@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-24T12:36:33.341Z",
+  "updatedAt": "2026-11-24T12:39:16.563Z",
   "ships": [
     {
       "arrived": true,
@@ -97,6 +97,15 @@
       "cap": 16,
       "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:8446016/zoom:10",
       "mmsi": "218026640",
+      "arrived": false,
+      "departed": false
+    },
+    {
+      "id": "x9qxg5tx",
+      "name": "Alanis",
+      "cap": 52,
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:364747/zoom:10",
+      "mmsi": "305469000",
       "arrived": false,
       "departed": false
     }
