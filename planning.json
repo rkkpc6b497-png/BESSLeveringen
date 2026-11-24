@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-24T12:32:44.395Z",
+  "updatedAt": "2026-11-24T12:34:31.780Z",
   "ships": [
     {
       "arrived": true,
@@ -70,6 +70,15 @@
       "cap": 20,
       "trackingUrl": "https://www.marinetraffic.com/en/ais/details/ships/shipid:7840474/mmsi:218006290/imo:9540120/vessel:MANILA_EXPRESS",
       "mmsi": "218006290",
+      "arrived": false,
+      "departed": false
+    },
+    {
+      "id": "xqsdtizv",
+      "name": "Tihama",
+      "cap": 4,
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/details/ships/shipid:3842177/mmsi:218008040/imo:9736107/vessel:AALBORG_EXPRESS",
+      "mmsi": "218008040",
       "arrived": false,
       "departed": false
     }
