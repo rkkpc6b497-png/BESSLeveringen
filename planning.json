@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-24T12:41:40.275Z",
+  "updatedAt": "2026-11-24T12:42:06.153Z",
   "ships": [
     {
       "arrived": true,
@@ -86,7 +86,7 @@
       "id": "xvf43qu8",
       "name": "Barzan",
       "cap": 20,
-      "trackingUrl": "https://www.marinetraffic.com/en/ais/details/ships/shipid:3445699/mmsi:211882920/imo:9708851/vessel:BARZAN",
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/home/shipid:3445699/zoom:10",
       "mmsi": "211882920",
       "arrived": false,
       "departed": false
