@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-24T12:34:47.004Z",
+  "updatedAt": "2026-11-24T12:35:38.723Z",
   "ships": [
     {
       "arrived": true,
@@ -79,6 +79,15 @@
       "cap": 4,
       "trackingUrl": "https://www.marinetraffic.com/en/ais/details/ships/shipid:3842177/mmsi:218008040/imo:9736107/vessel:AALBORG_EXPRESS",
       "mmsi": "218008040",
+      "arrived": false,
+      "departed": false
+    },
+    {
+      "id": "xvf43qu8",
+      "name": "Barzan",
+      "cap": 20,
+      "trackingUrl": "https://www.marinetraffic.com/en/ais/details/ships/shipid:3445699/mmsi:211882920/imo:9708851/vessel:BARZAN",
+      "mmsi": "211882920",
       "arrived": false,
       "departed": false
     }
