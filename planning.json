@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-25T11:33:39.531Z",
+  "updatedAt": "2026-11-25T13:42:33.995Z",
   "lastMonth": "2027-02",
   "ships": [
     {
@@ -149,7 +149,7 @@
       "hut": "1A",
       "id": "xzq8zizi",
       "shipId": "s1",
-      "status": "Bevestigd",
+      "status": "Geleverd",
       "units": 4
     },
     {
