@@ -1520,7 +1520,7 @@ function dash() {
       <div class="font-bold">Blok ${b}</div>
       <div class="text-xs mb-2" style="color:var(--mut)">${Object.keys(BL[b].h).join(', ')} &middot; capaciteit ${c}</div>
       ${bar(g, t - g, c, col)}
-      <div class="text-xs mt-2">Geleverd ${g} &middot; Gepland ${t - g} &middot; Resterend ${c - t}</div>
+      <div class="text-xs mt-2">Geleverd ${g} &middot; Gepland ${t - g}</div>
     </div>`;
   }).join('');
 
@@ -1664,10 +1664,10 @@ function expXLSX() {
     const md = by(d => d.date.startsWith(y + '-' + p(m + 1))), b = s => sum(md.filter(d => d.status == s));
     o.push([MN[m] + ' ' + y, new Set(md.map(d => d.date)).size, b('Gepland'), b('Bevestigd'), b('Geleverd'), sum(md)]);
   });
-  o.push([], ['Commercieel blok', 'Veldhuisjes', 'Capaciteit', 'Geleverd', 'Gepland', 'Resterend']);
+  o.push([], ['Commercieel blok', 'Veldhuisjes', 'Capaciteit', 'Geleverd', 'Gepland']);
   for (const b in BL) {
     const f = by(d => HB[d.hut] == b), t = sum(f), gg = g(f);
-    o.push([b, Object.keys(BL[b].h).join(', '), BCAP(b), gg, t - gg, BCAP(b) - t]);
+    o.push([b, Object.keys(BL[b].h).join(', '), BCAP(b), gg, t - gg]);
   }
   o.push([], ['Veldhuisje', 'Blok', 'Capaciteit', 'Geleverd', 'Gepland', 'Geleverd %', 'Resterend']);
   for (const h in HUT) {
