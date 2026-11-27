@@ -227,7 +227,6 @@ const BCAP = b => Object.values(BL[b].h).reduce((a, x) => a + x, 0);
 const ST = ['Gepland', 'Bevestigd', 'Geleverd'];
 const NEED = 320;
 const DAILY_PLAN_LIMIT = 8;
-const DAILY_CONFIRMED_LIMIT = 9;
 const KEY = 'bess-v1';
 
 const p = n => String(n).padStart(2, '0');
@@ -832,8 +831,8 @@ function bufferOf(s) {
 /* ---------- Validatie ---------- */
 function validate(x) {
   const e = [], u = +x.units;
-  const dailyLimit = x.status === 'Gepland' ? DAILY_PLAN_LIMIT : DAILY_CONFIRMED_LIMIT;
-  if (!Number.isInteger(u) || u < 1 || u > DAILY_CONFIRMED_LIMIT) e.push(`Aantal units moet een geheel getal van 1 tot en met ${DAILY_CONFIRMED_LIMIT} zijn.`);
+  const dailyLimit = x.status === 'Gepland' ? DAILY_PLAN_LIMIT : Infinity;
+  if (!Number.isInteger(u) || u < 1) e.push('Aantal units moet een geheel getal van minimaal 1 zijn.');
   const day = S.deliveries.filter(d => d.date == x.date && d.id != x.id);
   const sh2 = new Set(day.map(d => d.shipId));
   if (x.shipId) sh2.add(x.shipId);
@@ -926,8 +925,8 @@ function monthV(i) {
       wd.push(...dl);
       cells += `<td>
         <div class="dn">
-          <span><b>${d.getDate()}</b>${dl.length ? ` &nbsp;${sum(dl)}/${dl.some(x => x.status !== 'Gepland') ? DAILY_CONFIRMED_LIMIT : DAILY_PLAN_LIMIT} units` : ''}</span>
-          ${EDIT && sum(dl) < DAILY_CONFIRMED_LIMIT ? `<span class="add noprint" title="Levering toevoegen (maximaal 8 gepland, 9 bevestigd)" onclick="openM('${key}')">+</span>` : ''}
+          <span><b>${d.getDate()}</b>${dl.length ? ` &nbsp;${sum(dl)} units` : ''}</span>
+          ${EDIT ? `<span class="add noprint" title="Levering toevoegen" onclick="openM('${key}')">+</span>` : ''}
         </div>
         ${dl.map(card).join('')}
       </td>`;
@@ -1011,8 +1010,9 @@ function chk() {
   const x = val(), e = validate(x), u = +x.units || 0, sh = shipOf(x.shipId), day = S.deliveries.filter(d => d.date == x.date && d.id != x.id);
   const ss = new Set(day.map(d => d.shipId));
   if (x.shipId) ss.add(x.shipId);
-  const dailyLimit = x.status === 'Gepland' ? DAILY_PLAN_LIMIT : DAILY_CONFIRMED_LIMIT;
-  const l = [`Dag: ${sum(day) + u} van ${dailyLimit} units (${x.status === 'Gepland' ? 'gepland' : 'bevestigd/geleverd'}), ${ss.size} van 2 scheepsladingen`];
+  const dailyLimit = x.status === 'Gepland' ? DAILY_PLAN_LIMIT : Infinity;
+  const dayLabel = x.status === 'Gepland' ? `${sum(day) + u} van ${DAILY_PLAN_LIMIT} geplande units` : `${sum(day) + u} bevestigde/geleverde units`;
+  const l = [`Dag: ${dayLabel}, ${ss.size} van 2 scheepsladingen`];
   if (sh) {
     const dtInfo = getShipDates(sh.id);
     l.push(`Schip ${esc(sh.name)}: ${used(d => d.shipId == sh.id, x.id) + u} van ${sh.cap} units (${sh.departed ? 'gelost en vertrokken' : sh.arrived ? 'aangemeerd' : 'uiterste aanmeerdatum ' + dtInfo.deadlineLabel})`);
@@ -1549,7 +1549,7 @@ function dash() {
     const total = sum(dd);
     return { date, total, planned: sum(dd.filter(d => d.status === 'Gepland')), confirmed: sum(dd.filter(d => d.status === 'Bevestigd')), delivered: sum(dd.filter(d => d.status === 'Geleverd')) };
   }).filter(d => d.total > DAILY_PLAN_LIMIT && d.delivered < d.total);
-  const overLimitRows = overLimitDays.map(d => `<tr><td><b>${fmtDate(d.date)}</b></td><td>${d.planned}</td><td>${d.confirmed}</td><td>${d.delivered}</td><td><b>${d.total} / ${DAILY_CONFIRMED_LIMIT}</b></td></tr>`).join('');
+  const overLimitRows = overLimitDays.map(d => `<tr><td><b>${fmtDate(d.date)}</b></td><td>${d.planned}</td><td>${d.confirmed}</td><td>${d.delivered}</td><td><b>${d.total}</b></td></tr>`).join('');
 
   const blocks = Object.keys(BL).map(b => {
     const f = S.deliveries.filter(d => HB[d.hut] == b), g = sum(f.filter(d => d.status == 'Geleverd')), t = sum(f), c = BCAP(b), col = BL[b].c;
@@ -1629,7 +1629,7 @@ function dash() {
   <div class="card overflow-x-auto mb-5"><table><thead><tr><th>Maand</th><th>Leverdagen</th><th>Gepland</th><th>Bevestigd</th><th>Geleverd</th><th>Maandtotaal</th></tr></thead><tbody>${mrows}</tbody></table></div>
   <h2>Dagen boven de planningslimiet</h2>
   <div class="card overflow-x-auto mb-5"><table><thead><tr><th>Datum</th><th>Gepland</th><th>Bevestigd</th><th>Geleverd</th><th>Dagtotaal</th></tr></thead><tbody>${overLimitRows || '<tr><td colspan="5" class="text-xs" style="color:var(--mut)">Geen dagen boven 8 units.</td></tr>'}</tbody></table></div>
-  <p class="text-xs mb-5" style="color:var(--mut)">Deze tabel toont dagen waarop het dagtotaal hoger is dan de planningslimiet van 8 units. De bevestigde/geleverde daglimiet is 9 units.</p>
+  <p class="text-xs mb-5" style="color:var(--mut)">Deze tabel toont dagen waarop het dagtotaal hoger is dan de planningslimiet van 8 units. Dit is een signalering, geen harde bovengrens voor bevestigde of geleverde aantallen.</p>
   <h2>Voortgang per commercieel blok</h2>
   <div class="grid md:grid-cols-3 gap-2.5 mb-5">${blocks}</div>
   <h2>Voortgang per veldhuisje</h2>
