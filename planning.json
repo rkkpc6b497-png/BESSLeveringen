@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-27T07:01:48.287Z",
+  "updatedAt": "2026-11-27T07:02:19.086Z",
   "lastMonth": "2027-02",
   "ships": [
     {
@@ -174,7 +174,7 @@
       "id": "x4ervnw8",
       "shipId": "s3",
       "status": "Bevestigd",
-      "units": 8
+      "units": 6
     },
     {
       "date": "2026-12-01",
