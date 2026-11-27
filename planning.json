@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-27T06:42:19.717Z",
+  "updatedAt": "2026-11-27T07:00:51.478Z",
   "lastMonth": "2027-02",
   "ships": [
     {
@@ -159,14 +159,6 @@
       "shipId": "s1",
       "status": "Geleverd",
       "units": 8
-    },
-    {
-      "date": "2026-11-27",
-      "hut": "1B",
-      "id": "xllv099k",
-      "shipId": "s1",
-      "status": "Geleverd",
-      "units": 2
     },
     {
       "date": "2026-11-27",
