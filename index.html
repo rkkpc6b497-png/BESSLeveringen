@@ -1548,7 +1548,7 @@ function dash() {
     const dd = S.deliveries.filter(d => d.date === date);
     const total = sum(dd);
     return { date, total, planned: sum(dd.filter(d => d.status === 'Gepland')), confirmed: sum(dd.filter(d => d.status === 'Bevestigd')), delivered: sum(dd.filter(d => d.status === 'Geleverd')) };
-  }).filter(d => d.total > DAILY_PLAN_LIMIT);
+  }).filter(d => d.total > DAILY_PLAN_LIMIT && d.delivered < d.total);
   const overLimitRows = overLimitDays.map(d => `<tr><td><b>${fmtDate(d.date)}</b></td><td>${d.planned}</td><td>${d.confirmed}</td><td>${d.delivered}</td><td><b>${d.total} / ${DAILY_CONFIRMED_LIMIT}</b></td></tr>`).join('');
 
   const blocks = Object.keys(BL).map(b => {
