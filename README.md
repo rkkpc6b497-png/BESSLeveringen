@@ -100,13 +100,14 @@ Per maand worden de volgende totalen getoond:
 
 De huidige broncode controleert:
 
-- Per leveringsregel zijn 1 t/m 8 units toegestaan.
-- Het totaal van alle leveringen op één kalenderdag mag maximaal 8 units zijn.
+- Per leveringsregel mag een positief geheel aantal units worden ingevoerd.
+- De daglimiet van 8 units geldt uitsluitend voor leveringen met status **Gepland**.
+- Bevestigde en geleverde aantallen mogen boven 8 uitkomen; daarvoor geldt geen vooraf ingestelde harde dagbovengrens.
 - Er mogen maximaal twee verschillende schepen op één kalenderdag worden ingepland.
 - De totale toewijzing aan een schip mag de scheepscapaciteit niet overschrijden.
 - De totale toewijzing aan een veldhuisje mag de ingestelde veldhuiscapaciteit niet overschrijden.
 
-**Belangrijk aandachtspunt:** de daglimiet van 8 wordt in de huidige code toegepast op alle statussen. Ook bevestigde en geleverde leveringen kunnen dus niet boven 8 units per dag worden geregistreerd. Dit is de feitelijke werking van de huidige repositoryversie, niet slechts een signalering. Als de bedoeling is om bevestigde of geleverde dagen boven 8 toe te staan, moet de validatielogica in `index.html` eerst worden aangepast.
+De tabel **Dagen boven de planningslimiet** op het totaaloverzicht signaleert kalenderdagen met meer dan 8 units. Een dag blijft in deze tabel staan zolang nog niet alle units van die dag als geleverd zijn geregistreerd. Zodra de volledige dag is geleverd, verdwijnt deze uit het overzicht. Dit is een signalering, geen harde bovengrens voor bevestigde of geleverde leveringen.
 
 ---
 
@@ -158,18 +159,17 @@ Elke unit heeft een eigen identificatie, bijvoorbeeld `BP01-1A`. De unit is geko
 
 ### Statussen op de plattegrond
 
-De plattegrond onderscheidt vier toestanden:
+Levering en plaatsing vinden voor iedere unit op dezelfde dag plaats. Daarom gebruikt de plattegrond één gecombineerde status voor de afgeronde handeling en één status voor een toekomstige planning:
 
 | Kleur | Betekenis |
 |---|---|
-| Groen | Geplaatst |
-| Blauw | Geleverd, nog niet geplaatst |
-| Oranje | Plaatsing gepland, nog niet geleverd |
-| Grijs | Nog niet geleverd |
+| Groen | Geleverd en geplaatst |
+| Oranje | Levering en plaatsing gepland |
+| Grijs | Nog niet gepland |
 
-Een rode rand betekent dat de geplande plaatsingsdatum is verstreken en de unit nog niet als geplaatst is geregistreerd.
+Een rode rand betekent dat de geplande datum is verstreken en de unit nog niet als geleverd en geplaatst is geregistreerd.
 
-Boven de tekening worden aantallen getoond voor geleverd op locatie en geplaatst. Wanneer het aantal als geleverd geregistreerde units op de plattegrond afwijkt van het aantal leveringen met status **Geleverd** in de kalender, wordt dat verschil gemeld.
+Boven de tekening wordt het aantal geleverde en geplaatste units getoond. Wanneer dit aantal afwijkt van het aantal leveringen met status **Geleverd** in de kalender, wordt dat verschil gemeld.
 
 ### Navigeren op de plattegrond
 
@@ -184,32 +184,31 @@ Boven de tekening worden aantallen getoond voor geleverd op locatie en geplaatst
 
 Op een unit klikken toont de registratiegegevens in het paneel onder de tekening. Bij meerdere geselecteerde units kan dezelfde datum in één handeling voor alle geselecteerde units worden ingesteld of gewist.
 
-### Datums registreren
+### Datum registreren
 
-Per unit kunnen drie datums worden bijgehouden:
+Per unit worden maximaal twee datums bijgehouden:
 
-- **Geleverd op:** datum waarop de unit op locatie is geleverd.
-- **Plaatsing gepland op:** geplande datum voor plaatsing.
-- **Geplaatst op:** datum waarop de unit daadwerkelijk is geplaatst.
+- **Levering en plaatsing gepland op:** de datum waarop de levering en plaatsing naar verwachting plaatsvinden.
+- **Geleverd en geplaatst op:** de datum waarop beide handelingen daadwerkelijk zijn afgerond.
 
-Wanneer een unit als geplaatst wordt geregistreerd en nog geen leverdatum heeft, vult de applicatie de leverdatum automatisch met dezelfde datum. Dit is een hulpmiddel; controleer de registratie wanneer levering en plaatsing op verschillende dagen hebben plaatsgevonden.
+Er is bewust geen afzonderlijke leverdatum en plaatsingsdatum: de applicatie behandelt dit als één gecombineerde gebeurtenis. Bestaande registraties met de oude afzonderlijke velden worden bij het laden samengevoegd tot één datum voor **Geleverd en geplaatst op**.
 
 ### Geplande plaatsingen en voortgang per veldhuisje
 
 Onder de tekening staan:
 
-- **Geplande plaatsingen:** overzicht van geplande plaatsingsdata, aantallen units, betrokken veldhuisjes en hoeveel daarvan al geleverd zijn. Met **Toon** selecteer je de betreffende units op de tekening.
-- **Voortgang per veldhuisje:** overzicht van geplaatste en geleverde units, eventuele geplande plaatsingen en knoppen om naar een veldhuisje te gaan of alle units daarvan te selecteren.
+- **Geplande leveringen en plaatsingen:** overzicht van geplande data, aantallen units en betrokken veldhuisjes. Met **Toon** selecteer je de betreffende units op de tekening.
+- **Voortgang per veldhuisje:** overzicht van afgeronde units en eventueel geplande units, met knoppen om naar een veldhuisje te gaan of alle units daarvan te selecteren.
 
-### Geleverde units synchroniseren vanuit de kalender
+### Afgeronde units synchroniseren vanuit de kalender
 
-In de bewerkmodus is de knop **Geleverd invullen vanuit leveringen** beschikbaar. Deze functie kijkt per veldhuisje naar de kalenderleveringen met status **Geleverd** en vult de leverdatums in op de eerste nog niet als geleverd geregistreerde units van dat veldhuisje.
+In de bewerkmodus is de knop **Afronding invullen vanuit leveringen** beschikbaar. Deze functie kijkt per veldhuisje naar de kalenderleveringen met status **Geleverd** en vult de datum voor **Geleverd en geplaatst op** in op de eerste nog niet afgeronde units van dat veldhuisje.
 
 Deze synchronisatie is eenrichtingsverkeer: zij vult unitregistraties aan vanuit de leverkalender. Controleer de plattegrond na synchronisatie, vooral als individuele unitnummers of de fysieke volgorde afwijken van de standaardvolgorde.
 
 ### Unitexport
 
-Met de knop **CSV** op de plattegrond exporteer je de unitregistratie met onder andere unit-ID, veldhuisje, blok, leverdatum, geplande plaatsingsdatum, plaatsingsdatum en status.
+Met de knop **CSV** op de plattegrond exporteer je de unitregistratie met onder andere unit-ID, veldhuisje, blok, geplande leverings-/plaatsingsdatum, datum van levering en plaatsing en status.
 
 ---
 
