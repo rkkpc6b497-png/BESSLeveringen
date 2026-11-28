@@ -108,8 +108,30 @@
 .ibtn:disabled{opacity:.5;cursor:wait}
 .draftbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin:10px 12px 0;padding:10px 14px;border-radius:14px;background:color-mix(in srgb,var(--warn) 12%,var(--card));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--warn) 35%,transparent)}
 .tab:disabled{opacity:.35;cursor:not-allowed}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--bd);border-radius:99px;background:var(--card);color:var(--fg);font:500 12.5px 'Geist',sans-serif;cursor:pointer;transition:background .2s,border-color .2s}
+.chip:hover{background:var(--seg)}.chip.on{border-color:var(--fg);background:var(--seg)}
+.seg{display:inline-flex;gap:0}.seg .btn:first-child{border-radius:10px 0 0 10px}.seg .btn:last-child{border-radius:0 10px 10px 0;margin-left:-1px}.seg .btn.on{background:var(--acc);border-color:var(--acc);color:var(--accfg)}
+.plan-wrap{display:block}
+.plan-view{position:relative;height:clamp(340px,42vw,72vh);overflow:hidden;border-radius:18px;border:1px solid var(--line);background:#fff;box-shadow:var(--sh)}
+.plan-vp{position:absolute;inset:0;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.plan-vp.box{cursor:crosshair}.plan-vp:active{cursor:grabbing}
+.plan-vp svg{display:block}
+.plan-box{position:absolute;border:1.5px dashed #0f1419;background:rgba(198,244,50,.25);pointer-events:none}
+.pu{vector-effect:non-scaling-stroke;stroke-width:1;cursor:pointer;transition:opacity .15s}
+.pu.s-none{fill:rgba(148,163,184,.25);stroke:#94a3b8}
+.pu.s-planned{fill:rgba(245,158,11,.5);stroke:#b45309}
+.pu.s-delivered{fill:rgba(59,130,246,.5);stroke:#1d4ed8}
+.pu.s-placed{fill:rgba(34,197,94,.6);stroke:#15803d}
+.pu.od{stroke:#dc2626;stroke-width:2.2}
+.pu.sel{stroke:#0f1419;stroke-width:2.6;fill-opacity:.9}
+.pu.dim{opacity:.15}
+.plan-panel{margin-top:12px;position:sticky;bottom:12px;z-index:6;box-shadow:0 18px 50px -18px rgba(15,20,25,.35)}
+.plan-panel .pp{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:flex-start}
+.plan-panel .pp>div{min-width:200px;flex:1 1 220px}
+.plan-panel .pp .forms{flex:2 1 460px;display:flex;flex-wrap:wrap;gap:0 18px}.plan-panel .pp .forms>div{flex:1 1 220px}
+.plan-dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px}.plan-dl dt{color:var(--mut)}.plan-dl dd{margin:0;font-weight:500}
 </style>
-  <style id="tw">*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.mx-auto{margin-left:auto;margin-right:auto}.mb-1\.5{margin-bottom:.375rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.ml-auto{margin-left:auto}.mr-auto{margin-right:auto}.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.hidden{display:none}.w-full{width:100%}.max-w-screen-2xl{max-width:1536px}.flex-1{flex:1 1 0%}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-not-allowed{cursor:not-allowed}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;-moz-user-select:none;user-select:none}.list-decimal{list-style-type:decimal}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-6{grid-template-columns:repeat(6,minmax(0,1fr))}.flex-wrap{flex-wrap:wrap}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-x-4{-moz-column-gap:1rem;column-gap:1rem}.gap-y-1{row-gap:.25rem}.overflow-x-auto{overflow-x:auto}.p-2{padding:.5rem}.p-3{padding:.75rem}.p-3\.5{padding:.875rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.px-4{padding-left:1rem;padding-right:1rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.pl-5{padding-left:1.25rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.opacity-50{opacity:.5}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}@media (min-width:640px){.sm\:inline{display:inline}}@media (min-width:768px){.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.md\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}.md\:p-6{padding:1.5rem}}@media (min-width:1280px){.xl\:grid-cols-6{grid-template-columns:repeat(6,minmax(0,1fr))}}</style>
+  <style id="tw">*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.mx-auto{margin-left:auto;margin-right:auto}.my-2{margin-top:.5rem;margin-bottom:.5rem}.mb-1{margin-bottom:.25rem}.mb-1\.5{margin-bottom:.375rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.ml-auto{margin-left:auto}.mr-auto{margin-right:auto}.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.hidden{display:none}.w-full{width:100%}.max-w-screen-2xl{max-width:1536px}.flex-1{flex:1 1 0%}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-not-allowed{cursor:not-allowed}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;-moz-user-select:none;user-select:none}.list-decimal{list-style-type:decimal}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-6{grid-template-columns:repeat(6,minmax(0,1fr))}.flex-wrap{flex-wrap:wrap}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-x-4{-moz-column-gap:1rem;column-gap:1rem}.gap-y-1{row-gap:.25rem}.overflow-x-auto{overflow-x:auto}.p-2{padding:.5rem}.p-3{padding:.75rem}.p-3\.5{padding:.875rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.px-4{padding-left:1rem;padding-right:1rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.pl-5{padding-left:1.25rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.opacity-50{opacity:.5}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}@media (min-width:640px){.sm\:inline{display:inline}}@media (min-width:768px){.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.md\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}.md\:p-6{padding:1.5rem}}@media (min-width:1280px){.xl\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.xl\:grid-cols-6{grid-template-columns:repeat(6,minmax(0,1fr))}}</style>
 </head>
 <body>
 <header class="noprint hd">
@@ -184,7 +206,7 @@
 const MN = ['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];
 const FIRST_MONTH = [2026, 10];      // november 2026: vast begin van het project
 const MAX_MONTHS = 36;
-let MON = [], TABS = ['Totaaloverzicht', 'Schepenlijst'], SHIPS_TAB = 1;
+let MON = [], TABS = ['Totaaloverzicht', 'Schepenlijst', 'Plattegrond'], SHIPS_TAB = 1, PLAN_TAB = 2;
 // ISO-weeknummer (week begint op maandag, week 1 bevat de eerste donderdag van het jaar)
 function isoWeek(d) {
   const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
@@ -205,8 +227,9 @@ function applyMonths() {
   S.lastMonth = monthKey(Math.floor(last / 12), last % 12);
   MON = [];
   for (let k = first; k <= last; k++) MON.push([Math.floor(k / 12), k % 12]);
-  TABS = ['Totaaloverzicht', ...MON.map(([y, m]) => MN[m] + ' ' + y), 'Schepenlijst'];
-  SHIPS_TAB = TABS.length - 1;
+  TABS = ['Totaaloverzicht', ...MON.map(([y, m]) => MN[m] + ' ' + y), 'Schepenlijst', 'Plattegrond'];
+  SHIPS_TAB = TABS.length - 2;
+  PLAN_TAB = TABS.length - 1;
 }
 const BL = {
   Alpha:   { c: '#dc2626', h: { '1A': 32, '1B': 32 } },
@@ -226,7 +249,6 @@ for (const b in BL) {
 const BCAP = b => Object.values(BL[b].h).reduce((a, x) => a + x, 0);
 const ST = ['Gepland', 'Bevestigd', 'Geleverd'];
 const NEED = 320;
-const DAILY_PLAN_LIMIT = 8;
 const KEY = 'bess-v1';
 
 const p = n => String(n).padStart(2, '0');
@@ -689,10 +711,11 @@ SNAP.lastMonth = '2027-06';
 SNAP.updatedAt = '2026-11-18T00:00:00.000Z';
 const GH = { owner: 'rkkpc6b497-png', repo: 'BESSLeveringen', branch: 'main', path: 'planning.json' };
 const DRAFT_KEY = 'bess-draft', TOKEN_KEY = 'bess-gh-token';
-let S, tab = 0, M = null, EDIT = false, SHOW_DONE = false, DIRTY = false, BASE = SNAP.updatedAt, LAST_REMOTE = null, REMOTE_NEWER = false, DELETE_ARMED = false;
+let S, tab = 0, M = null, EDIT = false, SHOW_DONE = false, DIRTY = false, BASE = SNAP.updatedAt, LAST_REMOTE = null, REMOTE_NEWER = false;
 
 function normalize(st) {
   if (!/^\d{4}-\d{2}$/.test(st.lastMonth || '')) st.lastMonth = SNAP.lastMonth || '2027-06';
+  if (!st.units || typeof st.units !== 'object' || Array.isArray(st.units)) st.units = {};
   st.deliveries.sort((a, b) => a.date.localeCompare(b.date));
   st.ships.forEach(s => {
     const d = SNAP.ships.find(x => x.id === s.id);
@@ -831,13 +854,12 @@ function bufferOf(s) {
 /* ---------- Validatie ---------- */
 function validate(x) {
   const e = [], u = +x.units;
-  const dailyLimit = x.status === 'Gepland' ? DAILY_PLAN_LIMIT : Infinity;
-  if (!Number.isInteger(u) || u < 1) e.push('Aantal units moet een geheel getal van minimaal 1 zijn.');
+  if (!Number.isInteger(u) || u < 1 || u > 8) e.push('Aantal units moet een geheel getal van 1 tot en met 8 zijn.');
   const day = S.deliveries.filter(d => d.date == x.date && d.id != x.id);
   const sh2 = new Set(day.map(d => d.shipId));
   if (x.shipId) sh2.add(x.shipId);
   if (sh2.size > 2) e.push('Maximaal 2 scheepsladingen (verschillende schepen) per kalenderdag.');
-  if (sum(day) + u > dailyLimit) e.push(`Daglimiet Rotterdam voor ${x.status.toLowerCase()}: ${sum(day)} + ${u} is meer dan ${dailyLimit} units.`);
+  if (sum(day) + u > 8) e.push(`Daglimiet Rotterdam: ${sum(day)} + ${u} is meer dan 8 units.`);
   const sh = shipOf(x.shipId);
   if (!sh) e.push('Kies een schip.');
   else {
@@ -860,19 +882,21 @@ function go(i) {
 }
 
 function render() {
-  const prevShips = SHIPS_TAB;
+  const prevShips = SHIPS_TAB, prevPlan = PLAN_TAB;
   applyMonths();
-  if (tab === prevShips && prevShips !== SHIPS_TAB) tab = SHIPS_TAB;
-  else if (tab > SHIPS_TAB) tab = SHIPS_TAB;
+  if (tab === prevPlan && prevPlan !== PLAN_TAB) tab = PLAN_TAB;
+  else if (tab === prevShips && prevShips !== SHIPS_TAB) tab = SHIPS_TAB;
+  else if (tab > PLAN_TAB) tab = PLAN_TAB;
   const f = MON[0], l = MON[MON.length - 1];
   $('subTitle').textContent = `Leveringen GIGA Leopard, ${MN[f[1]].toLowerCase()} ${f[0]} t/m ${MN[l[1]].toLowerCase()} ${l[0]} · ${DIRTY ? 'niet gepubliceerd' : 'stand ' + fmtStamp(BASE)} · ${EDIT ? 'bewerken actief' : 'alleen lezen'}`;
   const lastKey = monthKey(l[0], l[1]);
   const canRemove = MON.length > 1 && !S.deliveries.some(d => d.date.startsWith(lastKey));
   $('nav').innerHTML = TABS.map((t, i) => {
-    const n = i == 0 ? 0 : i == SHIPS_TAB ? S.ships.length : mUnits(i - 1);
+    const n = i == 0 || i == PLAN_TAB ? 0 : i == SHIPS_TAB ? S.ships.length : mUnits(i - 1);
     return `<button class="tab ${i == tab ? 'on' : ''}" onclick="go(${i})">${t}${i == 0 || n <= 0 ? '' : `<span class="bd">${n}</span>`}</button>`;
   }).join('') + (EDIT ? `<button class="tab" title="Volgende maand toevoegen" onclick="addMonth()" ${MON.length >= MAX_MONTHS ? 'disabled' : ''}>+ maand</button><button class="tab" title="${canRemove ? 'Laatste maand verwijderen' : 'Alleen een lege laatste maand kan worden verwijderd'}" onclick="removeMonth()" ${canRemove ? '' : 'disabled'}>&minus; maand</button>` : '');
-  $('main').innerHTML = tab == 0 ? dash() : tab == SHIPS_TAB ? shipsV() : monthV(tab - 1);
+  $('main').innerHTML = tab == 0 ? dash() : tab == PLAN_TAB ? planV() : tab == SHIPS_TAB ? shipsV() : monthV(tab - 1);
+  if (tab == PLAN_TAB) planMount();
 }
 
 function addMonth() {
@@ -925,8 +949,8 @@ function monthV(i) {
       wd.push(...dl);
       cells += `<td>
         <div class="dn">
-          <span><b>${d.getDate()}</b>${dl.length ? ` &nbsp;${sum(dl)} units` : ''}</span>
-          ${EDIT ? `<span class="add noprint" title="Levering toevoegen" onclick="openM('${key}')">+</span>` : ''}
+          <span><b>${d.getDate()}</b>${dl.length ? ` &nbsp;${sum(dl)}/8 units` : ''}</span>
+          ${EDIT && sum(dl) < 8 ? `<span class="add noprint" title="Levering toevoegen" onclick="openM('${key}')">+</span>` : ''}
         </div>
         ${dl.map(card).join('')}
       </td>`;
@@ -950,7 +974,6 @@ function monthV(i) {
 
   return `<h1>${MN[m]} ${y}</h1>
   <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mb-3">${sm.map(s => `<div class="card p-2 kpi"><span>${s[0]}</span><b>${s[1]}</b></div>`).join('')}</div>
-  <p class="text-xs mb-3" style="color:var(--mut)">Daglimiet: maximaal 8 units gepland. Voor bevestigde en geleverde leveringen is maximaal 9 units per dag toegestaan.</p>
   <div class="mb-3 flex flex-wrap gap-x-4 gap-y-1 text-xs" style="color:var(--mut)">${Object.keys(BL).map(b => `<span><i class="sw" style="background:${BL[b].c}"></i>Blok ${b}</span>`).join('')}</div>
   <div class="overflow-x-auto"><table class="cal card"><thead><tr>${['Wk','Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Weektotaal'].map(h => `<th${h === 'Wk' ? ' class="wk"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`;
 }
@@ -976,7 +999,6 @@ function adv(id) {
 /* ---------- Invoermodal ---------- */
 function openM(date, id) {
   if (!ed()) return;
-  DELETE_ARMED = false;
   const d = id ? S.deliveries.find(x => x.id == id) : { id: null, date, units: 1, shipId: '', hut: '', status: 'Gepland' };
   M = d;
   const so = S.ships.map(s => `<option value="${s.id}" ${s.id == d.shipId ? 'selected' : ''}>${esc(s.name)} (vrij ${s.cap - used(x => x.shipId == s.id, d.id)} van ${s.cap}${s.departed ? ' · gelost' : s.arrived ? ' · aangemeerd' : ''})</option>`).join('');
@@ -985,7 +1007,7 @@ function openM(date, id) {
   $('modal').innerHTML = `<div class="card p-5 w-full" style="max-width:460px">
     <h2 class="text-lg font-bold mb-3" style="text-transform:none;letter-spacing:0;color:var(--fg)">${id ? 'Levering bewerken' : 'Levering plannen'} &middot; ${fmtDate(d.date)}</h2>
     <div class="grid gap-3" oninput="chk()" onchange="chk()">
-      <label class="text-xs" style="color:var(--mut)">Aantal BESS-units (1 t/m 9)<input id="fu" type="number" min="1" max="9" value="${d.units}" class="mt-1"></label>
+      <label class="text-xs" style="color:var(--mut)">Aantal BESS-units (1 t/m 8)<input id="fu" type="number" min="1" max="8" value="${d.units}" class="mt-1"></label>
       <label class="text-xs" style="color:var(--mut)">Schip<select id="fs" class="mt-1"><option value="">Kies een schip</option>${so}</select></label>
       <label class="text-xs" style="color:var(--mut)">Bestemd veldhuisje<select id="fh" class="mt-1"><option value="">Kies een veldhuisje</option>${ho}</select></label>
       <label class="text-xs" style="color:var(--mut)">Status<select id="ft" class="mt-1">${ST.map(s => `<option ${s == d.status ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
@@ -994,7 +1016,7 @@ function openM(date, id) {
     <div class="flex gap-2 mt-4">
       <button id="sv" class="btn pri" onclick="saveM()">Opslaan</button>
       <button class="btn" onclick="closeM()">Annuleren</button>
-      ${id ? `<button id="delBtn" type="button" class="btn del ml-auto" onclick="delM()">Verwijderen</button>` : ''}
+      ${id ? `<button class="btn del ml-auto" onclick="delM()">Verwijderen</button>` : ''}
     </div>
   </div>`;
   $('modal').classList.add('on');
@@ -1010,9 +1032,7 @@ function chk() {
   const x = val(), e = validate(x), u = +x.units || 0, sh = shipOf(x.shipId), day = S.deliveries.filter(d => d.date == x.date && d.id != x.id);
   const ss = new Set(day.map(d => d.shipId));
   if (x.shipId) ss.add(x.shipId);
-  const dailyLimit = x.status === 'Gepland' ? DAILY_PLAN_LIMIT : Infinity;
-  const dayLabel = x.status === 'Gepland' ? `${sum(day) + u} van ${DAILY_PLAN_LIMIT} geplande units` : `${sum(day) + u} bevestigde/geleverde units`;
-  const l = [`Dag: ${dayLabel}, ${ss.size} van 2 scheepsladingen`];
+  const l = [`Dag: ${sum(day) + u} van 8 units, ${ss.size} van 2 scheepsladingen`];
   if (sh) {
     const dtInfo = getShipDates(sh.id);
     l.push(`Schip ${esc(sh.name)}: ${used(d => d.shipId == sh.id, x.id) + u} van ${sh.cap} units (${sh.departed ? 'gelost en vertrokken' : sh.arrived ? 'aangemeerd' : 'uiterste aanmeerdatum ' + dtInfo.deadlineLabel})`);
@@ -1032,33 +1052,9 @@ function saveM() {
 }
 
 function delM() {
-  if (!ed() || !M || !M.id) return;
-  const btn = $('delBtn');
-  if (!DELETE_ARMED) {
-    DELETE_ARMED = true;
-    if (btn) {
-      btn.textContent = 'Bevestig verwijderen';
-      btn.title = 'Klik nogmaals om deze levering definitief te verwijderen';
-      btn.style.background = 'color-mix(in srgb,var(--bad) 12%,var(--card))';
-      btn.style.borderColor = 'var(--bad)';
-    }
-    toast('Klik nogmaals op “Bevestig verwijderen” om de levering te verwijderen.');
-    return;
-  }
-  const id = M.id;
-  const before = S.deliveries.length;
-  S.deliveries = S.deliveries.filter(d => d.id != id);
-  if (S.deliveries.length === before) {
-    toast('Deze levering is niet meer gevonden in de planning.');
-    closeM();
-    render();
-    return;
-  }
-  DELETE_ARMED = false;
-  save();
-  closeM();
-  render();
-  toast('Levering verwijderd.');
+  if (!confirm('Deze levering verwijderen?')) return;
+  S.deliveries = S.deliveries.filter(d => d.id != M.id);
+  save(); closeM(); render();
 }
 
 /* ---------- Menu en icoonknoppen ---------- */
@@ -1090,6 +1086,7 @@ document.addEventListener('click', e => { if (!e.target.closest('#expMenu')) clo
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(); closeM(); } });
 
 function expCSVTab() {
+  if (tab == PLAN_TAB) return planCSV();
   const sn = id => shipOf(id)?.name || '';
   let rows;
   if (tab >= 1 && tab < SHIPS_TAB) {
@@ -1159,7 +1156,7 @@ async function loadRemote(manual) {
     return;
   }
   if ($('modal').classList.contains('on')) return;
-  S = normalize({ ships: r.ships, deliveries: r.deliveries, lastMonth: r.lastMonth });
+  S = normalize({ ships: r.ships, deliveries: r.deliveries, lastMonth: r.lastMonth, units: r.units });
   BASE = r.updatedAt;
   render();
   toast('Planning bijgewerkt (stand ' + fmtStamp(BASE) + ').');
@@ -1214,7 +1211,7 @@ async function publish(auto) {
     const body = {
       message: 'Planning bijgewerkt ' + fmtStamp(stamp),
       branch: GH.branch,
-      content: b64enc(JSON.stringify({ updatedAt: stamp, lastMonth: S.lastMonth, ships: S.ships, deliveries: S.deliveries }, null, 2) + '\n')
+      content: b64enc(JSON.stringify({ updatedAt: stamp, lastMonth: S.lastMonth, ships: S.ships, deliveries: S.deliveries, units: S.units }, null, 2) + '\n')
     };
     if (sha) body.sha = sha;
     const p = await fetch(GH_API, { method: 'PUT', headers: { ...ghHeaders(token), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
@@ -1245,7 +1242,7 @@ function discardDraft() {
   if (!confirm('Alle niet-gepubliceerde wijzigingen verwerpen?')) return;
   try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
   const src = LAST_REMOTE && LAST_REMOTE.updatedAt > SNAP.updatedAt ? LAST_REMOTE : SNAP;
-  S = normalize(clone({ ships: src.ships, deliveries: src.deliveries, lastMonth: src.lastMonth }));
+  S = normalize(clone({ ships: src.ships, deliveries: src.deliveries, lastMonth: src.lastMonth, units: src.units }));
   BASE = src.updatedAt;
   DIRTY = false;
   REMOTE_NEWER = false;
@@ -1345,6 +1342,372 @@ function trackCell(s, deadlineISO) {
     ${v.destination ? `<div class="text-xs">Naar ${esc(v.destination)}${v.eta ? ' · ETA ' + fmtDate(v.eta.slice(0, 10)) : ''}</div>` : ''}
     ${etaLate ? '<span class="pill late">ETA na uiterste aanmeerdatum</span>' : ''}
     ${port && !s.arrived && still ? (EDIT ? `<button class="btn mt-1" onclick="toggleArrival('${s.id}')">Markeer als aangemeerd</button>` : '<span class="pill wait">Lijkt aangemeerd</span>') : ''}`;
+}
+
+/* ---------- Plattegrond: BESS-units volgen (geleverd en plaatsing) ---------- */
+const PLAN_VB = [220, 110, 3030, 1090];
+const PLAN_HUTS = ['1A', '1B', '1C', '1D', '3A', '3B', '3C', '3D', '5A', '5B', '5C', '5D'];
+const PLAN_BLOK = { '1A': 'Alpha', '1B': 'Alpha', '1C': 'Bravo', '1D': 'Bravo', '3A': 'Charlie', '3B': 'Charlie', '3C': 'Delta', '3D': 'Delta', '5A': 'Echo', '5B': 'Foxtrot', '5C': 'Foxtrot', '5D': 'Foxtrot' };
+const PLAN_GEO = {"1A":[[414.8,375.8,52.2,11.3],[414.8,387.1,52.2,11.3],[519.1,375.8,52.2,11.3],[519.1,387.1,52.2,11.3],[414.8,414.1,52.2,11.3],[414.8,425.4,52.2,11.3],[519.1,414.1,52.2,11.3],[519.1,425.4,52.2,11.3],[414.8,452.4,52.2,11.3],[414.8,463.8,52.2,11.3],[519.1,452.4,52.2,11.3],[519.1,463.8,52.2,11.3],[414.8,490.7,52.2,11.3],[414.8,502.1,52.2,11.3],[519.1,490.7,52.2,11.3],[519.1,502.1,52.2,11.3],[414.8,537.6,52.2,11.3],[414.8,548.9,52.2,11.3],[519.1,537.6,52.2,11.3],[519.1,548.9,52.2,11.3],[414.8,575.9,52.2,11.3],[414.8,587.2,52.2,11.3],[519.2,575.9,52.1,11.3],[519.2,587.2,52.1,11.3],[414.8,614.2,52.2,11.3],[414.8,625.6,52.2,11.3],[519.2,614.2,52.1,11.3],[519.2,625.6,52.1,11.3],[414.8,652.6,52.2,11.3],[414.8,663.9,52.2,11.3],[519.2,652.6,52.1,11.3],[519.2,663.9,52.1,11.3]],"1B":[[1554.4,480.4,10.5,49.9],[1566.3,480.4,10.5,49.9],[1592.7,480.4,10.5,49.9],[1604.7,480.4,10.5,49.9],[1631.0,480.4,10.5,49.9],[1643.0,480.4,10.5,49.9],[1669.3,480.4,10.5,49.9],[1681.3,480.4,10.5,49.9],[1716.2,480.3,10.5,49.9],[1728.1,480.3,10.5,49.9],[1754.5,480.3,10.5,49.9],[1766.4,480.3,10.5,49.9],[1792.8,480.3,10.5,49.9],[1804.8,480.3,10.5,49.9],[1831.2,480.3,10.5,49.9],[1843.1,480.3,10.5,49.9],[1919.9,480.3,10.5,49.9],[1931.9,480.3,10.5,49.9],[1958.2,480.3,10.5,49.9],[1970.2,480.3,10.5,49.9],[1996.6,480.3,10.5,49.9],[2008.5,480.3,10.5,49.9],[2034.9,480.3,10.5,49.9],[2046.8,480.3,10.5,49.9],[2081.7,480.3,10.5,49.9],[2093.7,480.3,10.5,49.9],[2120.1,480.3,10.5,49.9],[2132.0,480.3,10.5,49.9],[2158.4,480.3,10.5,49.9],[2170.3,480.3,10.5,49.9],[2196.7,480.3,10.5,49.9],[2208.7,480.3,10.5,49.9]],"1C":[[2439.0,675.1,10.5,49.9],[2451.0,675.1,10.5,49.9],[2477.4,675.1,10.5,49.9],[2489.3,675.1,10.5,49.9],[2524.2,675.1,10.5,49.9],[2536.1,675.1,10.5,49.9],[2562.5,675.1,10.5,49.9],[2574.5,675.1,10.5,49.9],[2600.8,675.1,10.5,49.9],[2612.8,675.1,10.5,49.9],[2639.1,675.1,10.5,49.9],[2651.1,675.1,10.5,49.9],[2699.2,675.1,10.5,49.9],[2711.1,675.1,10.5,49.9],[2737.5,675.1,10.5,49.9],[2749.5,675.1,10.5,49.9],[2775.9,675.0,10.5,49.9],[2787.8,675.0,10.5,49.9],[2814.2,675.0,10.5,49.9],[2826.1,675.0,10.5,49.9]],"1D":[[1932.0,675.1,10.5,49.9],[1943.9,675.1,10.5,49.9],[1970.3,675.1,10.5,49.9],[1982.3,675.1,10.5,49.9],[2017.1,675.1,10.5,49.9],[2029.1,675.1,10.5,49.9],[2055.4,675.1,10.5,49.9],[2067.4,675.1,10.5,49.9],[2093.8,675.1,10.5,49.9],[2105.7,675.1,10.5,49.9],[2132.1,675.1,10.5,49.9],[2144.1,675.1,10.5,49.9],[2192.1,675.1,10.5,49.9],[2204.1,675.1,10.5,49.9],[2230.5,675.1,10.5,49.9],[2242.4,675.1,10.5,49.9],[2268.8,675.1,10.5,49.9],[2280.7,675.1,10.5,49.9],[2307.1,675.1,10.5,49.9],[2319.1,675.1,10.5,49.9],[2353.9,675.1,10.5,49.9],[2365.8,675.1,10.5,49.9],[2392.2,675.1,10.5,49.9],[2404.1,675.1,10.5,49.9]],"3A":[[1424.9,675.1,10.5,49.9],[1436.8,675.1,10.5,49.9],[1463.2,675.1,10.5,49.9],[1475.1,675.1,10.5,49.9],[1510.0,675.1,10.5,49.9],[1522.0,675.1,10.5,49.9],[1548.3,675.1,10.5,49.9],[1560.3,675.1,10.5,49.9],[1586.7,675.1,10.5,49.9],[1598.6,675.1,10.5,49.9],[1625.0,675.1,10.5,49.9],[1636.9,675.1,10.5,49.9],[1685.0,675.1,10.5,49.9],[1697.0,675.1,10.5,49.9],[1723.3,675.1,10.5,49.9],[1735.3,675.1,10.5,49.9],[1761.7,675.1,10.5,49.9],[1773.6,675.1,10.5,49.9],[1800.0,675.1,10.5,49.9],[1812.0,675.1,10.5,49.9],[1846.8,675.1,10.5,49.9],[1858.8,675.1,10.5,49.9],[1885.2,675.1,10.5,49.9],[1897.1,675.1,10.5,49.9]],"3B":[[841.1,675.1,10.5,49.9],[853.1,675.1,10.5,49.9],[879.4,675.1,10.5,49.9],[891.4,675.1,10.5,49.9],[917.7,675.1,10.5,49.9],[929.7,675.1,10.5,49.9],[956.1,675.1,10.5,49.9],[968.0,675.1,10.5,49.9],[1002.9,675.1,10.5,49.9],[1014.9,675.1,10.5,49.9],[1041.2,675.1,10.5,49.9],[1053.2,675.1,10.5,49.9],[1079.5,675.1,10.5,49.9],[1091.5,675.1,10.5,49.9],[1117.9,675.1,10.5,49.9],[1129.8,675.1,10.5,49.9],[1177.9,675.1,10.5,49.9],[1189.9,675.1,10.5,49.9],[1216.2,675.1,10.5,49.9],[1228.2,675.1,10.5,49.9],[1254.6,675.1,10.5,49.9],[1266.5,675.1,10.5,49.9],[1292.9,675.1,10.5,49.9],[1304.8,675.1,10.5,49.9],[1339.7,675.1,10.5,49.9],[1351.7,675.1,10.5,49.9],[1378.0,675.1,10.5,49.9],[1390.0,675.1,10.5,49.9]],"3C":[[841.1,750.5,10.5,49.9],[853.1,750.5,10.5,49.9],[879.4,750.5,10.5,49.9],[891.4,750.5,10.5,49.9],[917.7,750.5,10.5,49.9],[929.7,750.5,10.5,49.9],[956.1,750.5,10.5,49.9],[968.0,750.5,10.5,49.9],[1002.9,750.5,10.5,49.9],[1014.9,750.5,10.5,49.9],[1041.2,750.5,10.5,49.9],[1053.2,750.5,10.5,49.9],[1079.5,750.5,10.5,49.9],[1091.5,750.5,10.5,49.9],[1117.9,750.5,10.5,49.9],[1129.8,750.5,10.5,49.9],[1177.9,750.5,10.5,49.9],[1189.9,750.5,10.5,49.9],[1216.2,750.5,10.5,49.9],[1228.2,750.5,10.5,49.9],[1254.6,750.5,10.5,49.9],[1266.5,750.5,10.5,49.9],[1292.9,750.5,10.5,49.9],[1304.8,750.5,10.5,49.9],[1339.7,750.5,10.5,49.9],[1351.7,750.5,10.5,49.9],[1378.0,750.5,10.5,49.9],[1390.0,750.5,10.5,49.9]],"3D":[[1541.5,946.7,10.5,49.9],[1553.5,946.7,10.5,49.9],[1579.9,946.7,10.5,49.9],[1591.8,946.7,10.5,49.9],[1618.2,946.7,10.5,49.9],[1630.2,946.7,10.5,49.9],[1656.5,946.7,10.5,49.9],[1668.5,946.7,10.5,49.9],[1703.4,946.7,10.5,49.9],[1715.3,946.7,10.5,49.9],[1741.7,946.7,10.5,49.9],[1753.6,946.7,10.5,49.9],[1780.0,946.7,10.5,49.9],[1791.9,946.7,10.5,49.9],[1818.3,946.7,10.5,49.9],[1830.3,946.7,10.5,49.9],[1878.3,946.6,10.5,49.9],[1890.3,946.6,10.5,49.9],[1916.7,946.6,10.5,49.9],[1928.7,946.6,10.5,49.9],[1955.0,946.6,10.5,49.9],[1967.0,946.6,10.5,49.9],[1993.3,946.6,10.5,49.9],[2005.3,946.6,10.5,49.9],[2040.2,946.6,10.5,49.9],[2052.1,946.6,10.5,49.9],[2078.5,946.6,10.5,49.9],[2090.4,946.6,10.5,49.9]],"5A":[[1932.0,750.5,10.5,49.9],[1943.9,750.5,10.5,49.9],[1970.3,750.5,10.5,49.9],[1982.3,750.5,10.5,49.9],[2017.1,750.5,10.5,49.9],[2029.1,750.5,10.5,49.9],[2055.5,750.5,10.5,49.9],[2067.4,750.5,10.5,49.9],[2093.8,750.5,10.5,49.9],[2105.7,750.5,10.5,49.9],[2132.1,750.5,10.5,49.9],[2144.1,750.5,10.5,49.9],[2192.1,750.5,10.5,49.9],[2204.1,750.5,10.5,49.9],[2230.5,750.5,10.5,49.9],[2242.4,750.5,10.5,49.9],[2268.8,750.5,10.5,49.9],[2280.7,750.5,10.5,49.9],[2307.1,750.5,10.5,49.9],[2319.1,750.5,10.5,49.9],[2353.9,750.4,10.5,49.9],[2365.9,750.4,10.5,49.9],[2392.3,750.4,10.5,49.9],[2404.2,750.4,10.5,49.9]],"5B":[[2439.0,750.4,10.5,49.9],[2451.0,750.4,10.5,49.9],[2477.4,750.4,10.5,49.9],[2489.3,750.4,10.5,49.9],[2524.2,750.4,10.5,49.9],[2536.1,750.4,10.5,49.9],[2562.5,750.4,10.5,49.9],[2574.5,750.4,10.5,49.9],[2600.8,750.4,10.5,49.9],[2612.8,750.4,10.5,49.9],[2639.2,750.4,10.5,49.9],[2651.1,750.4,10.5,49.9],[2699.2,750.4,10.5,49.9],[2711.2,750.4,10.5,49.9],[2737.5,750.4,10.5,49.9],[2749.5,750.4,10.5,49.9],[2775.9,750.4,10.5,49.9],[2787.8,750.4,10.5,49.9],[2814.2,750.4,10.5,49.9],[2826.1,750.4,10.5,49.9],[2709.1,946.6,10.5,49.9],[2721.0,946.6,10.5,49.9],[2747.4,946.6,10.5,49.9],[2759.4,946.6,10.5,49.9],[2785.7,946.6,10.5,49.9],[2797.7,946.6,10.5,49.9],[2824.1,946.6,10.5,49.9],[2836.0,946.6,10.5,49.9]],"5C":[[2125.3,946.6,10.5,49.9],[2137.3,946.6,10.5,49.9],[2163.6,946.6,10.5,49.9],[2175.6,946.6,10.5,49.9],[2202.0,946.6,10.5,49.9],[2213.9,946.6,10.5,49.9],[2240.3,946.6,10.5,49.9],[2252.2,946.6,10.5,49.9],[2287.1,946.6,10.5,49.9],[2299.1,946.6,10.5,49.9],[2325.4,946.6,10.5,49.9],[2337.4,946.6,10.5,49.9],[2363.8,946.6,10.5,49.9],[2375.7,946.6,10.5,49.9],[2402.1,946.6,10.5,49.9],[2414.1,946.6,10.5,49.9],[2462.1,946.6,10.5,49.9],[2474.1,946.6,10.5,49.9],[2500.4,946.6,10.5,49.9],[2512.4,946.6,10.5,49.9],[2538.8,946.6,10.5,49.9],[2550.7,946.6,10.5,49.9],[2577.1,946.6,10.5,49.9],[2589.1,946.6,10.5,49.9],[2623.9,946.6,10.5,49.9],[2635.9,946.6,10.5,49.9],[2662.2,946.6,10.5,49.9],[2674.2,946.6,10.5,49.9]],"5D":[[1424.9,750.5,10.5,49.9],[1436.8,750.5,10.5,49.9],[1463.2,750.5,10.5,49.9],[1475.1,750.5,10.5,49.9],[1510.0,750.5,10.5,49.9],[1522.0,750.5,10.5,49.9],[1548.3,750.5,10.5,49.9],[1560.3,750.5,10.5,49.9],[1586.7,750.5,10.5,49.9],[1598.6,750.5,10.5,49.9],[1625.0,750.5,10.5,49.9],[1636.9,750.5,10.5,49.9],[1685.0,750.5,10.5,49.9],[1697.0,750.5,10.5,49.9],[1723.3,750.5,10.5,49.9],[1735.3,750.5,10.5,49.9],[1761.7,750.5,10.5,49.9],[1773.6,750.5,10.5,49.9],[1800.0,750.5,10.5,49.9],[1812.0,750.5,10.5,49.9],[1846.8,750.5,10.5,49.9],[1858.8,750.5,10.5,49.9],[1885.2,750.5,10.5,49.9],[1897.1,750.5,10.5,49.9]]};
+const PLAN_UNITS = [];
+PLAN_HUTS.forEach(h => PLAN_GEO[h].forEach((g, i) => PLAN_UNITS.push({ id: `BP${String(i + 1).padStart(2, '0')}-${h}`, hut: h, blok: PLAN_BLOK[h], x: g[0], y: g[1], w: g[2], h: g[3] })));
+const PLAN_BY_ID = Object.fromEntries(PLAN_UNITS.map(u => [u.id, u]));
+const PLAN_STATES = [
+  ['placed', 'Geplaatst', '#22c55e'],
+  ['delivered', 'Geleverd, nog niet geplaatst', '#3b82f6'],
+  ['planned', 'Plaatsing gepland, nog niet geleverd', '#f59e0b'],
+  ['none', 'Nog niet geleverd', '#94a3b8']
+];
+const PV = { root: null, svg: null, box: null, rects: {}, vb: { x: PLAN_VB[0], y: PLAN_VB[1], w: PLAN_VB[2] }, sel: new Set(), tool: 'pan', filter: null, ptrs: new Map(), raf: 0, fitted: false, drag: null, pinch: null };
+
+const planToday = () => { const n = new Date(); return ds(n.getFullYear(), n.getMonth(), n.getDate()); };
+function unitState(id) {
+  const u = S.units[id];
+  if (!u) return 'none';
+  if (u.g) return 'placed';
+  if (u.d) return 'delivered';
+  if (u.p) return 'planned';
+  return 'none';
+}
+const unitOverdue = id => { const u = S.units[id]; return !!(u && u.p && !u.g && u.p < planToday()); };
+function planStateText(id) {
+  const u = S.units[id] || {}, parts = [];
+  if (u.g) parts.push('Geplaatst ' + fmtDate(u.g));
+  if (u.d) parts.push('geleverd ' + fmtDate(u.d));
+  if (!u.g && !u.d) parts.push('Nog niet geleverd');
+  if (u.p && !u.g) parts.push('plaatsing gepland ' + fmtDate(u.p));
+  return parts.join(', ');
+}
+function planCounts() {
+  const c = { placed: 0, delivered: 0, planned: 0, none: 0, dAll: 0 };
+  PLAN_UNITS.forEach(u => { c[unitState(u.id)]++; const x = S.units[u.id]; if (x && (x.d || x.g)) c.dAll++; });
+  return c;
+}
+function planBBox(us) {
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  us.forEach(u => { x0 = Math.min(x0, u.x); y0 = Math.min(y0, u.y); x1 = Math.max(x1, u.x + u.w); y1 = Math.max(y1, u.y + u.h); });
+  return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+}
+
+/* --- viewer: zoom en verschuiven via de viewBox van een SVG --- */
+function planSize() { const r = PV.root.getBoundingClientRect(); return { W: Math.max(r.width, 1), H: Math.max(r.height, 1), left: r.left, top: r.top }; }
+function planVH() { const { W, H } = planSize(); return PV.vb.w * H / W; }
+function planApply() { PV.svg.setAttribute('viewBox', `${PV.vb.x} ${PV.vb.y} ${PV.vb.w} ${planVH()}`); }
+function planFitW() { const { W, H } = planSize(); return Math.max(PLAN_VB[2], PLAN_VB[3] * W / H); }
+function planClamp() {
+  PV.vb.w = Math.min(Math.max(PV.vb.w, 30), planFitW() * 1.1);
+  const h = planVH();
+  PV.vb.x = Math.min(Math.max(PV.vb.x, PLAN_VB[0] - PV.vb.w * 0.5), PLAN_VB[0] + PLAN_VB[2] - PV.vb.w * 0.5);
+  PV.vb.y = Math.min(Math.max(PV.vb.y, PLAN_VB[1] - h * 0.5), PLAN_VB[1] + PLAN_VB[3] - h * 0.5);
+}
+function planSchedule() { if (PV.raf) return; PV.raf = requestAnimationFrame(() => { PV.raf = 0; planClamp(); planApply(); }); }
+function planFit() {
+  const w = planFitW();
+  PV.vb.w = w;
+  PV.vb.x = PLAN_VB[0] + (PLAN_VB[2] - w) / 2;
+  PV.vb.y = PLAN_VB[1] + (PLAN_VB[3] - planVH()) / 2;
+  planApply();
+}
+function planToRect(r, pad = 0.2) {
+  const { W, H } = planSize();
+  const w = Math.max(r.w * (1 + 2 * pad), r.h * (1 + 2 * pad) * W / H);
+  PV.vb.w = w;
+  PV.vb.x = r.x + r.w / 2 - w / 2;
+  PV.vb.y = r.y + r.h / 2 - planVH() / 2;
+  planClamp();
+  planApply();
+}
+function planZoomBy(f, cx, cy) {
+  const { W, H, left, top } = planSize();
+  const px = cx == null ? W / 2 : cx - left, py = cy == null ? H / 2 : cy - top;
+  const s = PV.vb.w / W, ux = PV.vb.x + px * s, uy = PV.vb.y + py * s;
+  const nw = Math.min(Math.max(PV.vb.w / f, 30), planFitW() * 1.1), s2 = nw / W;
+  PV.vb.w = nw;
+  PV.vb.x = ux - px * s2;
+  PV.vb.y = uy - py * s2;
+  planClamp();
+  planApply();
+}
+function planClientToUser(cx, cy) { const { W, left, top } = planSize(); const s = PV.vb.w / W; return { x: PV.vb.x + (cx - left) * s, y: PV.vb.y + (cy - top) * s }; }
+
+function planBuild() {
+  const NS = 'http://www.w3.org/2000/svg';
+  const root = document.createElement('div');
+  root.className = 'plan-vp';
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('width', '100%');
+  svg.setAttribute('height', '100%');
+  const img = document.createElementNS(NS, 'image');
+  img.setAttribute('href', 'plattegrond.svg');
+  img.setAttribute('x', PLAN_VB[0]); img.setAttribute('y', PLAN_VB[1]);
+  img.setAttribute('width', PLAN_VB[2]); img.setAttribute('height', PLAN_VB[3]);
+  svg.appendChild(img);
+  const g = document.createElementNS(NS, 'g');
+  PLAN_UNITS.forEach(u => {
+    const r = document.createElementNS(NS, 'rect');
+    r.setAttribute('x', u.x); r.setAttribute('y', u.y); r.setAttribute('width', u.w); r.setAttribute('height', u.h);
+    r.dataset.id = u.id;
+    r.appendChild(document.createElementNS(NS, 'title'));
+    g.appendChild(r);
+    PV.rects[u.id] = r;
+  });
+  svg.appendChild(g);
+  const box = document.createElement('div');
+  box.className = 'plan-box';
+  box.hidden = true;
+  root.append(svg, box);
+  PV.root = root; PV.svg = svg; PV.box = box;
+  planBind();
+  if (typeof ResizeObserver !== 'undefined') new ResizeObserver(() => { if (PV.root.isConnected && PV.fitted) planSchedule(); }).observe(root);
+}
+
+function planBind() {
+  const root = PV.root;
+  root.addEventListener('wheel', e => {
+    e.preventDefault();
+    planZoomBy(Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0018)), e.clientX, e.clientY);
+  }, { passive: false });
+  root.addEventListener('pointerdown', e => {
+    if (e.button > 0) return;
+    try { root.setPointerCapture(e.pointerId); } catch (_) {}
+    PV.ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (PV.ptrs.size === 1) {
+      const t = e.target.closest ? e.target.closest('.pu') : null;
+      const add = e.shiftKey || e.ctrlKey || e.metaKey || PV.tool === 'box';
+      PV.drag = { x0: e.clientX, y0: e.clientY, moved: false, unit: t ? t.dataset.id : null, box: PV.tool === 'box' || e.shiftKey, add, vx: PV.vb.x, vy: PV.vb.y };
+    } else if (PV.ptrs.size === 2) {
+      const [a, b] = [...PV.ptrs.values()];
+      PV.pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), w: PV.vb.w };
+      if (PV.drag) PV.drag.moved = true;
+    }
+  });
+  root.addEventListener('pointermove', e => {
+    if (!PV.ptrs.has(e.pointerId)) return;
+    PV.ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (PV.ptrs.size >= 2 && PV.pinch) {
+      const [a, b] = [...PV.ptrs.values()], d = Math.hypot(a.x - b.x, a.y - b.y);
+      planZoomBy(PV.vb.w / (PV.pinch.w * PV.pinch.d / d), (a.x + b.x) / 2, (a.y + b.y) / 2);
+      return;
+    }
+    const dr = PV.drag;
+    if (!dr) return;
+    const dx = e.clientX - dr.x0, dy = e.clientY - dr.y0;
+    if (!dr.moved && Math.hypot(dx, dy) > 5) dr.moved = true;
+    if (!dr.moved) return;
+    if (dr.box) {
+      const { left, top } = planSize();
+      Object.assign(PV.box.style, { left: Math.min(dr.x0, e.clientX) - left + 'px', top: Math.min(dr.y0, e.clientY) - top + 'px', width: Math.abs(dx) + 'px', height: Math.abs(dy) + 'px' });
+      PV.box.hidden = false;
+    } else {
+      const s = PV.vb.w / planSize().W;
+      PV.vb.x = dr.vx - dx * s;
+      PV.vb.y = dr.vy - dy * s;
+      planSchedule();
+    }
+  });
+  const end = e => {
+    if (!PV.ptrs.has(e.pointerId)) return;
+    PV.ptrs.delete(e.pointerId);
+    try { root.releasePointerCapture(e.pointerId); } catch (_) {}
+    if (PV.ptrs.size < 2) PV.pinch = null;
+    const dr = PV.drag;
+    if (PV.ptrs.size === 0 && dr) {
+      PV.drag = null;
+      if (dr.box && dr.moved) {
+        PV.box.hidden = true;
+        const a = planClientToUser(dr.x0, dr.y0), b = planClientToUser(e.clientX, e.clientY);
+        const x0 = Math.min(a.x, b.x), x1 = Math.max(a.x, b.x), y0 = Math.min(a.y, b.y), y1 = Math.max(a.y, b.y);
+        if (!dr.add) PV.sel.clear();
+        PLAN_UNITS.forEach(u => { if (u.x < x1 && u.x + u.w > x0 && u.y < y1 && u.y + u.h > y0) PV.sel.add(u.id); });
+        planSelChanged();
+      } else if (!dr.moved && e.type === 'pointerup') {
+        if (dr.unit) {
+          if (dr.add) { if (PV.sel.has(dr.unit)) PV.sel.delete(dr.unit); else PV.sel.add(dr.unit); }
+          else PV.sel = new Set([dr.unit]);
+        } else if (!dr.add) PV.sel.clear();
+        planSelChanged();
+      }
+    }
+  };
+  root.addEventListener('pointerup', end);
+  root.addEventListener('pointercancel', end);
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && tab === PLAN_TAB && PV.sel.size) planClearSel(); });
+
+function planPaint() {
+  PLAN_UNITS.forEach(u => {
+    const el = PV.rects[u.id], st = unitState(u.id);
+    let cls = 'pu s-' + st;
+    if (unitOverdue(u.id)) cls += ' od';
+    if (PV.sel.has(u.id)) cls += ' sel';
+    if (PV.filter && PV.filter !== st) cls += ' dim';
+    el.setAttribute('class', cls);
+    el.firstChild.textContent = `${u.id} · ${planStateText(u.id)}`;
+  });
+}
+function planSelChanged() {
+  planPaint();
+  const p = $('pvpanel');
+  if (p) p.innerHTML = planPanel();
+}
+function planClearSel() { PV.sel.clear(); planSelChanged(); }
+function planMount() {
+  const m = $('pvmount');
+  if (!m) return;
+  if (!PV.root) planBuild();
+  m.appendChild(PV.root);
+  PV.root.classList.toggle('box', PV.tool === 'box');
+  planPaint();
+  if (!PV.fitted) { PV.fitted = true; planFit(); } else { planClamp(); planApply(); }
+}
+
+/* --- acties --- */
+function planFilter(k) { PV.filter = PV.filter === k ? null : k; render(); }
+function planTool(t) { PV.tool = t; render(); }
+function planGoto(h) {
+  if (!h) return;
+  planToRect(planBBox(PLAN_UNITS.filter(u => u.hut === h)), 0.25);
+  const s = $('pvhut'); if (s) s.value = '';
+}
+function planSelectHut(h) {
+  PV.sel = new Set(PLAN_UNITS.filter(u => u.hut === h).map(u => u.id));
+  planGoto(h);
+  planSelChanged();
+  const m = $('pvmount'); if (m && m.scrollIntoView) m.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function planSelectDate(d) {
+  const us = PLAN_UNITS.filter(u => { const x = S.units[u.id]; return x && x.p === d && !x.g; });
+  if (!us.length) return;
+  PV.sel = new Set(us.map(u => u.id));
+  planToRect(planBBox(us), 0.3);
+  planSelChanged();
+  const m = $('pvmount'); if (m && m.scrollIntoView) m.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function planSearch(q) {
+  q = (q || '').trim().toUpperCase();
+  if (!q) return;
+  const hits = PLAN_UNITS.filter(u => u.id.includes(q));
+  if (!hits.length) return toast('Geen unit gevonden.');
+  PV.sel = new Set(hits.map(u => u.id));
+  planToRect(planBBox(hits), 0.3);
+  planSelChanged();
+}
+function planSet(key, clear) {
+  if (!ed()) return;
+  const val = clear ? '' : (($('pv-' + key) || {}).value || '');
+  if (!clear && !/^\d{4}-\d{2}-\d{2}$/.test(val)) return toast('Kies eerst een datum.');
+  PV.sel.forEach(id => {
+    const x = Object.assign({}, S.units[id]);
+    if (val) { x[key] = val; if (key === 'g' && !x.d) x.d = val; } else delete x[key];
+    if (Object.keys(x).length) S.units[id] = x; else delete S.units[id];
+  });
+  save();
+  render();
+  toast(`${PV.sel.size} ${PV.sel.size === 1 ? 'unit' : 'units'} bijgewerkt.`);
+}
+function planSyncDeliveries() {
+  if (!ed()) return;
+  let added = 0;
+  PLAN_HUTS.forEach(h => {
+    const dels = S.deliveries.filter(d => d.hut === h && d.status === 'Geleverd').sort((a, b) => a.date.localeCompare(b.date));
+    const dates = [];
+    dels.forEach(d => { for (let i = 0; i < d.units; i++) dates.push(d.date); });
+    const us = PLAN_UNITS.filter(u => u.hut === h);
+    let have = us.filter(u => S.units[u.id] && (S.units[u.id].d || S.units[u.id].g)).length;
+    for (const u of us) {
+      if (have >= dates.length) break;
+      const x = S.units[u.id] || {};
+      if (x.d || x.g) continue;
+      S.units[u.id] = Object.assign({}, x, { d: dates[have] });
+      have++; added++;
+    }
+  });
+  if (!added) return toast('De tekening loopt al gelijk met de leveringen.');
+  save();
+  render();
+  toast(`${added} units als geleverd gemarkeerd op basis van de leveringen.`);
+}
+function planRows() {
+  const f = v => v ? fmtDate(v) : '';
+  return PLAN_UNITS.map(u => { const x = S.units[u.id] || {}; return [u.id, u.hut, u.blok, f(x.d), f(x.p), f(x.g), PLAN_STATES.find(s => s[0] === unitState(u.id))[1]]; });
+}
+function planCSV() {
+  const rows = [['Unit', 'Veldhuisje', 'Blok', 'Geleverd', 'Plaatsing gepland', 'Geplaatst', 'Status'], ...planRows()];
+  dl('bess-units.csv', new Blob(['\ufeff' + rows.map(r => r.join(';')).join('\r\n')], { type: 'text/csv;charset=utf-8' }));
+}
+
+/* --- weergave --- */
+function planHutCard(h) {
+  const us = PLAN_UNITS.filter(u => u.hut === h), n = us.length;
+  let pl = 0, dl = 0, pp = 0;
+  us.forEach(u => { const x = S.units[u.id] || {}; if (x.g) pl++; if (x.d || x.g) dl++; if (x.p && !x.g) pp++; });
+  const fromDel = S.deliveries.filter(d => d.hut === h && d.status === 'Geleverd').reduce((t, d) => t + d.units, 0);
+  return `<div class="card p-3">
+    <div class="flex justify-between items-center"><b>${h}</b><span class="text-xs" style="color:var(--mut)">Blok ${PLAN_BLOK[h]}</span></div>
+    <div class="my-2">${bar(pl, Math.max(dl - pl, 0), n, BL[PLAN_BLOK[h]].c)}</div>
+    <div class="text-xs" style="color:var(--mut)">Geplaatst ${pl} · Geleverd ${dl} van ${n}${pp ? ` · ${pp} gepland` : ''}</div>
+    ${fromDel !== dl ? `<div class="text-xs" style="color:var(--warn)">Leveringen: ${fromDel} geleverd</div>` : ''}
+    <div class="flex gap-2 mt-2"><button class="btn" onclick="planGoto('${h}')">Toon</button><button class="btn" onclick="planSelectHut('${h}')">Selecteer alles</button></div>
+  </div>`;
+}
+function planAgenda() {
+  const by = {};
+  PLAN_UNITS.forEach(u => { const x = S.units[u.id]; if (x && x.p && !x.g) (by[x.p] = by[x.p] || []).push(u); });
+  const dates = Object.keys(by).sort();
+  if (!dates.length) return `<p class="text-sm mb-5" style="color:var(--mut)">Nog geen plaatsing gepland. Selecteer units op de tekening en kies bij &ldquo;Plaatsing gepland op&rdquo; een datum.</p>`;
+  const today = planToday();
+  return `<div class="card overflow-x-auto mb-5"><table><thead><tr><th>Geplaatst op</th><th>Units</th><th>Veldhuisjes</th><th>Geleverd</th><th></th></tr></thead><tbody>${dates.map(d => {
+    const us = by[d], huts = [...new Set(us.map(u => u.hut))].join(', '), dlv = us.filter(u => S.units[u.id].d).length;
+    return `<tr><td class="font-medium">${fmtDate(d)}${d < today ? ' <span class="text-xs" style="color:var(--bad)">verstreken</span>' : ''}</td><td><b>${us.length}</b></td><td>${huts}</td><td>${dlv} van ${us.length}${dlv < us.length ? ' <span class="text-xs" style="color:var(--warn)">nog niet alles geleverd</span>' : ''}</td><td><button class="btn" onclick="planSelectDate('${d}')">Toon</button></td></tr>`;
+  }).join('')}</tbody></table></div>`;
+}
+function planPanel() {
+  const ids = [...PV.sel];
+  const sync = EDIT ? `<button class="btn mt-3" onclick="planSyncDeliveries()" title="Markeert per veldhuisje de eerste units als geleverd, passend bij de leveringen">Geleverd invullen vanuit leveringen</button>` : '';
+  if (!ids.length) return `<div class="pp"><div><h3 class="font-semibold mb-1">Geen selectie</h3>
+    <p class="text-sm" style="color:var(--mut)">Klik op een unit. Houd Shift ingedrukt en sleep, of kies <b>Selecteren</b> bovenaan, om meerdere units tegelijk te kiezen.${EDIT ? '' : ' Ontgrendel bewerken om de status te wijzigen.'}</p></div></div>${sync}`;
+  const byState = {};
+  ids.forEach(id => { const s = unitState(id); byState[s] = (byState[s] || 0) + 1; });
+  const huts = [...new Set(ids.map(id => PLAN_BY_ID[id].hut))];
+  let head;
+  if (ids.length === 1) {
+    const id = ids[0], u = PLAN_BY_ID[id], x = S.units[id] || {};
+    head = `<h3 class="font-semibold">${id}</h3><div class="text-sm mb-2" style="color:var(--mut)">Veldhuisje ${u.hut} &middot; blok ${u.blok}</div>
+      <dl class="plan-dl text-sm"><dt>Geleverd</dt><dd>${x.d ? fmtDate(x.d) : '-'}</dd><dt>Plaatsing gepland</dt><dd>${x.p ? fmtDate(x.p) : '-'}${unitOverdue(id) ? ' <span style="color:var(--bad)">(verstreken)</span>' : ''}</dd><dt>Geplaatst</dt><dd>${x.g ? fmtDate(x.g) : '-'}</dd></dl>`;
+  } else {
+    head = `<h3 class="font-semibold">${ids.length} units geselecteerd</h3><div class="text-sm mb-1" style="color:var(--mut)">Veldhuisje${huts.length > 1 ? 's' : ''} ${huts.join(', ')}</div>
+      <div class="text-xs mb-2">${PLAN_STATES.filter(([k]) => byState[k]).map(([k, l]) => `${byState[k]}&times; ${l.toLowerCase()}`).join(' &middot; ')}</div>`;
+  }
+  const row = (key, label, def) => `<div class="mb-2"><label class="text-xs" style="color:var(--mut)">${label}</label><div class="flex gap-2 mt-1"><input type="date" id="pv-${key}" value="${def}" style="flex:1;min-width:0"><button class="btn pri" onclick="planSet('${key}')">Zet</button><button class="btn" title="Datum wissen" onclick="planSet('${key}', true)">Wis</button></div></div>`;
+  const form = EDIT
+    ? `<div class="forms">${row('d', 'Geleverd op', planToday())}${row('p', 'Plaatsing gepland op', '')}${row('g', 'Geplaatst op', planToday())}</div>`
+    : '<div><p class="text-xs mt-2" style="color:var(--mut)">Ontgrendel bewerken om de status te wijzigen.</p></div>';
+  return `<div class="pp"><div>${head}<button class="btn mt-2" onclick="planClearSel()">Selectie wissen</button></div>${form}</div>${sync}`;
+}
+function planV() {
+  const c = planCounts(), n = PLAN_UNITS.length;
+  const delivSum = S.deliveries.filter(d => d.status === 'Geleverd').reduce((t, d) => t + d.units, 0);
+  const chips = PLAN_STATES.map(([k, label, col]) => `<button class="chip${PV.filter === k ? ' on' : ''}" onclick="planFilter('${k}')"><i class="sw" style="background:${col}"></i>${label} <b>${c[k]}</b></button>`).join('');
+  const hutOpts = PLAN_HUTS.map(h => `<option value="${h}">${h} &middot; blok ${PLAN_BLOK[h]}</option>`).join('');
+  return `<h1>Plattegrond</h1>
+  <p class="text-sm mb-3" style="color:var(--mut)">Geleverd op locatie: <b style="color:var(--fg)">${c.dAll}</b> van ${n} &middot; geplaatst: <b style="color:var(--fg)">${c.placed}</b>${c.dAll !== delivSum ? ` &middot; <span style="color:var(--warn)">volgens de leveringen is ${delivSum} geleverd</span>` : ''}</p>
+  <div class="flex flex-wrap items-center gap-2 mb-2">${chips}</div>
+  <div class="flex flex-wrap items-center gap-2 mb-2">
+    <input id="pvsearch" placeholder="Zoek unit, bijv. BP12-3B of 3B" style="width:230px" onkeydown="if(event.key==='Enter')planSearch(this.value)">
+    <select id="pvhut" style="width:170px" onchange="planGoto(this.value)"><option value="">Ga naar veldhuisje</option>${hutOpts}</select>
+    <button class="btn" onclick="planZoomBy(1.6)" aria-label="Inzoomen">+</button><button class="btn" onclick="planZoomBy(1/1.6)" aria-label="Uitzoomen">&minus;</button><button class="btn" onclick="planFit()">Alles</button>
+    <span class="seg"><button class="btn${PV.tool === 'pan' ? ' on' : ''}" onclick="planTool('pan')">Verplaatsen</button><button class="btn${PV.tool === 'box' ? ' on' : ''}" onclick="planTool('box')">Selecteren</button></span>
+    <button class="btn" onclick="planCSV()">CSV</button>
+  </div>
+  <div class="plan-wrap">
+    <div id="pvmount" class="plan-view"></div>
+    <aside id="pvpanel" class="card p-4 plan-panel">${planPanel()}</aside>
+  </div>
+  <p class="text-xs mt-2 mb-4" style="color:var(--mut)">Scroll of knijp om te zoomen, sleep om te verschuiven. De kleuren op de tekening volgen de status per unit. Een rode rand betekent dat de geplande plaatsingsdatum voorbij is.</p>
+  <h2>Geplande plaatsingen</h2>
+  ${planAgenda()}
+  <h2>Voortgang per veldhuisje</h2>
+  <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2">${PLAN_HUTS.map(planHutCard).join('')}</div>`;
 }
 
 /* ---------- Lokale bewerktoegang ---------- */
@@ -1544,13 +1907,6 @@ function dash() {
     </tr>`;
   }).join('');
 
-  const overLimitDays = [...new Set(S.deliveries.map(d => d.date))].sort().map(date => {
-    const dd = S.deliveries.filter(d => d.date === date);
-    const total = sum(dd);
-    return { date, total, planned: sum(dd.filter(d => d.status === 'Gepland')), confirmed: sum(dd.filter(d => d.status === 'Bevestigd')), delivered: sum(dd.filter(d => d.status === 'Geleverd')) };
-  }).filter(d => d.total > DAILY_PLAN_LIMIT && d.delivered < d.total);
-  const overLimitRows = overLimitDays.map(d => `<tr><td><b>${fmtDate(d.date)}</b></td><td>${d.planned}</td><td>${d.confirmed}</td><td>${d.delivered}</td><td><b>${d.total}</b></td></tr>`).join('');
-
   const blocks = Object.keys(BL).map(b => {
     const f = S.deliveries.filter(d => HB[d.hut] == b), g = sum(f.filter(d => d.status == 'Geleverd')), t = sum(f), c = BCAP(b), col = BL[b].c;
     return `<div class="card p-3.5" style="border-top:4px solid ${col}">
@@ -1627,9 +1983,6 @@ function dash() {
   <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2.5 mb-5">${k.map(x => `<div class="card p-3 kpi"><span>${x[0]}</span><b>${x[1]}</b><span class="text-xs">${x[2]}</span></div>`).join('')}</div>
   <h2>Maandoverzicht</h2>
   <div class="card overflow-x-auto mb-5"><table><thead><tr><th>Maand</th><th>Leverdagen</th><th>Gepland</th><th>Bevestigd</th><th>Geleverd</th><th>Maandtotaal</th></tr></thead><tbody>${mrows}</tbody></table></div>
-  <h2>Dagen boven de planningslimiet</h2>
-  <div class="card overflow-x-auto mb-5"><table><thead><tr><th>Datum</th><th>Gepland</th><th>Bevestigd</th><th>Geleverd</th><th>Dagtotaal</th></tr></thead><tbody>${overLimitRows || '<tr><td colspan="5" class="text-xs" style="color:var(--mut)">Geen dagen boven 8 units.</td></tr>'}</tbody></table></div>
-  <p class="text-xs mb-5" style="color:var(--mut)">Deze tabel toont dagen waarop het dagtotaal hoger is dan de planningslimiet van 8 units. Dit is een signalering, geen harde bovengrens voor bevestigde of geleverde aantallen.</p>
   <h2>Voortgang per commercieel blok</h2>
   <div class="grid md:grid-cols-3 gap-2.5 mb-5">${blocks}</div>
   <h2>Voortgang per veldhuisje</h2>
@@ -1649,7 +2002,7 @@ function dash() {
 function allHtml() {
   const cur = tab;
   let h = '';
-  TABS.forEach((t, i) => {
+  TABS.slice(0, SHIPS_TAB + 1).forEach((t, i) => {
     tab = i;
     render();
     h += `<section style="${i < SHIPS_TAB ? 'break-after:page;' : ''}margin-bottom:24px">${$('main').innerHTML}</section>`;
@@ -1760,6 +2113,7 @@ function expXLSX() {
   })], [26, 12, 18, 12, 10, 16, 22, 12]);
 
   A('Alle leveringen', [['Datum', 'Schip', 'Veldhuisje', 'Blok', 'Units', 'Status'], ...[...D].sort((a, c) => a.date.localeCompare(c.date)).map(x => [fmtDate(x.date), sn(x.shipId), x.hut, HB[x.hut] || '', x.units, x.status])], [12, 26, 12, 10, 8, 12]);
+  A('Units', [['Unit', 'Veldhuisje', 'Blok', 'Geleverd', 'Plaatsing gepland', 'Geplaatst', 'Status'], ...planRows()], [14, 12, 10, 14, 18, 14, 36]);
   const arr = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
   dl('bess-complete-export.xlsx', new Blob([arr], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
 }
@@ -1781,7 +2135,7 @@ function impJSON(i) {
         if (sh.departed && !sh.arrived) sh.departed = false;
         if (!Object.prototype.hasOwnProperty.call(sh, 'trackingUrl')) sh.trackingUrl = '';
       });
-      S = { ships: s.ships, deliveries: s.deliveries, lastMonth: s.lastMonth };
+      S = normalize({ ships: s.ships, deliveries: s.deliveries, lastMonth: s.lastMonth, units: s.units });
       save(); render(); toast('Planning geïmporteerd.');
     } catch (e) {
       toast('Ongeldig JSON-bestand.');
