@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-27T07:02:23.930Z",
+  "updatedAt": "2026-11-28T05:36:56.603Z",
   "lastMonth": "2027-02",
   "ships": [
     {
@@ -161,11 +161,19 @@
       "units": 7
     },
     {
+      "id": "x3strj15",
+      "date": "2026-11-26",
+      "units": 2,
+      "shipId": "s1",
+      "hut": "1B",
+      "status": "Geleverd"
+    },
+    {
       "date": "2026-11-27",
       "hut": "1B",
       "id": "xlwqh0cg",
       "shipId": "s3",
-      "status": "Bevestigd",
+      "status": "Geleverd",
       "units": 8
     },
     {
@@ -535,14 +543,7 @@
       "shipId": "x9qxg5tx",
       "hut": "3C",
       "status": "Gepland"
-    },
-    {
-      "id": "x3strj15",
-      "date": "2026-11-26",
-      "units": 2,
-      "shipId": "s1",
-      "hut": "1B",
-      "status": "Geleverd"
     }
-  ]
+  ],
+  "units": {}
 }
