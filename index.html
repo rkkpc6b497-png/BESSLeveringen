@@ -249,6 +249,7 @@ for (const b in BL) {
 const BCAP = b => Object.values(BL[b].h).reduce((a, x) => a + x, 0);
 const ST = ['Gepland', 'Bevestigd', 'Geleverd'];
 const NEED = 320;
+const DAILY_PLAN_LIMIT = 8;
 const KEY = 'bess-v1';
 
 const p = n => String(n).padStart(2, '0');
@@ -854,12 +855,15 @@ function bufferOf(s) {
 /* ---------- Validatie ---------- */
 function validate(x) {
   const e = [], u = +x.units;
-  if (!Number.isInteger(u) || u < 1 || u > 8) e.push('Aantal units moet een geheel getal van 1 tot en met 8 zijn.');
+  if (!Number.isInteger(u) || u < 1) e.push('Aantal units moet een positief geheel getal zijn.');
   const day = S.deliveries.filter(d => d.date == x.date && d.id != x.id);
   const sh2 = new Set(day.map(d => d.shipId));
   if (x.shipId) sh2.add(x.shipId);
   if (sh2.size > 2) e.push('Maximaal 2 scheepsladingen (verschillende schepen) per kalenderdag.');
-  if (sum(day) + u > 8) e.push(`Daglimiet Rotterdam: ${sum(day)} + ${u} is meer dan 8 units.`);
+  if (x.status == 'Gepland') {
+    const planned = sum(day.filter(d => d.status == 'Gepland'));
+    if (planned + u > DAILY_PLAN_LIMIT) e.push(`Planningslimiet: ${planned} + ${u} is meer dan ${DAILY_PLAN_LIMIT} geplande units op deze dag.`);
+  }
   const sh = shipOf(x.shipId);
   if (!sh) e.push('Kies een schip.');
   else {
@@ -1007,7 +1011,7 @@ function openM(date, id) {
   $('modal').innerHTML = `<div class="card p-5 w-full" style="max-width:460px">
     <h2 class="text-lg font-bold mb-3" style="text-transform:none;letter-spacing:0;color:var(--fg)">${id ? 'Levering bewerken' : 'Levering plannen'} &middot; ${fmtDate(d.date)}</h2>
     <div class="grid gap-3" oninput="chk()" onchange="chk()">
-      <label class="text-xs" style="color:var(--mut)">Aantal BESS-units (1 t/m 8)<input id="fu" type="number" min="1" max="8" value="${d.units}" class="mt-1"></label>
+      <label class="text-xs" style="color:var(--mut)">Aantal BESS-units<input id="fu" type="number" min="1" step="1" value="${d.units}" class="mt-1"></label>
       <label class="text-xs" style="color:var(--mut)">Schip<select id="fs" class="mt-1"><option value="">Kies een schip</option>${so}</select></label>
       <label class="text-xs" style="color:var(--mut)">Bestemd veldhuisje<select id="fh" class="mt-1"><option value="">Kies een veldhuisje</option>${ho}</select></label>
       <label class="text-xs" style="color:var(--mut)">Status<select id="ft" class="mt-1">${ST.map(s => `<option ${s == d.status ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
@@ -1032,7 +1036,11 @@ function chk() {
   const x = val(), e = validate(x), u = +x.units || 0, sh = shipOf(x.shipId), day = S.deliveries.filter(d => d.date == x.date && d.id != x.id);
   const ss = new Set(day.map(d => d.shipId));
   if (x.shipId) ss.add(x.shipId);
-  const l = [`Dag: ${sum(day) + u} van 8 units, ${ss.size} van 2 scheepsladingen`];
+  const statusDay = sum(day.filter(d => d.status == x.status)) + u;
+  const dayInfo = x.status == 'Gepland'
+    ? `Gepland op deze dag: ${statusDay} van ${DAILY_PLAN_LIMIT} units`
+    : `${x.status} op deze dag: ${statusDay} units (geen vaste daglimiet)`;
+  const l = [dayInfo, `${ss.size} van 2 scheepsladingen op deze dag`];
   if (sh) {
     const dtInfo = getShipDates(sh.id);
     l.push(`Schip ${esc(sh.name)}: ${used(d => d.shipId == sh.id, x.id) + u} van ${sh.cap} units (${sh.departed ? 'gelost en vertrokken' : sh.arrived ? 'aangemeerd' : 'uiterste aanmeerdatum ' + dtInfo.deadlineLabel})`);
@@ -1926,7 +1934,18 @@ function dash() {
     </div>`;
   }).join('');
 
-  const doneCount = S.ships.filter(shipDone).length;
+  const overLimitDays = Object.values(S.deliveries.reduce((acc, d) => {
+    const item = acc[d.date] || (acc[d.date] = { date: d.date, total: 0, planned: 0, confirmed: 0, delivered: 0 });
+    item.total += d.units;
+    if (d.status == 'Gepland') item.planned += d.units;
+    else if (d.status == 'Bevestigd') item.confirmed += d.units;
+    else if (d.status == 'Geleverd') item.delivered += d.units;
+    return acc;
+  }, {})).filter(d => d.total > DAILY_PLAN_LIMIT && d.delivered < d.total).sort((a, b) => a.date.localeCompare(b.date));
+  const overLimitRows = overLimitDays.map(d => `<tr>
+    <td class="font-medium">${fmtDate(d.date)}</td><td><b>${d.total}</b></td><td>${d.planned}</td><td>${d.confirmed}</td><td>${d.delivered}</td><td>${d.total - d.delivered}</td>
+  </tr>`).join('');
+  const doneCount = S.ships.filter(shipDone);
   const byDeadline = (a, b) => {
     const da = getShipDates(a.id).deadlineISO, db = getShipDates(b.id).deadlineISO;
     if (da && db) return da.localeCompare(db) || a.name.localeCompare(b.name);
@@ -1983,6 +2002,9 @@ function dash() {
   <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2.5 mb-5">${k.map(x => `<div class="card p-3 kpi"><span>${x[0]}</span><b>${x[1]}</b><span class="text-xs">${x[2]}</span></div>`).join('')}</div>
   <h2>Maandoverzicht</h2>
   <div class="card overflow-x-auto mb-5"><table><thead><tr><th>Maand</th><th>Leverdagen</th><th>Gepland</th><th>Bevestigd</th><th>Geleverd</th><th>Maandtotaal</th></tr></thead><tbody>${mrows}</tbody></table></div>
+  <h2>Dagen boven de planningslimiet</h2>
+  <div class="card overflow-x-auto mb-2"><table><thead><tr><th>Datum</th><th>Totaal</th><th>Gepland</th><th>Bevestigd</th><th>Geleverd</th><th>Nog niet geleverd</th></tr></thead><tbody>${overLimitRows || '<tr><td colspan="6" class="text-xs" style="color:var(--mut)">Geen openstaande dagen boven de planningslimiet.</td></tr>'}</tbody></table></div>
+  <p class="text-xs mb-5" style="color:var(--mut)">De planningslimiet van ${DAILY_PLAN_LIMIT} units geldt alleen voor de status Gepland. Bevestigde en geleverde aantallen mogen hoger uitkomen; deze tabel signaleert dagen met meer dan ${DAILY_PLAN_LIMIT} units zolang nog niet alle units zijn geleverd. Er geldt hiervoor geen vooraf ingestelde harde bovengrens.</p>
   <h2>Voortgang per commercieel blok</h2>
   <div class="grid md:grid-cols-3 gap-2.5 mb-5">${blocks}</div>
   <h2>Voortgang per veldhuisje</h2>
