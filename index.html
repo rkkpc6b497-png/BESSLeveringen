@@ -120,8 +120,7 @@
 .pu{vector-effect:non-scaling-stroke;stroke-width:1;cursor:pointer;transition:opacity .15s}
 .pu.s-none{fill:rgba(148,163,184,.25);stroke:#94a3b8}
 .pu.s-planned{fill:rgba(245,158,11,.5);stroke:#b45309}
-.pu.s-delivered{fill:rgba(59,130,246,.5);stroke:#1d4ed8}
-.pu.s-placed{fill:rgba(34,197,94,.6);stroke:#15803d}
+.pu.s-done{fill:rgba(34,197,94,.6);stroke:#15803d}
 .pu.od{stroke:#dc2626;stroke-width:2.2}
 .pu.sel{stroke:#0f1419;stroke-width:2.6;fill-opacity:.9}
 .pu.dim{opacity:.15}
@@ -718,6 +717,8 @@ function normalize(st) {
   if (!/^\d{4}-\d{2}$/.test(st.lastMonth || '')) st.lastMonth = SNAP.lastMonth || '2027-06';
   if (!st.units || typeof st.units !== 'object' || Array.isArray(st.units)) st.units = {};
   st.deliveries.sort((a, b) => a.date.localeCompare(b.date));
+  // Legacy unit data stored delivery (d) and placement (g) separately. They are one completion event now.
+  Object.values(st.units).forEach(u => { if (!u || typeof u !== 'object') return; const completed = u.g || u.d; if (completed) u.g = completed; delete u.d; });
   st.ships.forEach(s => {
     const d = SNAP.ships.find(x => x.id === s.id);
     if (!Object.prototype.hasOwnProperty.call(s, 'trackingUrl')) s.trackingUrl = d ? (d.trackingUrl || '') : '';
@@ -1361,10 +1362,9 @@ const PLAN_UNITS = [];
 PLAN_HUTS.forEach(h => PLAN_GEO[h].forEach((g, i) => PLAN_UNITS.push({ id: `BP${String(i + 1).padStart(2, '0')}-${h}`, hut: h, blok: PLAN_BLOK[h], x: g[0], y: g[1], w: g[2], h: g[3] })));
 const PLAN_BY_ID = Object.fromEntries(PLAN_UNITS.map(u => [u.id, u]));
 const PLAN_STATES = [
-  ['placed', 'Geplaatst', '#22c55e'],
-  ['delivered', 'Geleverd, nog niet geplaatst', '#3b82f6'],
-  ['planned', 'Plaatsing gepland, nog niet geleverd', '#f59e0b'],
-  ['none', 'Nog niet geleverd', '#94a3b8']
+  ['done', 'Geleverd en geplaatst', '#22c55e'],
+  ['planned', 'Levering en plaatsing gepland', '#f59e0b'],
+  ['none', 'Nog niet gepland', '#94a3b8']
 ];
 const PV = { root: null, svg: null, box: null, rects: {}, vb: { x: PLAN_VB[0], y: PLAN_VB[1], w: PLAN_VB[2] }, sel: new Set(), tool: 'pan', filter: null, ptrs: new Map(), raf: 0, fitted: false, drag: null, pinch: null };
 
@@ -1372,23 +1372,20 @@ const planToday = () => { const n = new Date(); return ds(n.getFullYear(), n.get
 function unitState(id) {
   const u = S.units[id];
   if (!u) return 'none';
-  if (u.g) return 'placed';
-  if (u.d) return 'delivered';
+  if (u.g || u.d) return 'done';
   if (u.p) return 'planned';
   return 'none';
 }
-const unitOverdue = id => { const u = S.units[id]; return !!(u && u.p && !u.g && u.p < planToday()); };
+const unitOverdue = id => { const u = S.units[id]; return !!(u && u.p && !u.g && !u.d && u.p < planToday()); };
 function planStateText(id) {
-  const u = S.units[id] || {}, parts = [];
-  if (u.g) parts.push('Geplaatst ' + fmtDate(u.g));
-  if (u.d) parts.push('geleverd ' + fmtDate(u.d));
-  if (!u.g && !u.d) parts.push('Nog niet geleverd');
-  if (u.p && !u.g) parts.push('plaatsing gepland ' + fmtDate(u.p));
-  return parts.join(', ');
+  const u = S.units[id] || {};
+  if (u.g || u.d) return 'Geleverd en geplaatst ' + fmtDate(u.g || u.d);
+  if (u.p) return 'Levering en plaatsing gepland ' + fmtDate(u.p);
+  return 'Nog niet gepland';
 }
 function planCounts() {
-  const c = { placed: 0, delivered: 0, planned: 0, none: 0, dAll: 0 };
-  PLAN_UNITS.forEach(u => { c[unitState(u.id)]++; const x = S.units[u.id]; if (x && (x.d || x.g)) c.dAll++; });
+  const c = { done: 0, planned: 0, none: 0 };
+  PLAN_UNITS.forEach(u => { c[unitState(u.id)]++; });
   return c;
 }
 function planBBox(us) {
@@ -1606,7 +1603,7 @@ function planSet(key, clear) {
   if (!clear && !/^\d{4}-\d{2}-\d{2}$/.test(val)) return toast('Kies eerst een datum.');
   PV.sel.forEach(id => {
     const x = Object.assign({}, S.units[id]);
-    if (val) { x[key] = val; if (key === 'g' && !x.d) x.d = val; } else delete x[key];
+    if (val) { x[key] = val; } else delete x[key];
     if (Object.keys(x).length) S.units[id] = x; else delete S.units[id];
   });
   save();
@@ -1621,57 +1618,57 @@ function planSyncDeliveries() {
     const dates = [];
     dels.forEach(d => { for (let i = 0; i < d.units; i++) dates.push(d.date); });
     const us = PLAN_UNITS.filter(u => u.hut === h);
-    let have = us.filter(u => S.units[u.id] && (S.units[u.id].d || S.units[u.id].g)).length;
+    let have = us.filter(u => S.units[u.id] && (S.units[u.id].g || S.units[u.id].d)).length;
     for (const u of us) {
       if (have >= dates.length) break;
       const x = S.units[u.id] || {};
-      if (x.d || x.g) continue;
-      S.units[u.id] = Object.assign({}, x, { d: dates[have] });
+      if (x.g || x.d) continue;
+      S.units[u.id] = Object.assign({}, x, { g: dates[have] });
       have++; added++;
     }
   });
   if (!added) return toast('De tekening loopt al gelijk met de leveringen.');
   save();
   render();
-  toast(`${added} units als geleverd gemarkeerd op basis van de leveringen.`);
+  toast(`${added} units als geleverd en geplaatst gemarkeerd op basis van de leveringen.`);
 }
 function planRows() {
   const f = v => v ? fmtDate(v) : '';
-  return PLAN_UNITS.map(u => { const x = S.units[u.id] || {}; return [u.id, u.hut, u.blok, f(x.d), f(x.p), f(x.g), PLAN_STATES.find(s => s[0] === unitState(u.id))[1]]; });
+  return PLAN_UNITS.map(u => { const x = S.units[u.id] || {}; return [u.id, u.hut, u.blok, f(x.p), f(x.g || x.d), PLAN_STATES.find(s => s[0] === unitState(u.id))[1]]; });
 }
 function planCSV() {
-  const rows = [['Unit', 'Veldhuisje', 'Blok', 'Geleverd', 'Plaatsing gepland', 'Geplaatst', 'Status'], ...planRows()];
+  const rows = [['Unit', 'Veldhuisje', 'Blok', 'Levering en plaatsing gepland', 'Geleverd en geplaatst op', 'Status'], ...planRows()];
   dl('bess-units.csv', new Blob(['\ufeff' + rows.map(r => r.join(';')).join('\r\n')], { type: 'text/csv;charset=utf-8' }));
 }
 
 /* --- weergave --- */
 function planHutCard(h) {
   const us = PLAN_UNITS.filter(u => u.hut === h), n = us.length;
-  let pl = 0, dl = 0, pp = 0;
-  us.forEach(u => { const x = S.units[u.id] || {}; if (x.g) pl++; if (x.d || x.g) dl++; if (x.p && !x.g) pp++; });
+  let done = 0, planned = 0;
+  us.forEach(u => { const x = S.units[u.id] || {}; if (x.g || x.d) done++; else if (x.p) planned++; });
   const fromDel = S.deliveries.filter(d => d.hut === h && d.status === 'Geleverd').reduce((t, d) => t + d.units, 0);
   return `<div class="card p-3">
     <div class="flex justify-between items-center"><b>${h}</b><span class="text-xs" style="color:var(--mut)">Blok ${PLAN_BLOK[h]}</span></div>
-    <div class="my-2">${bar(pl, Math.max(dl - pl, 0), n, BL[PLAN_BLOK[h]].c)}</div>
-    <div class="text-xs" style="color:var(--mut)">Geplaatst ${pl} · Geleverd ${dl} van ${n}${pp ? ` · ${pp} gepland` : ''}</div>
-    ${fromDel !== dl ? `<div class="text-xs" style="color:var(--warn)">Leveringen: ${fromDel} geleverd</div>` : ''}
+    <div class="my-2">${bar(done, 0, n, BL[PLAN_BLOK[h]].c)}</div>
+    <div class="text-xs" style="color:var(--mut)">Geleverd en geplaatst ${done} van ${n}${planned ? ` · ${planned} gepland` : ''}</div>
+    ${fromDel !== done ? `<div class="text-xs" style="color:var(--warn)">Leverkalender: ${fromDel} geleverd</div>` : ''}
     <div class="flex gap-2 mt-2"><button class="btn" onclick="planGoto('${h}')">Toon</button><button class="btn" onclick="planSelectHut('${h}')">Selecteer alles</button></div>
   </div>`;
 }
 function planAgenda() {
   const by = {};
-  PLAN_UNITS.forEach(u => { const x = S.units[u.id]; if (x && x.p && !x.g) (by[x.p] = by[x.p] || []).push(u); });
+  PLAN_UNITS.forEach(u => { const x = S.units[u.id]; if (x && x.p && !x.g && !x.d) (by[x.p] = by[x.p] || []).push(u); });
   const dates = Object.keys(by).sort();
-  if (!dates.length) return `<p class="text-sm mb-5" style="color:var(--mut)">Nog geen plaatsing gepland. Selecteer units op de tekening en kies bij &ldquo;Plaatsing gepland op&rdquo; een datum.</p>`;
+  if (!dates.length) return `<p class="text-sm mb-5" style="color:var(--mut)">Nog geen leveringen en plaatsingen gepland. Selecteer units op de tekening en kies een geplande datum.</p>`;
   const today = planToday();
-  return `<div class="card overflow-x-auto mb-5"><table><thead><tr><th>Geplaatst op</th><th>Units</th><th>Veldhuisjes</th><th>Geleverd</th><th></th></tr></thead><tbody>${dates.map(d => {
-    const us = by[d], huts = [...new Set(us.map(u => u.hut))].join(', '), dlv = us.filter(u => S.units[u.id].d).length;
-    return `<tr><td class="font-medium">${fmtDate(d)}${d < today ? ' <span class="text-xs" style="color:var(--bad)">verstreken</span>' : ''}</td><td><b>${us.length}</b></td><td>${huts}</td><td>${dlv} van ${us.length}${dlv < us.length ? ' <span class="text-xs" style="color:var(--warn)">nog niet alles geleverd</span>' : ''}</td><td><button class="btn" onclick="planSelectDate('${d}')">Toon</button></td></tr>`;
+  return `<div class="card overflow-x-auto mb-5"><table><thead><tr><th>Levering en plaatsing gepland op</th><th>Units</th><th>Veldhuisjes</th><th></th></tr></thead><tbody>${dates.map(d => {
+    const us = by[d], huts = [...new Set(us.map(u => u.hut))].join(', ');
+    return `<tr><td class="font-medium">${fmtDate(d)}${d < today ? ' <span class="text-xs" style="color:var(--bad)">verstreken</span>' : ''}</td><td><b>${us.length}</b></td><td>${huts}</td><td><button class="btn" onclick="planSelectDate('${d}')">Toon</button></td></tr>`;
   }).join('')}</tbody></table></div>`;
 }
 function planPanel() {
   const ids = [...PV.sel];
-  const sync = EDIT ? `<button class="btn mt-3" onclick="planSyncDeliveries()" title="Markeert per veldhuisje de eerste units als geleverd, passend bij de leveringen">Geleverd invullen vanuit leveringen</button>` : '';
+  const sync = EDIT ? `<button class="btn mt-3" onclick="planSyncDeliveries()" title="Markeert per veldhuisje de eerste units als geleverd en geplaatst, passend bij de leveringen">Afronding invullen vanuit leveringen</button>` : '';
   if (!ids.length) return `<div class="pp"><div><h3 class="font-semibold mb-1">Geen selectie</h3>
     <p class="text-sm" style="color:var(--mut)">Klik op een unit. Houd Shift ingedrukt en sleep, of kies <b>Selecteren</b> bovenaan, om meerdere units tegelijk te kiezen.${EDIT ? '' : ' Ontgrendel bewerken om de status te wijzigen.'}</p></div></div>${sync}`;
   const byState = {};
@@ -1681,14 +1678,14 @@ function planPanel() {
   if (ids.length === 1) {
     const id = ids[0], u = PLAN_BY_ID[id], x = S.units[id] || {};
     head = `<h3 class="font-semibold">${id}</h3><div class="text-sm mb-2" style="color:var(--mut)">Veldhuisje ${u.hut} &middot; blok ${u.blok}</div>
-      <dl class="plan-dl text-sm"><dt>Geleverd</dt><dd>${x.d ? fmtDate(x.d) : '-'}</dd><dt>Plaatsing gepland</dt><dd>${x.p ? fmtDate(x.p) : '-'}${unitOverdue(id) ? ' <span style="color:var(--bad)">(verstreken)</span>' : ''}</dd><dt>Geplaatst</dt><dd>${x.g ? fmtDate(x.g) : '-'}</dd></dl>`;
+      <dl class="plan-dl text-sm"><dt>Levering en plaatsing gepland</dt><dd>${x.p ? fmtDate(x.p) : '-'}${unitOverdue(id) ? ' <span style="color:var(--bad)">(verstreken)</span>' : ''}</dd><dt>Geleverd en geplaatst op</dt><dd>${x.g || x.d ? fmtDate(x.g || x.d) : '-'}</dd></dl>`;
   } else {
     head = `<h3 class="font-semibold">${ids.length} units geselecteerd</h3><div class="text-sm mb-1" style="color:var(--mut)">Veldhuisje${huts.length > 1 ? 's' : ''} ${huts.join(', ')}</div>
       <div class="text-xs mb-2">${PLAN_STATES.filter(([k]) => byState[k]).map(([k, l]) => `${byState[k]}&times; ${l.toLowerCase()}`).join(' &middot; ')}</div>`;
   }
   const row = (key, label, def) => `<div class="mb-2"><label class="text-xs" style="color:var(--mut)">${label}</label><div class="flex gap-2 mt-1"><input type="date" id="pv-${key}" value="${def}" style="flex:1;min-width:0"><button class="btn pri" onclick="planSet('${key}')">Zet</button><button class="btn" title="Datum wissen" onclick="planSet('${key}', true)">Wis</button></div></div>`;
   const form = EDIT
-    ? `<div class="forms">${row('d', 'Geleverd op', planToday())}${row('p', 'Plaatsing gepland op', '')}${row('g', 'Geplaatst op', planToday())}</div>`
+    ? `<div class="forms">${row('p', 'Levering en plaatsing gepland op', '')}${row('g', 'Geleverd en geplaatst op', planToday())}</div>`
     : '<div><p class="text-xs mt-2" style="color:var(--mut)">Ontgrendel bewerken om de status te wijzigen.</p></div>';
   return `<div class="pp"><div>${head}<button class="btn mt-2" onclick="planClearSel()">Selectie wissen</button></div>${form}</div>${sync}`;
 }
@@ -1698,7 +1695,7 @@ function planV() {
   const chips = PLAN_STATES.map(([k, label, col]) => `<button class="chip${PV.filter === k ? ' on' : ''}" onclick="planFilter('${k}')"><i class="sw" style="background:${col}"></i>${label} <b>${c[k]}</b></button>`).join('');
   const hutOpts = PLAN_HUTS.map(h => `<option value="${h}">${h} &middot; blok ${PLAN_BLOK[h]}</option>`).join('');
   return `<h1>Plattegrond</h1>
-  <p class="text-sm mb-3" style="color:var(--mut)">Geleverd op locatie: <b style="color:var(--fg)">${c.dAll}</b> van ${n} &middot; geplaatst: <b style="color:var(--fg)">${c.placed}</b>${c.dAll !== delivSum ? ` &middot; <span style="color:var(--warn)">volgens de leveringen is ${delivSum} geleverd</span>` : ''}</p>
+  <p class="text-sm mb-3" style="color:var(--mut)">Geleverd en geplaatst op locatie: <b style="color:var(--fg)">${c.done}</b> van ${n}${c.done !== delivSum ? ` &middot; <span style="color:var(--warn)">volgens de leverkalender is ${delivSum} geleverd</span>` : ''}</p>
   <div class="flex flex-wrap items-center gap-2 mb-2">${chips}</div>
   <div class="flex flex-wrap items-center gap-2 mb-2">
     <input id="pvsearch" placeholder="Zoek unit, bijv. BP12-3B of 3B" style="width:230px" onkeydown="if(event.key==='Enter')planSearch(this.value)">
@@ -1711,7 +1708,7 @@ function planV() {
     <div id="pvmount" class="plan-view"></div>
     <aside id="pvpanel" class="card p-4 plan-panel">${planPanel()}</aside>
   </div>
-  <p class="text-xs mt-2 mb-4" style="color:var(--mut)">Scroll of knijp om te zoomen, sleep om te verschuiven. De kleuren op de tekening volgen de status per unit. Een rode rand betekent dat de geplande plaatsingsdatum voorbij is.</p>
+  <p class="text-xs mt-2 mb-4" style="color:var(--mut)">Scroll of knijp om te zoomen, sleep om te verschuiven. De kleuren op de tekening tonen of een unit nog niet gepland, gepland of geleverd en geplaatst is. Een rode rand betekent dat de geplande datum voorbij is.</p>
   <h2>Geplande plaatsingen</h2>
   ${planAgenda()}
   <h2>Voortgang per veldhuisje</h2>
